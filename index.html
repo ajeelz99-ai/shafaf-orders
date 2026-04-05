@@ -460,8 +460,6 @@ function initTelegram() {
   if (tg) {
     tg.ready();
     tg.expand();
-    tg.setBackgroundColor('#ffffff');
-    tg.setHeaderColor('#1a73e8');
     var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     tgUsername = tgUser ? (tgUser.username || null) : null;
   }
@@ -728,22 +726,11 @@ alert('Loaded ' + doctors.length + ' doctors');
 }
 
 function loadData() {
-  if (tg && tg.DeviceStorage) {
-    tg.DeviceStorage.getItem('shafaf_data').then(function(value) {
-      if (value) {
-        try { applyCache(JSON.parse(value)); } catch(e) {}
-      }
-      fetchFreshData();
-    }).catch(function() {
-      fetchFreshData();
-    });
-  } else {
-    try {
-      var cached = localStorage.getItem('shafaf_data');
-      if (cached) { applyCache(JSON.parse(cached)); }
-    } catch(e) {}
-    fetchFreshData();
-  }
+  try {
+    var cached = localStorage.getItem('shafaf_data');
+    if (cached) { applyCache(JSON.parse(cached)); }
+  } catch(e) {}
+  fetchFreshData();
 }
 
 function buildCaseNumber() {
