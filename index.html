@@ -414,6 +414,11 @@ textarea { resize: none; height: 80px; }
     </div>
 
     <div class="form-group">
+      <label>Reason for Reprint <span class="required">*</span></label>
+      <input type="text" id="reprintReason" placeholder="e.g. Broken aligner, Lost aligner..." />
+    </div>
+
+    <div class="form-group">
       <label>Payment Amount (IQD) — leave empty if free</label>
       <input type="number" id="reprintPayment" placeholder="Leave empty if free" min="0" />
     </div>
@@ -782,7 +787,7 @@ function buildTelegramMessage(data) {
   var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || (parts[2] || '');
 
   var msg = '';
-  msg += '🆕 Print Order from @' + username + '\n';
+  msg += '🆕 Approval from @' + username + '\n';
   msg += 'Case Number: ' + data.caseNumber + '\n';
   msg += 'Doctor: ' + data.doctor + '\n';
   msg += 'Patient: ' + data.patient + '\n';
@@ -794,6 +799,7 @@ function buildTelegramMessage(data) {
     var upperTo = document.getElementById('reprintUpperTo').value;
     var lowerFrom = document.getElementById('reprintLowerFrom').value;
     var lowerTo = document.getElementById('reprintLowerTo').value;
+    var reprintReason = document.getElementById('reprintReason').value.trim();
     var payment = document.getElementById('reprintPayment').value;
     var reprintNotes = document.getElementById('reprintNotes').value.trim();
 
@@ -805,6 +811,7 @@ function buildTelegramMessage(data) {
     if ((arch === 'Both' || arch === 'Lower') && lowerFrom && lowerTo) {
       msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
     }
+    if (reprintReason) msg += 'Reason: ' + reprintReason + '\n';
     if (payment && parseInt(payment) > 0) {
       msg += 'Payment: ' + payment + ' IQD\n';
     } else {
@@ -1002,32 +1009,25 @@ function submitForm() {
   };
 
   var message = buildTelegramMessage(data);
-
-  // Send to admin chat
   var promises = [sendToTelegram(CHAT_ID, message)];
 
-  // Send STL files if any
   selectedFiles.forEach(function(file) {
     promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber));
   });
 
   Promise.all(promises)
     .then(function() {
-      // Send confirmation to rep's private chat
       if (tgUserId) {
-if (tgUserId) {
-  setTimeout(function() {
-    sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
-  }, 500);
-}
-}
-
+        setTimeout(function() {
+          sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
+        }, 500);
+      }
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo(0, 0);
       document.getElementById('successSub').textContent = caseNumber
-  ? 'Order for case ' + caseNumber + ' submitted successfully.'
-  : 'Order submitted successfully.';
+        ? 'Order for case ' + caseNumber + ' submitted successfully.'
+        : 'Order submitted successfully.';
       if (tg) {
         setTimeout(function() { tg.close(); }, 3000);
       } else {
@@ -1047,4 +1047,3 @@ loadData();
 </script>
 </body>
 </html>
-
