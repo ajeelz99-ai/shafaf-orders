@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Shafaf Orders</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="./telegram-web-app.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
@@ -264,7 +264,6 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
-  <!-- Normal cards hidden for reprint -->
   <div id="normalCards">
     <div class="card">
       <div class="section-title">Steps & Package</div>
@@ -380,7 +379,6 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
-  <!-- Reprint card -->
   <div class="card hidden" id="reprintCard">
     <div class="section-title">Reprint Details</div>
 
@@ -457,10 +455,7 @@ var singleArchLocked = null;
 var tg = null;
 var tgUsername = null;
 
-// Initialize Telegram
-handleCaseTypeChange();
-
-window.addEventListener('load', function() {
+function initTelegram() {
   tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   if (tg) {
     tg.ready();
@@ -470,9 +465,8 @@ window.addEventListener('load', function() {
     var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     tgUsername = tgUser ? (tgUser.username || null) : null;
   }
-  alert('tgUsername: ' + tgUsername + ' | tg: ' + (tg ? 'yes' : 'no'));
-  loadData();
-});
+}
+
 function handleCaseTypeChange() {
   var type = document.getElementById('caseType').value;
   var mcaBatch = document.getElementById('mcaBatchNumber').value;
@@ -708,8 +702,6 @@ function fetchFreshData() {
         });
 
       var cacheData = JSON.stringify({ doctors: doctors, reps: reps });
-
-      // Save to Telegram DeviceStorage if available, else localStorage
       if (tg && tg.DeviceStorage) {
         tg.DeviceStorage.setItem('shafaf_data', cacheData).catch(function() {
           try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
@@ -731,20 +723,16 @@ function fetchFreshData() {
 }
 
 function loadData() {
-  // Try Telegram DeviceStorage first
   if (tg && tg.DeviceStorage) {
     tg.DeviceStorage.getItem('shafaf_data').then(function(value) {
       if (value) {
-        try {
-          applyCache(JSON.parse(value));
-        } catch(e) {}
+        try { applyCache(JSON.parse(value)); } catch(e) {}
       }
       fetchFreshData();
     }).catch(function() {
       fetchFreshData();
     });
   } else {
-    // Fallback to localStorage for browser
     try {
       var cached = localStorage.getItem('shafaf_data');
       if (cached) applyCache(JSON.parse(cached));
@@ -1057,6 +1045,7 @@ function submitForm() {
 }
 
 handleCaseTypeChange();
+initTelegram();
 loadData();
 </script>
 </body>
