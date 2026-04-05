@@ -116,10 +116,6 @@ textarea { resize: none; height: 80px; }
   cursor: pointer; margin-top: 4px; -webkit-appearance: none;
 }
 .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.rep-badge {
-  background: #e8f0fe; color: #1a73e8; border-radius: 8px;
-  padding: 10px 13px; font-size: 14px; font-weight: 600;
-}
 #formScreen { display: block; }
 #successScreen {
   display: none;
@@ -137,25 +133,11 @@ textarea { resize: none; height: 80px; }
 
 <div class="header">📋 Shafaf Order Form</div>
 
+<input type="hidden" id="repDetected" />
+<input type="hidden" id="repUsername" />
+
 <div id="formScreen">
 <div class="form-container">
-
-  <div class="card hidden" id="repCard">
-    <div class="section-title">Rep</div>
-    <div class="form-group hidden" id="repDropdownGroup">
-      <label>Rep Name <span class="required">*</span></label>
-      <select id="repSelect">
-        <option value="">Select rep...</option>
-      </select>
-      <div class="error-msg" id="repError">Please select your name</div>
-    </div>
-    <div class="form-group hidden" id="repBadgeGroup">
-      <label>Submitting as</label>
-      <div class="rep-badge" id="repBadge"></div>
-      <input type="hidden" id="repDetected" />
-      <input type="hidden" id="repUsername" />
-    </div>
-  </div>
 
   <div class="card">
     <div class="section-title">Case Details</div>
@@ -415,7 +397,7 @@ textarea { resize: none; height: 80px; }
 
     <div class="form-group">
       <label>Reason for Reprint <span class="required">*</span></label>
-      <input type="text" id="reprintReason" placeholder="e.g. Broken aligner(s), Lost aligner(s)..." />
+      <input type="text" id="reprintReason" placeholder="e.g. Broken aligner, Lost aligner..." />
     </div>
 
     <div class="form-group">
@@ -658,23 +640,11 @@ function setupRepField() {
       return r.username.toLowerCase() === tgUsername.toLowerCase();
     });
     if (matched) {
-      document.getElementById('repCard').classList.add('hidden');
       document.getElementById('repDetected').value = matched.name;
       document.getElementById('repUsername').value = tgUsername;
       detectedUsername = tgUsername;
-      return;
     }
   }
-  document.getElementById('repCard').classList.remove('hidden');
-  var select = document.getElementById('repSelect');
-  while (select.options.length > 1) select.remove(1);
-  reps.forEach(function(r) {
-    var opt = document.createElement('option');
-    opt.value = r.name + '|' + r.username + '|' + r.zone;
-    opt.textContent = r.name;
-    select.appendChild(opt);
-  });
-  document.getElementById('repDropdownGroup').classList.remove('hidden');
 }
 
 function applyCache(parsed) {
@@ -716,8 +686,6 @@ function fetchFreshData() {
       console.error('Failed to load data', e);
       if (doctors.length === 0) {
         document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
-        document.getElementById('repCard').classList.remove('hidden');
-        document.getElementById('repDropdownGroup').classList.remove('hidden');
       }
     });
 }
@@ -780,11 +748,9 @@ function buildPrintOrderLine(data) {
 }
 
 function buildTelegramMessage(data) {
-  var repSelectVal = document.getElementById('repSelect').value;
-  var parts = repSelectVal ? repSelectVal.split('|') : [];
-  var username = detectedUsername || (parts[1] || '');
-  var repName = document.getElementById('repDetected').value || (parts[0] || '');
-  var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || (parts[2] || '');
+  var username = detectedUsername || '';
+  var repName = document.getElementById('repDetected').value || '';
+  var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || '';
 
   var msg = '';
   msg += '🆕 Approval from @' + username + '\n';
@@ -870,18 +836,6 @@ function validateForm() {
   var valid = true;
   var caseType = document.getElementById('caseType').value;
 
-  var repSelectVal = document.getElementById('repSelect').value;
-  var repVal = document.getElementById('repDetected').value || (repSelectVal ? repSelectVal.split('|')[0] : '');
-  var repCardHidden = document.getElementById('repCard').classList.contains('hidden');
-  if (!repCardHidden && !repVal) {
-    document.getElementById('repError').classList.add('show');
-    document.getElementById('repSelect').classList.add('error-field');
-    valid = false;
-  } else {
-    document.getElementById('repError').classList.remove('show');
-    document.getElementById('repSelect').classList.remove('error-field');
-  }
-
   var caseNum = document.getElementById('caseNumber').value.trim();
   if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
     document.getElementById('caseNumberError').classList.add('show');
@@ -893,18 +847,18 @@ function validateForm() {
   }
 
   var doctorValue = document.getElementById('doctorValue').value;
-var doctorSearch = document.getElementById('doctorSearch').value.trim();
-if (!doctorValue) {
-  document.getElementById('doctorError').classList.add('show');
-  document.getElementById('doctorSearch').classList.add('error-field');
-  document.getElementById('doctorError').textContent = doctorSearch
-    ? 'Please select a doctor from the list or click + New Doctor'
-    : 'Please select or enter a doctor';
-  valid = false;
-} else {
-  document.getElementById('doctorError').classList.remove('show');
-  document.getElementById('doctorSearch').classList.remove('error-field');
-}
+  var doctorSearch = document.getElementById('doctorSearch').value.trim();
+  if (!doctorValue) {
+    document.getElementById('doctorError').classList.add('show');
+    document.getElementById('doctorSearch').classList.add('error-field');
+    document.getElementById('doctorError').textContent = doctorSearch
+      ? 'Please select a doctor from the list or click + New Doctor'
+      : 'Please select or enter a doctor';
+    valid = false;
+  } else {
+    document.getElementById('doctorError').classList.remove('show');
+    document.getElementById('doctorSearch').classList.remove('error-field');
+  }
 
   if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) {
     document.getElementById('newDoctorError').classList.add('show');
@@ -983,9 +937,7 @@ function submitForm() {
     ? newDoctorName
     : (doctorValue || document.getElementById('doctorSearch').value.trim());
 
-  var repSelectVal = document.getElementById('repSelect').value;
-  var parts = repSelectVal ? repSelectVal.split('|') : [];
-  var repName = document.getElementById('repDetected').value || (parts[0] || '');
+  var repName = document.getElementById('repDetected').value || '';
   var caseNumber = buildCaseNumber();
   var caseType = document.getElementById('caseType').value;
 
