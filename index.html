@@ -647,6 +647,7 @@ document.getElementById('doctorSearch').addEventListener('focus', function() {
 });
 
 function setupRepField() {
+  alert('setupRepField called. tgUsername: ' + tgUsername + ' reps count: ' + reps.length);
   if (tgUsername) {
     var matched = reps.find(function(r) {
       return r.username.toLowerCase() === tgUsername.toLowerCase();
