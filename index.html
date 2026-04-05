@@ -681,7 +681,8 @@ function applyCache(parsed) {
 
 function fetchFreshData() {
   alert('fetchFreshData called');
-  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + ...
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
+    '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
     '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
 
