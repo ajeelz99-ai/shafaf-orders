@@ -462,7 +462,6 @@ function initTelegram() {
     tg.expand();
     var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     tgUsername = tgUser ? (tgUser.username || null) : null;
-    alert('initData: ' + tg.initData + '\nuser: ' + JSON.stringify(tgUser));
   }
 }
 
@@ -647,7 +646,6 @@ document.getElementById('doctorSearch').addEventListener('focus', function() {
 });
 
 function setupRepField() {
-  alert('setupRepField called. tgUsername: ' + tgUsername + ' reps count: ' + reps.length);
   if (tgUsername) {
     var matched = reps.find(function(r) {
       return r.username.toLowerCase() === tgUsername.toLowerCase();
@@ -680,9 +678,6 @@ function applyCache(parsed) {
 }
 
 function fetchFreshData() {
-  alert('fetchFreshData called');
-  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
     '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
 
@@ -692,8 +687,6 @@ function fetchFreshData() {
       var drValues = data.valueRanges[0].values || [];
       doctors = drValues.flat().filter(function(v) { return v && v.trim() !== ''; });
       document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
-      document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
-alert('Loaded ' + doctors.length + ' doctors');
 
       var repValues = data.valueRanges[1].values || [];
       reps = repValues
@@ -707,24 +700,20 @@ alert('Loaded ' + doctors.length + ' doctors');
         });
 
       var cacheData = JSON.stringify({ doctors: doctors, reps: reps });
-      if (tg && tg.DeviceStorage) {
-        tg.DeviceStorage.setItem('shafaf_data', cacheData).catch(function() {
-          try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
-        });
-      } else {
-        try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
-      }
+      try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
 
+      // Re-init Telegram to get latest username then setup rep
+      initTelegram();
       setupRepField();
     })
-   .catch(function(e) {
-  alert('Sheets error: ' + e.message);
-  if (doctors.length === 0) {
-    document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
-    document.getElementById('repCard').classList.remove('hidden');
-    document.getElementById('repDropdownGroup').classList.remove('hidden');
-  }
-});
+    .catch(function(e) {
+      console.error('Failed to load data', e);
+      if (doctors.length === 0) {
+        document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
+        document.getElementById('repCard').classList.remove('hidden');
+        document.getElementById('repDropdownGroup').classList.remove('hidden');
+      }
+    });
 }
 
 function loadData() {
