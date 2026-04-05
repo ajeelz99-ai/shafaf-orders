@@ -1015,14 +1015,15 @@ function submitForm() {
     .then(function() {
       // Send confirmation to rep's private chat
       if (tgUserId) {
-        sendToTelegram(tgUserId, '✅ Print Order received—thanks!');
-      }
+  sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
+}
 
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo(0, 0);
-      document.getElementById('successSub').textContent =
-        'Order for case ' + caseNumber + ' submitted successfully.';
+      document.getElementById('successSub').textContent = caseNumber
+  ? 'Order for case ' + caseNumber + ' submitted successfully.'
+  : 'Order submitted successfully.';
       if (tg) {
         setTimeout(function() { tg.close(); }, 3000);
       } else {
