@@ -689,6 +689,8 @@ function fetchFreshData() {
       var drValues = data.valueRanges[0].values || [];
       doctors = drValues.flat().filter(function(v) { return v && v.trim() !== ''; });
       document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+      document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+alert('Loaded ' + doctors.length + ' doctors');
 
       var repValues = data.valueRanges[1].values || [];
       reps = repValues
@@ -712,14 +714,14 @@ function fetchFreshData() {
 
       setupRepField();
     })
-    .catch(function(e) {
-      console.error('Failed to load data', e);
-      if (doctors.length === 0) {
-        document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
-        document.getElementById('repCard').classList.remove('hidden');
-        document.getElementById('repDropdownGroup').classList.remove('hidden');
-      }
-    });
+   .catch(function(e) {
+  alert('Sheets error: ' + e.message);
+  if (doctors.length === 0) {
+    document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
+    document.getElementById('repCard').classList.remove('hidden');
+    document.getElementById('repDropdownGroup').classList.remove('hidden');
+  }
+});
 }
 
 function loadData() {
