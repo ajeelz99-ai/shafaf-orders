@@ -782,7 +782,7 @@ function buildTelegramMessage(data) {
   var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || (parts[2] || '');
 
   var msg = '';
-  msg += '🆕 Approval from @' + username + '\n';
+  msg += '🆕 Print Order from @' + username + '\n';
   msg += 'Case Number: ' + data.caseNumber + '\n';
   msg += 'Doctor: ' + data.doctor + '\n';
   msg += 'Patient: ' + data.patient + '\n';
@@ -1016,8 +1016,9 @@ function submitForm() {
       // Send confirmation to rep's private chat
       if (tgUserId) {
 if (tgUserId) {
-  alert('Sending to rep: ' + tgUserId + '\n' + message.substring(0, 50));
-  sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
+  setTimeout(function() {
+    sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
+  }, 500);
 }
 }
 
