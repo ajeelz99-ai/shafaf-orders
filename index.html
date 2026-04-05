@@ -462,6 +462,7 @@ function initTelegram() {
     tg.expand();
     var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     tgUsername = tgUser ? (tgUser.username || null) : null;
+    alert('initData: ' + tg.initData + '\nuser: ' + JSON.stringify(tgUser));
   }
 }
 
