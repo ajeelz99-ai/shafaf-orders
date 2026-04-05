@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -454,6 +455,7 @@ var detectedUsername = null;
 var singleArchLocked = null;
 var tg = null;
 var tgUsername = null;
+var tgUserId = null;
 
 function initTelegram() {
   tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -462,6 +464,7 @@ function initTelegram() {
     tg.expand();
     var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
     tgUsername = tgUser ? (tgUser.username || null) : null;
+    tgUserId = tgUser ? (tgUser.id || null) : null;
   }
 }
 
@@ -702,7 +705,6 @@ function fetchFreshData() {
       var cacheData = JSON.stringify({ doctors: doctors, reps: reps });
       try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
 
-      // Re-init Telegram to get latest username then setup rep
       initTelegram();
       setupRepField();
     })
@@ -840,11 +842,11 @@ function buildTelegramMessage(data) {
   return msg;
 }
 
-function sendToTelegram(message) {
+function sendToTelegram(chatId, message) {
   return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+    body: JSON.stringify({ chat_id: chatId, text: message })
   });
 }
 
@@ -1001,14 +1003,22 @@ function submitForm() {
   };
 
   var message = buildTelegramMessage(data);
-  var promises = [sendToTelegram(message)];
 
+  // Send to admin chat
+  var promises = [sendToTelegram(CHAT_ID, message)];
+
+  // Send STL files if any
   selectedFiles.forEach(function(file) {
     promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber));
   });
 
   Promise.all(promises)
     .then(function() {
+      // Send confirmation to rep's private chat
+      if (tgUserId) {
+        sendToTelegram(tgUserId, '✅ Print Order received—thanks!');
+      }
+
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo(0, 0);
@@ -1033,3 +1043,4 @@ loadData();
 </script>
 </body>
 </html>
+```
