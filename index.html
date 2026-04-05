@@ -893,15 +893,18 @@ function validateForm() {
   }
 
   var doctorValue = document.getElementById('doctorValue').value;
-  var doctorSearch = document.getElementById('doctorSearch').value.trim();
-  if (!doctorValue && !doctorSearch) {
-    document.getElementById('doctorError').classList.add('show');
-    document.getElementById('doctorSearch').classList.add('error-field');
-    valid = false;
-  } else {
-    document.getElementById('doctorError').classList.remove('show');
-    document.getElementById('doctorSearch').classList.remove('error-field');
-  }
+var doctorSearch = document.getElementById('doctorSearch').value.trim();
+if (!doctorValue) {
+  document.getElementById('doctorError').classList.add('show');
+  document.getElementById('doctorSearch').classList.add('error-field');
+  document.getElementById('doctorError').textContent = doctorSearch
+    ? 'Please select a doctor from the list or click + New Doctor'
+    : 'Please select or enter a doctor';
+  valid = false;
+} else {
+  document.getElementById('doctorError').classList.remove('show');
+  document.getElementById('doctorSearch').classList.remove('error-field');
+}
 
   if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) {
     document.getElementById('newDoctorError').classList.add('show');
