@@ -727,6 +727,9 @@ alert('Loaded ' + doctors.length + ' doctors');
 }
 
 function loadData() {
+  function loadData() {
+  alert('loadData called');
+  if (tg && tg.DeviceStorage) {
   if (tg && tg.DeviceStorage) {
     tg.DeviceStorage.getItem('shafaf_data').then(function(value) {
       if (value) {
