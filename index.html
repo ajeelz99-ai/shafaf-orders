@@ -1015,7 +1015,10 @@ function submitForm() {
     .then(function() {
       // Send confirmation to rep's private chat
       if (tgUserId) {
+if (tgUserId) {
+  alert('Sending to rep: ' + tgUserId + '\n' + message.substring(0, 50));
   sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
+}
 }
 
       document.getElementById('formScreen').style.display = 'none';
@@ -1043,4 +1046,4 @@ loadData();
 </script>
 </body>
 </html>
-```
+
