@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Shafaf Orders</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+.header {
+  background: #1a73e8;
+  color: white;
+  padding: 16px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.form-container { max-width: 500px; margin: 0 auto; padding: 16px; }
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #1a73e8;
+  margin-bottom: 12px;
+}
+.form-group { margin-bottom: 12px; }
+.form-group:last-child { margin-bottom: 0; }
+label { display: block; font-size: 13px; font-weight: 600; color: #444; margin-bottom: 5px; }
+.required { color: #e53935; margin-left: 2px; }
+input[type="text"], input[type="number"], input[type="search"],
+select, textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #1a1a1a;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+input:focus, select:focus, textarea:focus { border-color: #1a73e8; background: white; }
+input.error-field, select.error-field { border-color: #e53935; }
+input:disabled { background: #f0f0f0; color: #999; cursor: not-allowed; }
+textarea { resize: none; height: 80px; }
+.row { display: flex; gap: 10px; }
+.row .form-group { flex: 1; }
+.hidden { display: none !important; }
+.error-msg { color: #e53935; font-size: 11px; margin-top: 3px; display: none; }
+.error-msg.show { display: block; }
+.checkbox-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.checkbox-item {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; font-size: 14px; font-weight: 500;
+}
+.checkbox-item input[type="checkbox"] {
+  width: 20px; height: 20px; cursor: pointer; accent-color: #1a73e8;
+}
+.search-wrapper { position: relative; }
+.clear-btn {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; font-size: 18px; color: #999;
+  cursor: pointer; padding: 4px; display: none; z-index: 1;
+}
+.search-results {
+  position: absolute; top: calc(100% + 2px); left: 0; right: 0;
+  background: white; border: 1.5px solid #e0e0e0; border-radius: 8px;
+  max-height: 200px; overflow-y: auto; z-index: 200; display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.search-result-item {
+  padding: 11px 13px; cursor: pointer; font-size: 14px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:active { background: #e8f0fe; }
+.new-doctor-item { color: #1a73e8; font-weight: 600; background: #f8f9ff; }
+.loading-item { color: #999; font-style: italic; }
+.file-upload-area {
+  border: 2px dashed #e0e0e0; border-radius: 8px; padding: 20px;
+  text-align: center; cursor: pointer; background: #fafafa;
+}
+.file-upload-area:active { border-color: #1a73e8; }
+.file-upload-icon { font-size: 28px; margin-bottom: 6px; }
+.file-upload-text { font-size: 13px; color: #666; }
+.file-name { font-size: 12px; color: #1a73e8; margin-top: 6px; word-break: break-all; }
+.submit-btn {
+  width: 100%; padding: 15px; background: #1a73e8; color: white;
+  border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+  cursor: pointer; margin-top: 4px; -webkit-appearance: none;
+}
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.rep-badge {
+  background: #e8f0fe; color: #1a73e8; border-radius: 8px;
+  padding: 10px 13px; font-size: 14px; font-weight: 600;
+}
+#formScreen { display: block; }
+#successScreen {
+  display: none;
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.success-icon { font-size: 72px; margin-bottom: 20px; }
+.success-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; color: #1a1a1a; }
+.success-sub { font-size: 15px; color: #666; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="header">📋 Shafaf Order Form</div>
+
+<div id="formScreen">
+<div class="form-container">
+
+  <div class="card hidden" id="repCard">
+    <div class="section-title">Rep</div>
+    <div class="form-group hidden" id="repDropdownGroup">
+      <label>Rep Name <span class="required">*</span></label>
+      <select id="repSelect">
+        <option value="">Select rep...</option>
+      </select>
+      <div class="error-msg" id="repError">Please select your name</div>
+    </div>
+    <div class="form-group hidden" id="repBadgeGroup">
+      <label>Submitting as</label>
+      <div class="rep-badge" id="repBadge"></div>
+      <input type="hidden" id="repDetected" />
+      <input type="hidden" id="repUsername" />
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Case Details</div>
+    <div class="form-group">
+      <label>Case Type <span class="required">*</span></label>
+      <select id="caseType" onchange="handleCaseTypeChange()">
+        <option value="new">New Case</option>
+        <option value="batch">Batch</option>
+        <option value="mca">MCA</option>
+        <option value="refinement">Refinement</option>
+        <option value="retainer">Retainer(s)</option>
+        <option value="reprint">Reprint</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Case Number <span class="required" id="caseNumberRequired">*</span></label>
+      <input type="text" id="caseNumber" placeholder="e.g. XXXX" autocomplete="off" />
+      <div class="error-msg" id="caseNumberError">Case number is required</div>
+    </div>
+
+    <div class="form-group hidden" id="batchNumberGroup">
+      <label>Batch Number</label>
+      <select id="batchNumber">
+        <option value="2nd">2nd Batch</option>
+        <option value="3rd">3rd Batch</option>
+        <option value="4th">4th Batch</option>
+        <option value="5th">5th Batch</option>
+      </select>
+    </div>
+
+    <div class="form-group hidden" id="mcaNumberGroup">
+      <label>MCA Number</label>
+      <select id="mcaNumber">
+        <option value="1">1st MCA</option>
+        <option value="2">2nd MCA</option>
+        <option value="3">3rd MCA</option>
+        <option value="4">4th MCA</option>
+      </select>
+    </div>
+
+    <div class="form-group hidden" id="mcaBatchNumberGroup">
+      <label>MCA Batch</label>
+      <select id="mcaBatchNumber" onchange="handleCaseTypeChange()">
+        <option value="1">1st Batch</option>
+        <option value="2">2nd Batch</option>
+        <option value="3">3rd Batch</option>
+        <option value="4">4th Batch</option>
+      </select>
+    </div>
+
+    <div class="form-group hidden" id="refinementNumberGroup">
+      <label>Refinement Number</label>
+      <select id="refinementNumber">
+        <option value="1">R1</option>
+        <option value="2">R2</option>
+        <option value="3">R3</option>
+        <option value="4">R4</option>
+        <option value="5">R5</option>
+        <option value="6">R6</option>
+      </select>
+    </div>
+
+    <div class="form-group hidden" id="refinementBatchGroup">
+      <label>Refinement Batch</label>
+      <select id="refinementBatch" onchange="handleCaseTypeChange()">
+        <option value="1">1st Batch</option>
+        <option value="2">2nd Batch</option>
+        <option value="3">3rd Batch</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Doctor & Patient</div>
+
+    <div class="form-group">
+      <label>Doctor <span class="required">*</span></label>
+      <div class="search-wrapper">
+        <input type="search" id="doctorSearch"
+          placeholder="Loading doctors..."
+          autocomplete="off"
+          style="padding-right:36px" />
+        <button class="clear-btn" id="clearDoctor" onclick="clearDoctor()">✕</button>
+        <input type="hidden" id="doctorValue" />
+        <div class="search-results" id="doctorResults"></div>
+      </div>
+      <div class="error-msg" id="doctorError">Please select or enter a doctor</div>
+    </div>
+
+    <div class="form-group hidden" id="newDoctorGroup">
+      <label>New Doctor Full Name <span class="required">*</span></label>
+      <input type="text" id="newDoctorName" placeholder="Enter full name" />
+      <div class="error-msg" id="newDoctorError">Please enter the doctor name</div>
+    </div>
+
+    <div class="form-group">
+      <label>Patient <span class="required">*</span></label>
+      <input type="text" id="patient" placeholder="Patient full name" />
+      <div class="error-msg" id="patientError">Patient name is required</div>
+    </div>
+
+    <div class="form-group">
+      <label>Clinic</label>
+      <input type="text" id="clinic" placeholder="Clinic name" />
+    </div>
+  </div>
+
+  <!-- Normal cards hidden for reprint -->
+  <div id="normalCards">
+    <div class="card">
+      <div class="section-title">Steps & Package</div>
+
+      <div class="form-group">
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="singleArch" onchange="handleSingleArch()" /> Single Arch
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="asap" /> ASAP
+          </label>
+          <label class="checkbox-item" id="retainerCheckboxGroup">
+            <input type="checkbox" id="retainer" /> Add Retainer(s)
+          </label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Upper <span class="required" id="upperRequired">*</span></label>
+          <input type="number" id="upper" placeholder="0" min="0" />
+          <div class="error-msg" id="upperError">Required</div>
+        </div>
+        <div class="form-group">
+          <label>Lower <span class="required" id="lowerRequired">*</span></label>
+          <input type="number" id="lower" placeholder="0" min="0" />
+          <div class="error-msg" id="lowerError">Required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Package</label>
+        <select id="package">
+          <option value="BRONZE">Bronze</option>
+          <option value="SILVER">Silver</option>
+          <option value="GOLD">Gold</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Payment</div>
+
+      <div class="form-group">
+        <label>Installments</label>
+        <select id="installments">
+          <option value="0">Not specified</option>
+          <option value="full">Full</option>
+          <option value="2">2 Installments</option>
+          <option value="3">3 Installments</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Discount</label>
+        <select id="discountType" onchange="handleDiscountChange()">
+          <option value="none">No Discount</option>
+          <option value="percentage">Percentage (%)</option>
+          <option value="fixed">Fixed Amount (IQD)</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="discountValueGroup">
+        <label id="discountValueLabel">Discount Value</label>
+        <input type="number" id="discountValue" placeholder="0" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label>First Payment Amount (IQD)</label>
+        <input type="number" id="batch1Amount" placeholder="e.g. 500000" min="0" />
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="attachmentCard">
+      <div class="section-title">Attachment Template</div>
+      <div class="form-group">
+        <label>Thickness</label>
+        <select id="attachmentThickness">
+          <option value="">None</option>
+          <option value="0.5mm">0.5mm</option>
+          <option value="0.7mm">0.7mm</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card hidden" id="stlCard">
+      <div class="section-title">STL Files</div>
+      <div class="form-group">
+        <div class="file-upload-area" onclick="document.getElementById('stlFiles').click()">
+          <div class="file-upload-icon">📁</div>
+          <div class="file-upload-text">Tap to select STL files</div>
+          <div class="file-name" id="fileNames"></div>
+        </div>
+        <input type="file" id="stlFiles" accept=".stl,.STL" multiple
+          style="display:none" onchange="handleFileSelect(this)" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Notes</div>
+      <div class="form-group">
+        <textarea id="notes" placeholder="Any additional notes..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reprint card -->
+  <div class="card hidden" id="reprintCard">
+    <div class="section-title">Reprint Details</div>
+
+    <div class="form-group">
+      <label>Arch</label>
+      <select id="reprintArch" onchange="handleReprintArch()">
+        <option value="Both">Both</option>
+        <option value="Upper">Upper Only</option>
+        <option value="Lower">Lower Only</option>
+      </select>
+    </div>
+
+    <div class="row" id="reprintUpperGroup">
+      <div class="form-group">
+        <label>Upper From</label>
+        <input type="number" id="reprintUpperFrom" placeholder="e.g. 5" min="1" />
+      </div>
+      <div class="form-group">
+        <label>Upper To</label>
+        <input type="number" id="reprintUpperTo" placeholder="e.g. 10" min="1" />
+      </div>
+    </div>
+
+    <div class="row" id="reprintLowerGroup">
+      <div class="form-group">
+        <label>Lower From</label>
+        <input type="number" id="reprintLowerFrom" placeholder="e.g. 5" min="1" />
+      </div>
+      <div class="form-group">
+        <label>Lower To</label>
+        <input type="number" id="reprintLowerTo" placeholder="e.g. 10" min="1" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Payment Amount (IQD) — leave empty if free</label>
+      <input type="number" id="reprintPayment" placeholder="Leave empty if free" min="0" />
+    </div>
+
+    <div class="form-group">
+      <textarea id="reprintNotes" placeholder="Any additional notes..."></textarea>
+    </div>
+  </div>
+
+  <div class="form-container" style="padding-top:0">
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      Submit Order
+    </button>
+  </div>
+
+</div>
+</div>
+
+<div id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">Order Submitted!</div>
+  <div class="success-sub" id="successSub">
+    Your order has been received and is being processed.
+  </div>
+</div>
+
+<script>
+var BOT_TOKEN = '8276218347:AAEBr0HHorBvOvtTPdhGIXiinDPVNbMnF3Y';
+var CHAT_ID = '-5283248423';
+var SHEET_ID = '1ToxldsqvuQUfI__xNoaxOwNG0iYx6FgkJC0hpngd0h8';
+var API_KEY = 'AIzaSyDGBOFL9rSp3dPkQ1No5i5IXI27xL1-9ME';
+var TG_PROXY = 'https://telegram-proxy.ajeelz99.workers.dev';
+
+var doctors = [];
+var reps = [];
+var selectedFiles = [];
+var detectedUsername = null;
+var singleArchLocked = null;
+var tg = null;
+var tgUsername = null;
+
+// Initialize Telegram
+handleCaseTypeChange();
+
+window.addEventListener('load', function() {
+  tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    tg.setBackgroundColor('#ffffff');
+    tg.setHeaderColor('#1a73e8');
+    var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+    tgUsername = tgUser ? (tgUser.username || null) : null;
+  }
+  alert('tgUsername: ' + tgUsername + ' | tg: ' + (tg ? 'yes' : 'no'));
+  loadData();
+});
+function handleCaseTypeChange() {
+  var type = document.getElementById('caseType').value;
+  var mcaBatch = document.getElementById('mcaBatchNumber').value;
+  var rBatch = document.getElementById('refinementBatch').value;
+  var isReprint = type === 'reprint';
+
+  document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
+  document.getElementById('mcaNumberGroup').classList.toggle('hidden', type !== 'mca');
+  document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', type !== 'mca');
+  document.getElementById('refinementNumberGroup').classList.toggle('hidden', type !== 'refinement');
+  document.getElementById('refinementBatchGroup').classList.toggle('hidden', type !== 'refinement');
+
+  var isRetainer = type === 'retainer';
+  document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
+  document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
+
+  var showRetainer = (type !== 'mca' && type !== 'refinement' && type !== 'reprint');
+  document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainer);
+  if (!showRetainer) document.getElementById('retainer').checked = false;
+
+  var showAttachment = !isReprint && ((type === 'new') ||
+    (type === 'mca' && mcaBatch === '1') ||
+    (type === 'refinement' && rBatch === '1') ||
+    (type === 'retainer'));
+  document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment);
+  document.getElementById('stlCard').classList.toggle('hidden', type !== 'retainer');
+  document.getElementById('normalCards').classList.toggle('hidden', isReprint);
+  document.getElementById('reprintCard').classList.toggle('hidden', !isReprint);
+}
+
+function handleReprintArch() {
+  var arch = document.getElementById('reprintArch').value;
+  document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower');
+  document.getElementById('reprintLowerGroup').classList.toggle('hidden', arch === 'Upper');
+}
+
+function handleSingleArch() {
+  var checked = document.getElementById('singleArch').checked;
+  var upper = document.getElementById('upper');
+  var lower = document.getElementById('lower');
+
+  if (!checked) {
+    upper.disabled = false;
+    lower.disabled = false;
+    singleArchLocked = null;
+    document.getElementById('upperRequired').style.display = 'inline';
+    document.getElementById('lowerRequired').style.display = 'inline';
+    upper.removeEventListener('input', lockLowerOnInput);
+    lower.removeEventListener('input', lockUpperOnInput);
+    return;
+  }
+
+  var upperVal = upper.value.trim();
+  var lowerVal = lower.value.trim();
+
+  if (upperVal && !lowerVal) {
+    lower.value = '0';
+    lower.disabled = true;
+    singleArchLocked = 'lower';
+    document.getElementById('lowerRequired').style.display = 'none';
+  } else if (lowerVal && !upperVal) {
+    upper.value = '0';
+    upper.disabled = true;
+    singleArchLocked = 'upper';
+    document.getElementById('upperRequired').style.display = 'none';
+  } else {
+    upper.addEventListener('input', lockLowerOnInput);
+    lower.addEventListener('input', lockUpperOnInput);
+  }
+}
+
+function lockLowerOnInput() {
+  if (document.getElementById('singleArch').checked && document.getElementById('upper').value) {
+    var lower = document.getElementById('lower');
+    lower.value = '0';
+    lower.disabled = true;
+    singleArchLocked = 'lower';
+    document.getElementById('lowerRequired').style.display = 'none';
+    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
+    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
+  }
+}
+
+function lockUpperOnInput() {
+  if (document.getElementById('singleArch').checked && document.getElementById('lower').value) {
+    var upper = document.getElementById('upper');
+    upper.value = '0';
+    upper.disabled = true;
+    singleArchLocked = 'upper';
+    document.getElementById('upperRequired').style.display = 'none';
+    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
+    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
+  }
+}
+
+function handleFullPayment() {
+  var checked = document.getElementById('fullPayment').checked;
+  var field = document.getElementById('batch1Amount');
+  if (checked) {
+    field.value = '';
+    field.disabled = true;
+    field.placeholder = 'N/A - Full Payment';
+  } else {
+    field.disabled = false;
+    field.placeholder = 'e.g. 500000';
+  }
+}
+
+function handleDiscountChange() {
+  var type = document.getElementById('discountType').value;
+  document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none');
+  document.getElementById('discountValueLabel').textContent =
+    type === 'percentage' ? 'Discount (%)' : 'Discount Amount (IQD)';
+}
+
+function handleFileSelect(input) {
+  selectedFiles = Array.from(input.files);
+  document.getElementById('fileNames').textContent =
+    selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : '';
+}
+
+function filterDoctors(query) {
+  var results = document.getElementById('doctorResults');
+  query = (query || '').toLowerCase().trim();
+  var filtered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
+  var html = '<div class="search-result-item new-doctor-item" onclick="selectNewDoctor()">+ New Doctor</div>';
+  filtered.slice(0, 40).forEach(function(doc) {
+    var escaped = doc.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    html += '<div class="search-result-item" onclick="selectDoctor(\'' + escaped + '\')">' + doc + '</div>';
+  });
+  if (filtered.length === 0 && query) {
+    html += '<div class="search-result-item loading-item">No match — select New Doctor</div>';
+  }
+  results.innerHTML = html;
+  results.style.display = 'block';
+  document.getElementById('clearDoctor').style.display = query ? 'block' : 'none';
+}
+
+function selectDoctor(name) {
+  document.getElementById('doctorSearch').value = name;
+  document.getElementById('doctorValue').value = name;
+  document.getElementById('doctorResults').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.add('hidden');
+  document.getElementById('clearDoctor').style.display = 'block';
+  document.getElementById('doctorError').classList.remove('show');
+  document.getElementById('doctorSearch').classList.remove('error-field');
+}
+
+function selectNewDoctor() {
+  document.getElementById('doctorSearch').value = '';
+  document.getElementById('doctorValue').value = 'NEW_DOCTOR';
+  document.getElementById('doctorResults').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.remove('hidden');
+  document.getElementById('newDoctorName').focus();
+  document.getElementById('doctorError').classList.remove('show');
+}
+
+function clearDoctor() {
+  document.getElementById('doctorSearch').value = '';
+  document.getElementById('doctorValue').value = '';
+  document.getElementById('clearDoctor').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.add('hidden');
+  document.getElementById('doctorSearch').focus();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrapper')) {
+    document.getElementById('doctorResults').style.display = 'none';
+  }
+});
+
+document.getElementById('doctorSearch').addEventListener('input', function() {
+  filterDoctors(this.value);
+});
+
+document.getElementById('doctorSearch').addEventListener('focus', function() {
+  filterDoctors(this.value);
+  document.getElementById('doctorResults').style.display = 'block';
+});
+
+function setupRepField() {
+  if (tgUsername) {
+    var matched = reps.find(function(r) {
+      return r.username.toLowerCase() === tgUsername.toLowerCase();
+    });
+    if (matched) {
+      document.getElementById('repCard').classList.add('hidden');
+      document.getElementById('repDetected').value = matched.name;
+      document.getElementById('repUsername').value = tgUsername;
+      detectedUsername = tgUsername;
+      return;
+    }
+  }
+  document.getElementById('repCard').classList.remove('hidden');
+  var select = document.getElementById('repSelect');
+  while (select.options.length > 1) select.remove(1);
+  reps.forEach(function(r) {
+    var opt = document.createElement('option');
+    opt.value = r.name + '|' + r.username + '|' + r.zone;
+    opt.textContent = r.name;
+    select.appendChild(opt);
+  });
+  document.getElementById('repDropdownGroup').classList.remove('hidden');
+}
+
+function applyCache(parsed) {
+  doctors = parsed.doctors || [];
+  reps = parsed.reps || [];
+  document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+  setupRepField();
+}
+
+function fetchFreshData() {
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
+    '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
+
+  fetch(url)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var drValues = data.valueRanges[0].values || [];
+      doctors = drValues.flat().filter(function(v) { return v && v.trim() !== ''; });
+      document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+
+      var repValues = data.valueRanges[1].values || [];
+      reps = repValues
+        .filter(function(row) { return row[0] && row[0].trim() !== ''; })
+        .map(function(row) {
+          return {
+            name: row[0].trim(),
+            username: (row[1] || '').trim(),
+            zone: (row[2] || '').trim()
+          };
+        });
+
+      var cacheData = JSON.stringify({ doctors: doctors, reps: reps });
+
+      // Save to Telegram DeviceStorage if available, else localStorage
+      if (tg && tg.DeviceStorage) {
+        tg.DeviceStorage.setItem('shafaf_data', cacheData).catch(function() {
+          try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
+        });
+      } else {
+        try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
+      }
+
+      setupRepField();
+    })
+    .catch(function(e) {
+      console.error('Failed to load data', e);
+      if (doctors.length === 0) {
+        document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
+        document.getElementById('repCard').classList.remove('hidden');
+        document.getElementById('repDropdownGroup').classList.remove('hidden');
+      }
+    });
+}
+
+function loadData() {
+  // Try Telegram DeviceStorage first
+  if (tg && tg.DeviceStorage) {
+    tg.DeviceStorage.getItem('shafaf_data').then(function(value) {
+      if (value) {
+        try {
+          applyCache(JSON.parse(value));
+        } catch(e) {}
+      }
+      fetchFreshData();
+    }).catch(function() {
+      fetchFreshData();
+    });
+  } else {
+    // Fallback to localStorage for browser
+    try {
+      var cached = localStorage.getItem('shafaf_data');
+      if (cached) applyCache(JSON.parse(cached));
+    } catch(e) {}
+    fetchFreshData();
+  }
+}
+
+function buildCaseNumber() {
+  var type = document.getElementById('caseType').value;
+  var baseNum = document.getElementById('caseNumber').value.trim();
+
+  if (type === 'reprint') return 'Reprint/ ' + baseNum;
+  if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum;
+  if (type === 'mca') {
+    var mcaNum = document.getElementById('mcaNumber').value;
+    var mcaBatch = document.getElementById('mcaBatchNumber').value;
+    var prefix = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
+    if (mcaBatch === '1') return prefix + '/ ' + baseNum;
+    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
+    return prefix + '/ ' + batchSuffix + '/ ' + baseNum;
+  }
+  if (type === 'refinement') {
+    var rNum = document.getElementById('refinementNumber').value;
+    var rBatch = document.getElementById('refinementBatch').value;
+    var rPrefix = 'R' + rNum;
+    if (rBatch === '1') return rPrefix + '/ ' + baseNum;
+    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
+    return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum;
+  }
+  if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer';
+  return baseNum;
+}
+
+function buildPrintOrderLine(data) {
+  var type = data.caseType;
+  if (type === 'new' || type === 'retainer') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch';
+  if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch';
+  if (type === 'mca') {
+    var mcaBatch = document.getElementById('mcaBatchNumber').value;
+    var mcaNum = document.getElementById('mcaNumber').value;
+    var mcaLabel = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
+    if (mcaBatch === '1') return data.fullBatch ? 'Print order for Full Batch of ' + mcaLabel : 'Print order for 1st Batch of ' + mcaLabel;
+    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
+    return 'Print order for ' + batchSuffix + ' Batch of ' + mcaLabel;
+  }
+  if (type === 'refinement') {
+    var rNum = document.getElementById('refinementNumber').value;
+    var rBatch = document.getElementById('refinementBatch').value;
+    var rLabel = 'R' + rNum;
+    if (rBatch === '1') return 'Print order for Refinement ' + rLabel;
+    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
+    return 'Print order for ' + rBatchSuffix + ' Batch of ' + rLabel;
+  }
+  return 'Print order for 1st Batch';
+}
+
+function buildTelegramMessage(data) {
+  var repSelectVal = document.getElementById('repSelect').value;
+  var parts = repSelectVal ? repSelectVal.split('|') : [];
+  var username = detectedUsername || (parts[1] || '');
+  var repName = document.getElementById('repDetected').value || (parts[0] || '');
+  var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || (parts[2] || '');
+
+  var msg = '';
+  msg += '🆕 Approval from @' + username + '\n';
+  msg += 'Case Number: ' + data.caseNumber + '\n';
+  msg += 'Doctor: ' + data.doctor + '\n';
+  msg += 'Patient: ' + data.patient + '\n';
+  if (data.clinic) msg += 'Clinic: ' + data.clinic + '\n';
+
+  if (data.caseType === 'reprint') {
+    var arch = document.getElementById('reprintArch').value;
+    var upperFrom = document.getElementById('reprintUpperFrom').value;
+    var upperTo = document.getElementById('reprintUpperTo').value;
+    var lowerFrom = document.getElementById('reprintLowerFrom').value;
+    var lowerTo = document.getElementById('reprintLowerTo').value;
+    var payment = document.getElementById('reprintPayment').value;
+    var reprintNotes = document.getElementById('reprintNotes').value.trim();
+
+    msg += 'Reprint Request\n';
+    msg += 'Arch: ' + arch + '\n';
+    if ((arch === 'Both' || arch === 'Upper') && upperFrom && upperTo) {
+      msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
+    }
+    if ((arch === 'Both' || arch === 'Lower') && lowerFrom && lowerTo) {
+      msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
+    }
+    if (payment && parseInt(payment) > 0) {
+      msg += 'Payment: ' + payment + ' IQD\n';
+    } else {
+      msg += 'Free Reprint\n';
+    }
+    if (reprintNotes) msg += 'Notes: ' + reprintNotes + '\n';
+    if (zone) msg += zone + '\n';
+    msg += repName;
+    return msg;
+  }
+
+  msg += 'Upper: ' + data.upper + '\n';
+  msg += 'Lower: ' + data.lower + '\n';
+  msg += data.package + '\n';
+  if (data.singleArch) msg += 'Single Arch\n';
+  if (data.discountType !== 'none' && data.discountValue) {
+    if (data.discountType === 'percentage') msg += data.discountValue + '% DISCOUNT\n';
+    else msg += 'Discount: ' + data.discountValue + ' IQD\n';
+  }
+  var installments = document.getElementById('installments').value;
+  if (installments === 'full') msg += 'Approved (Full)\n';
+  else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
+  else msg += 'Approved\n';
+  if (data.batch1Amount) msg += 'First Payment: ' + data.batch1Amount + '\n';
+  if (data.fullPayment) msg += 'Full Payment\n';
+  msg += buildPrintOrderLine(data) + '\n';
+  if (data.asap) msg += 'ASAP\n';
+  if (data.retainer) msg += 'Add Retainer(s)\n';
+  var thickness = document.getElementById('attachmentThickness').value;
+  if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n';
+  if (data.notes) msg += data.notes + '\n';
+  if (zone) msg += zone + '\n';
+  msg += repName;
+  return msg;
+}
+
+function sendToTelegram(message) {
+  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+  });
+}
+
+function sendSTLToTelegram(file, caption) {
+  var formData = new FormData();
+  formData.append('chat_id', CHAT_ID);
+  formData.append('document', file, file.name);
+  formData.append('caption', caption);
+  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendDocument', {
+    method: 'POST', body: formData
+  });
+}
+
+function validateForm() {
+  var valid = true;
+  var caseType = document.getElementById('caseType').value;
+
+  var repSelectVal = document.getElementById('repSelect').value;
+  var repVal = document.getElementById('repDetected').value || (repSelectVal ? repSelectVal.split('|')[0] : '');
+  var repCardHidden = document.getElementById('repCard').classList.contains('hidden');
+  if (!repCardHidden && !repVal) {
+    document.getElementById('repError').classList.add('show');
+    document.getElementById('repSelect').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('repError').classList.remove('show');
+    document.getElementById('repSelect').classList.remove('error-field');
+  }
+
+  var caseNum = document.getElementById('caseNumber').value.trim();
+  if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
+    document.getElementById('caseNumberError').classList.add('show');
+    document.getElementById('caseNumber').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('caseNumberError').classList.remove('show');
+    document.getElementById('caseNumber').classList.remove('error-field');
+  }
+
+  var doctorValue = document.getElementById('doctorValue').value;
+  var doctorSearch = document.getElementById('doctorSearch').value.trim();
+  if (!doctorValue && !doctorSearch) {
+    document.getElementById('doctorError').classList.add('show');
+    document.getElementById('doctorSearch').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('doctorError').classList.remove('show');
+    document.getElementById('doctorSearch').classList.remove('error-field');
+  }
+
+  if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) {
+    document.getElementById('newDoctorError').classList.add('show');
+    document.getElementById('newDoctorName').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('newDoctorError').classList.remove('show');
+    document.getElementById('newDoctorName').classList.remove('error-field');
+  }
+
+  if (!document.getElementById('patient').value.trim()) {
+    document.getElementById('patientError').classList.add('show');
+    document.getElementById('patient').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('patientError').classList.remove('show');
+    document.getElementById('patient').classList.remove('error-field');
+  }
+
+  if (caseType !== 'reprint') {
+    var upper = document.getElementById('upper');
+    var lower = document.getElementById('lower');
+    var singleArch = document.getElementById('singleArch').checked;
+
+    if (!singleArch) {
+      if (upper.value === '') {
+        document.getElementById('upperError').classList.add('show');
+        upper.classList.add('error-field');
+        valid = false;
+      } else {
+        document.getElementById('upperError').classList.remove('show');
+        upper.classList.remove('error-field');
+      }
+      if (lower.value === '') {
+        document.getElementById('lowerError').classList.add('show');
+        lower.classList.add('error-field');
+        valid = false;
+      } else {
+        document.getElementById('lowerError').classList.remove('show');
+        lower.classList.remove('error-field');
+      }
+    } else {
+      var upperVal = parseInt(upper.value) || 0;
+      var lowerVal = parseInt(lower.value) || 0;
+      if (upperVal === 0 && lowerVal === 0) {
+        document.getElementById('upperError').classList.add('show');
+        upper.classList.add('error-field');
+        valid = false;
+      } else {
+        document.getElementById('upperError').classList.remove('show');
+        upper.classList.remove('error-field');
+        document.getElementById('lowerError').classList.remove('show');
+        lower.classList.remove('error-field');
+      }
+    }
+  }
+
+  return valid;
+}
+
+function submitForm() {
+  if (!validateForm()) {
+    var firstError = document.querySelector('.error-field');
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  var doctorValue = document.getElementById('doctorValue').value;
+  var isNewDoctor = doctorValue === 'NEW_DOCTOR';
+  var newDoctorName = document.getElementById('newDoctorName').value.trim();
+  var finalDoctor = isNewDoctor
+    ? newDoctorName
+    : (doctorValue || document.getElementById('doctorSearch').value.trim());
+
+  var repSelectVal = document.getElementById('repSelect').value;
+  var parts = repSelectVal ? repSelectVal.split('|') : [];
+  var repName = document.getElementById('repDetected').value || (parts[0] || '');
+  var caseNumber = buildCaseNumber();
+  var caseType = document.getElementById('caseType').value;
+
+  var data = {
+    caseType: caseType,
+    caseNumber: caseNumber,
+    doctor: finalDoctor,
+    isNewDoctor: isNewDoctor,
+    patient: document.getElementById('patient').value.trim(),
+    clinic: document.getElementById('clinic').value.trim(),
+    upper: parseInt(document.getElementById('upper').value) || 0,
+    lower: parseInt(document.getElementById('lower').value) || 0,
+    package: document.getElementById('package').value,
+    singleArch: document.getElementById('singleArch').checked,
+    discountType: document.getElementById('discountType').value,
+    discountValue: parseFloat(document.getElementById('discountValue').value) || 0,
+    batch1Amount: parseInt(document.getElementById('batch1Amount').value) || null,
+    fullBatch: document.getElementById('installments').value === 'full',
+    fullPayment: document.getElementById('fullPayment').checked,
+    asap: document.getElementById('asap').checked,
+    retainer: document.getElementById('retainer').checked,
+    notes: document.getElementById('notes').value.trim(),
+    rep: repName
+  };
+
+  var message = buildTelegramMessage(data);
+  var promises = [sendToTelegram(message)];
+
+  selectedFiles.forEach(function(file) {
+    promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber));
+  });
+
+  Promise.all(promises)
+    .then(function() {
+      document.getElementById('formScreen').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      window.scrollTo(0, 0);
+      document.getElementById('successSub').textContent =
+        'Order for case ' + caseNumber + ' submitted successfully.';
+      if (tg) {
+        setTimeout(function() { tg.close(); }, 3000);
+      } else {
+        setTimeout(function() { window.location.reload(); }, 5000);
+      }
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Order';
+      alert('Failed to submit. Please try again.\n' + err.message);
+    });
+}
+
+handleCaseTypeChange();
+loadData();
+</script>
+</body>
+</html>
