@@ -82,6 +82,11 @@ textarea { resize: none; height: 80px; }
 .checkbox-item input[type="checkbox"] {
   width: 20px; height: 20px; cursor: pointer; accent-color: #1a73e8;
 }
+.arch-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.arch-row .checkbox-item { flex: 0 0 auto; }
+.arch-row select { flex: 1; }
 .search-wrapper { position: relative; }
 .clear-btn {
   position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
@@ -246,6 +251,7 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
+  <!-- Normal cards (new, batch, mca) -->
   <div id="normalCards">
     <div class="card">
       <div class="section-title">Steps & Package</div>
@@ -277,7 +283,7 @@ textarea { resize: none; height: 80px; }
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="packageGroup">
         <label>Package</label>
         <select id="package">
           <option value="BRONZE">Bronze</option>
@@ -287,10 +293,10 @@ textarea { resize: none; height: 80px; }
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="paymentCard">
       <div class="section-title">Payment</div>
 
-      <div class="form-group">
+      <div class="form-group" id="installmentsGroup">
         <label>Installments</label>
         <select id="installments">
           <option value="0">Not specified</option>
@@ -300,7 +306,7 @@ textarea { resize: none; height: 80px; }
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="discountGroup">
         <label>Discount</label>
         <select id="discountType" onchange="handleDiscountChange()">
           <option value="none">No Discount</option>
@@ -314,12 +320,12 @@ textarea { resize: none; height: 80px; }
         <input type="number" id="discountValue" placeholder="0" min="0" />
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="batch1AmountGroup">
         <label>First Payment Amount (IQD)</label>
         <input type="number" id="batch1Amount" placeholder="e.g. 500000" min="0" />
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="fullPaymentGroup">
         <div class="checkbox-row">
           <label class="checkbox-item">
             <input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment
@@ -340,19 +346,6 @@ textarea { resize: none; height: 80px; }
       </div>
     </div>
 
-    <div class="card hidden" id="stlCard">
-      <div class="section-title">STL Files</div>
-      <div class="form-group">
-        <div class="file-upload-area" onclick="document.getElementById('stlFiles').click()">
-          <div class="file-upload-icon">📁</div>
-          <div class="file-upload-text">Tap to select STL files</div>
-          <div class="file-name" id="fileNames"></div>
-        </div>
-        <input type="file" id="stlFiles" accept=".stl,.STL" multiple
-          style="display:none" onchange="handleFileSelect(this)" />
-      </div>
-    </div>
-
     <div class="card">
       <div class="section-title">Notes</div>
       <div class="form-group">
@@ -361,6 +354,86 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
+  <!-- Retainer card -->
+  <div class="card hidden" id="retainerCard">
+    <div class="section-title">Retainer Details</div>
+
+    <div class="form-group">
+      <div class="arch-row">
+        <label class="checkbox-item">
+          <input type="checkbox" id="retainerUpper" onchange="handleRetainerArch()" /> Upper Arch
+        </label>
+        <select id="retainerUpperQty" class="hidden">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div class="arch-row">
+        <label class="checkbox-item">
+          <input type="checkbox" id="retainerLower" onchange="handleRetainerArch()" /> Lower Arch
+        </label>
+        <select id="retainerLowerQty" class="hidden">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div class="error-msg" id="retainerArchError">Please select at least one arch</div>
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-row">
+        <label class="checkbox-item">
+          <input type="checkbox" id="retainerAsap" /> ASAP
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Price (IQD) <span class="required">*</span></label>
+      <input type="number" id="retainerPrice" placeholder="e.g. 150000" min="0" />
+      <div class="error-msg" id="retainerPriceError">Please enter the price</div>
+    </div>
+  </div>
+
+  <!-- Retainer STL card -->
+  <div class="card hidden" id="stlCard">
+    <div class="section-title">STL Files</div>
+    <div class="form-group">
+      <div class="file-upload-area" onclick="document.getElementById('stlFiles').click()">
+        <div class="file-upload-icon">📁</div>
+        <div class="file-upload-text">Tap to select STL files</div>
+        <div class="file-name" id="fileNames"></div>
+      </div>
+      <input type="file" id="stlFiles" accept=".stl,.STL" multiple
+        style="display:none" onchange="handleFileSelect(this)" />
+    </div>
+  </div>
+
+  <!-- Retainer notes card -->
+  <div class="card hidden" id="retainerNotesCard">
+    <div class="section-title">Notes</div>
+    <div class="form-group">
+      <textarea id="retainerNotes" placeholder="Any additional notes..."></textarea>
+    </div>
+  </div>
+
+  <!-- Trim line card — always visible for non-reprint non-retainer -->
+  <div class="card" id="trimLineCard">
+    <div class="section-title">Trim Line Level</div>
+    <div class="form-group">
+      <label>Trim Line</label>
+      <select id="trimLine">
+        <option value="Straight">Straight</option>
+        <option value="Straight 2mm above gingiva">Straight 2mm above gingiva</option>
+        <option value="Scalloped">Scalloped</option>
+        <option value="Semi Scalloped">Semi Scalloped</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reprint card -->
   <div class="card hidden" id="reprintCard">
     <div class="section-title">Reprint Details</div>
 
@@ -459,29 +532,58 @@ function handleCaseTypeChange() {
   var mcaBatch = document.getElementById('mcaBatchNumber').value;
   var rBatch = document.getElementById('refinementBatch').value;
   var isReprint = type === 'reprint';
-
-  document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
-  document.getElementById('mcaNumberGroup').classList.toggle('hidden', type !== 'mca');
-  document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', type !== 'mca');
-  document.getElementById('refinementNumberGroup').classList.toggle('hidden', type !== 'refinement');
-  document.getElementById('refinementBatchGroup').classList.toggle('hidden', type !== 'refinement');
-
   var isRetainer = type === 'retainer';
+  var isMCA = type === 'mca';
+  var isRefinement = type === 'refinement';
+
+  // Case number
   document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
   document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
 
-  var showRetainer = (type !== 'mca' && type !== 'refinement' && type !== 'reprint');
-  document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainer);
-  if (!showRetainer) document.getElementById('retainer').checked = false;
+  // Batch/MCA/Refinement sub-fields
+  document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
+  document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA);
+  document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA);
+  document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement);
+  document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement);
 
-  var showAttachment = !isReprint && ((type === 'new') ||
-    (type === 'mca' && mcaBatch === '1') ||
-    (type === 'refinement' && rBatch === '1') ||
-    (type === 'retainer'));
+  // Normal cards
+  document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer);
+
+  // Package — hide for MCA and Refinement
+  document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement);
+
+  // Payment card — hide for Refinement and Reprint
+  document.getElementById('paymentCard').classList.toggle('hidden', isRefinement || isReprint || isRetainer);
+
+  // Retainer checkbox in steps card
+  var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer;
+  document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox);
+  if (!showRetainerCheckbox) document.getElementById('retainer').checked = false;
+
+  // Attachment card
+  var showAttachment = !isReprint && !isRetainer && ((type === 'new') ||
+    (isMCA && mcaBatch === '1') ||
+    (isRefinement && rBatch === '1'));
   document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment);
-  document.getElementById('stlCard').classList.toggle('hidden', type !== 'retainer');
-  document.getElementById('normalCards').classList.toggle('hidden', isReprint);
+
+  // Retainer specific cards
+  document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer);
+  document.getElementById('stlCard').classList.toggle('hidden', !isRetainer);
+  document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer);
+
+  // Reprint card
   document.getElementById('reprintCard').classList.toggle('hidden', !isReprint);
+
+  // Trim line — hide for reprint and retainer
+  document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer);
+}
+
+function handleRetainerArch() {
+  var upperChecked = document.getElementById('retainerUpper').checked;
+  var lowerChecked = document.getElementById('retainerLower').checked;
+  document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked);
+  document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked);
 }
 
 function handleReprintArch() {
@@ -703,6 +805,7 @@ function buildCaseNumber() {
   var baseNum = document.getElementById('caseNumber').value.trim();
 
   if (type === 'reprint') return 'Reprint/ ' + baseNum;
+  if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer';
   if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum;
   if (type === 'mca') {
     var mcaNum = document.getElementById('mcaNumber').value;
@@ -720,13 +823,12 @@ function buildCaseNumber() {
     var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
     return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum;
   }
-  if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer';
   return baseNum;
 }
 
 function buildPrintOrderLine(data) {
   var type = data.caseType;
-  if (type === 'new' || type === 'retainer') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch';
+  if (type === 'new') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch';
   if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch';
   if (type === 'mca') {
     var mcaBatch = document.getElementById('mcaBatchNumber').value;
@@ -789,6 +891,26 @@ function buildTelegramMessage(data) {
     return msg;
   }
 
+  if (data.caseType === 'retainer') {
+    var upperChecked = document.getElementById('retainerUpper').checked;
+    var lowerChecked = document.getElementById('retainerLower').checked;
+    var upperQty = document.getElementById('retainerUpperQty').value;
+    var lowerQty = document.getElementById('retainerLowerQty').value;
+    var retainerAsap = document.getElementById('retainerAsap').checked;
+    var retainerPrice = document.getElementById('retainerPrice').value;
+    var retainerNotes = document.getElementById('retainerNotes').value.trim();
+
+    if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
+    if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
+    if (retainerAsap) msg += 'ASAP\n';
+    msg += 'Price: ' + retainerPrice + ' IQD\n';
+    msg += 'Print order for Retainer\n';
+    if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n';
+    if (zone) msg += zone + '\n';
+    msg += repName;
+    return msg;
+  }
+
   msg += 'Upper: ' + data.upper + '\n';
   msg += 'Lower: ' + data.lower + '\n';
   msg += data.package + '\n';
@@ -808,7 +930,9 @@ function buildTelegramMessage(data) {
   if (data.retainer) msg += 'Add Retainer(s)\n';
   var thickness = document.getElementById('attachmentThickness').value;
   if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n';
-  if (data.notes) msg += data.notes + '\n';
+  var trimLine = document.getElementById('trimLine').value;
+  if (trimLine && trimLine !== 'Straight') msg += 'Trim Line: ' + trimLine + '\n';
+  if (data.notes) msg += 'Notes: ' + data.notes + '\n';
   if (zone) msg += zone + '\n';
   msg += repName;
   return msg;
@@ -878,7 +1002,26 @@ function validateForm() {
     document.getElementById('patient').classList.remove('error-field');
   }
 
-  if (caseType !== 'reprint') {
+  if (caseType === 'retainer') {
+    var upperChecked = document.getElementById('retainerUpper').checked;
+    var lowerChecked = document.getElementById('retainerLower').checked;
+    if (!upperChecked && !lowerChecked) {
+      document.getElementById('retainerArchError').classList.add('show');
+      valid = false;
+    } else {
+      document.getElementById('retainerArchError').classList.remove('show');
+    }
+    if (!document.getElementById('retainerPrice').value) {
+      document.getElementById('retainerPriceError').classList.add('show');
+      document.getElementById('retainerPrice').classList.add('error-field');
+      valid = false;
+    } else {
+      document.getElementById('retainerPriceError').classList.remove('show');
+      document.getElementById('retainerPrice').classList.remove('error-field');
+    }
+  }
+
+  if (caseType !== 'reprint' && caseType !== 'retainer') {
     var upper = document.getElementById('upper');
     var lower = document.getElementById('lower');
     var singleArch = document.getElementById('singleArch').checked;
