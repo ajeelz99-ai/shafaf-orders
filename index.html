@@ -390,10 +390,15 @@ textarea { resize: none; height: 80px; }
       </div>
     </div>
 
-    <div class="form-group">
+  <div class="form-group">
       <label>Total Price (IQD) <span class="required">*</span></label>
       <input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" />
       <div class="error-msg" id="retainerPriceError">Please enter the price</div>
+    </div>
+
+    <div class="form-group">
+      <label>Reason / Notes</label>
+      <input type="text" id="retainerReason" placeholder="e.g. Lost retainer, new patient..." />
     </div>
   </div>
 
@@ -910,6 +915,8 @@ function buildTelegramMessage(data) {
     var retainerAsap = document.getElementById('retainerAsap').checked;
     var retainerPriceVal = getFormattedValue('retainerPrice');
     var retainerNotes = document.getElementById('retainerNotes').value.trim();
+    var retainerReason = document.getElementById('retainerReason').value.trim();
+if (retainerReason) msg += 'Reason: ' + retainerReason + '\n';
 
     if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
     if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
@@ -1016,7 +1023,14 @@ function validateForm() {
     document.getElementById('patientError').classList.remove('show');
     document.getElementById('patient').classList.remove('error-field');
   }
-
+if (caseType === 'reprint') {
+    if (!document.getElementById('reprintReason').value.trim()) {
+      document.getElementById('reprintReason').classList.add('error-field');
+      valid = false;
+    } else {
+      document.getElementById('reprintReason').classList.remove('error-field');
+    }
+  }
   if (caseType === 'retainer') {
     var upperChecked = document.getElementById('retainerUpper').checked;
     var lowerChecked = document.getElementById('retainerLower').checked;
