@@ -251,7 +251,7 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
-  <!-- Normal cards (new, batch, mca) -->
+  <!-- Normal cards (new, batch, mca, refinement) -->
   <div id="normalCards">
     <div class="card">
       <div class="section-title">Steps & Package</div>
@@ -317,12 +317,12 @@ textarea { resize: none; height: 80px; }
 
       <div class="form-group hidden" id="discountValueGroup">
         <label id="discountValueLabel">Discount Value</label>
-        <input type="number" id="discountValue" placeholder="0" min="0" />
+        <input type="text" id="discountValue" placeholder="0" inputmode="numeric" />
       </div>
 
       <div class="form-group" id="batch1AmountGroup">
         <label>First Payment Amount (IQD)</label>
-        <input type="number" id="batch1Amount" placeholder="e.g. 500000" min="0" />
+        <input type="text" id="batch1Amount" placeholder="e.g. 500,000" inputmode="numeric" />
       </div>
 
       <div class="form-group" id="fullPaymentGroup">
@@ -391,8 +391,8 @@ textarea { resize: none; height: 80px; }
     </div>
 
     <div class="form-group">
-      <label>Price (IQD) <span class="required">*</span></label>
-      <input type="number" id="retainerPrice" placeholder="e.g. 150000" min="0" />
+      <label>Total Price (IQD) <span class="required">*</span></label>
+      <input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" />
       <div class="error-msg" id="retainerPriceError">Please enter the price</div>
     </div>
   </div>
@@ -419,7 +419,7 @@ textarea { resize: none; height: 80px; }
     </div>
   </div>
 
-  <!-- Trim line card — always visible for non-reprint non-retainer -->
+  <!-- Trim line card -->
   <div class="card" id="trimLineCard">
     <div class="section-title">Trim Line Level</div>
     <div class="form-group">
@@ -475,7 +475,7 @@ textarea { resize: none; height: 80px; }
 
     <div class="form-group">
       <label>Payment Amount (IQD) — leave empty if free</label>
-      <input type="number" id="reprintPayment" placeholder="Leave empty if free" min="0" />
+      <input type="text" id="reprintPayment" placeholder="Leave empty if free" inputmode="numeric" />
     </div>
 
     <div class="form-group">
@@ -516,6 +516,31 @@ var tg = null;
 var tgUsername = null;
 var tgUserId = null;
 
+// Format number with commas as user types
+function formatWithCommas(input) {
+  input.addEventListener('input', function() {
+    var pos = input.selectionStart;
+    var raw = input.value.replace(/,/g, '');
+    if (!/^\d*$/.test(raw)) {
+      input.value = raw.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return;
+    }
+    var formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var diff = formatted.length - input.value.length;
+    input.value = formatted;
+    input.setSelectionRange(pos + diff, pos + diff);
+  });
+}
+
+function getRawNumber(id) {
+  var val = document.getElementById(id).value.replace(/,/g, '').trim();
+  return parseInt(val) || 0;
+}
+
+function getFormattedValue(id) {
+  return document.getElementById(id).value.trim();
+}
+
 function initTelegram() {
   tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   if (tg) {
@@ -536,46 +561,32 @@ function handleCaseTypeChange() {
   var isMCA = type === 'mca';
   var isRefinement = type === 'refinement';
 
-  // Case number
   document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
   document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
 
-  // Batch/MCA/Refinement sub-fields
   document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
   document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA);
   document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA);
   document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement);
   document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement);
 
-  // Normal cards
   document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer);
-
-  // Package — hide for MCA and Refinement
   document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement);
-
-  // Payment card — hide for Refinement and Reprint
   document.getElementById('paymentCard').classList.toggle('hidden', isRefinement || isReprint || isRetainer);
 
-  // Retainer checkbox in steps card
   var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer;
   document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox);
   if (!showRetainerCheckbox) document.getElementById('retainer').checked = false;
 
-  // Attachment card
   var showAttachment = !isReprint && !isRetainer && ((type === 'new') ||
     (isMCA && mcaBatch === '1') ||
     (isRefinement && rBatch === '1'));
   document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment);
 
-  // Retainer specific cards
   document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer);
   document.getElementById('stlCard').classList.toggle('hidden', !isRetainer);
   document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer);
-
-  // Reprint card
   document.getElementById('reprintCard').classList.toggle('hidden', !isReprint);
-
-  // Trim line — hide for reprint and retainer
   document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer);
 }
 
@@ -660,7 +671,7 @@ function handleFullPayment() {
     field.placeholder = 'N/A - Full Payment';
   } else {
     field.disabled = false;
-    field.placeholder = 'e.g. 500000';
+    field.placeholder = 'e.g. 500,000';
   }
 }
 
@@ -868,7 +879,7 @@ function buildTelegramMessage(data) {
     var lowerFrom = document.getElementById('reprintLowerFrom').value;
     var lowerTo = document.getElementById('reprintLowerTo').value;
     var reprintReason = document.getElementById('reprintReason').value.trim();
-    var payment = document.getElementById('reprintPayment').value;
+    var reprintPaymentVal = getFormattedValue('reprintPayment');
     var reprintNotes = document.getElementById('reprintNotes').value.trim();
 
     msg += 'Reprint Request\n';
@@ -880,8 +891,8 @@ function buildTelegramMessage(data) {
       msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
     }
     if (reprintReason) msg += 'Reason: ' + reprintReason + '\n';
-    if (payment && parseInt(payment) > 0) {
-      msg += 'Payment: ' + payment + ' IQD\n';
+    if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) {
+      msg += 'Payment: ' + reprintPaymentVal + ' IQD\n';
     } else {
       msg += 'Free Reprint\n';
     }
@@ -897,13 +908,13 @@ function buildTelegramMessage(data) {
     var upperQty = document.getElementById('retainerUpperQty').value;
     var lowerQty = document.getElementById('retainerLowerQty').value;
     var retainerAsap = document.getElementById('retainerAsap').checked;
-    var retainerPrice = document.getElementById('retainerPrice').value;
+    var retainerPriceVal = getFormattedValue('retainerPrice');
     var retainerNotes = document.getElementById('retainerNotes').value.trim();
 
     if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
     if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
     if (retainerAsap) msg += 'ASAP\n';
-    msg += 'Price: ' + retainerPrice + ' IQD\n';
+    msg += 'Price: ' + retainerPriceVal + ' IQD\n';
     msg += 'Print order for Retainer\n';
     if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n';
     if (zone) msg += zone + '\n';
@@ -916,14 +927,18 @@ function buildTelegramMessage(data) {
   msg += data.package + '\n';
   if (data.singleArch) msg += 'Single Arch\n';
   if (data.discountType !== 'none' && data.discountValue) {
-    if (data.discountType === 'percentage') msg += data.discountValue + '% DISCOUNT\n';
-    else msg += 'Discount: ' + data.discountValue + ' IQD\n';
+    if (data.discountType === 'percentage') {
+      msg += data.discountValue + '% DISCOUNT\n';
+    } else {
+      msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
+    }
   }
   var installments = document.getElementById('installments').value;
   if (installments === 'full') msg += 'Approved (Full)\n';
   else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
   else msg += 'Approved\n';
-  if (data.batch1Amount) msg += 'First Payment: ' + data.batch1Amount + '\n';
+  var batch1Val = getFormattedValue('batch1Amount');
+  if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n';
   if (data.fullPayment) msg += 'Full Payment\n';
   msg += buildPrintOrderLine(data) + '\n';
   if (data.asap) msg += 'ASAP\n';
@@ -1011,7 +1026,7 @@ function validateForm() {
     } else {
       document.getElementById('retainerArchError').classList.remove('show');
     }
-    if (!document.getElementById('retainerPrice').value) {
+    if (!document.getElementById('retainerPrice').value.trim()) {
       document.getElementById('retainerPriceError').classList.add('show');
       document.getElementById('retainerPrice').classList.add('error-field');
       valid = false;
@@ -1096,8 +1111,10 @@ function submitForm() {
     package: document.getElementById('package').value,
     singleArch: document.getElementById('singleArch').checked,
     discountType: document.getElementById('discountType').value,
-    discountValue: parseFloat(document.getElementById('discountValue').value) || 0,
-    batch1Amount: parseInt(document.getElementById('batch1Amount').value) || null,
+    discountValue: document.getElementById('discountType').value === 'percentage'
+      ? parseFloat(document.getElementById('discountValue').value) || 0
+      : getRawNumber('discountValue'),
+    batch1Amount: getRawNumber('batch1Amount'),
     fullBatch: document.getElementById('installments').value === 'full',
     fullPayment: document.getElementById('fullPayment').checked,
     asap: document.getElementById('asap').checked,
@@ -1138,6 +1155,12 @@ function submitForm() {
       alert('Failed to submit. Please try again.\n' + err.message);
     });
 }
+
+// Initialize comma formatting on price fields
+formatWithCommas(document.getElementById('batch1Amount'));
+formatWithCommas(document.getElementById('discountValue'));
+formatWithCommas(document.getElementById('retainerPrice'));
+formatWithCommas(document.getElementById('reprintPayment'));
 
 handleCaseTypeChange();
 initTelegram();
