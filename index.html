@@ -222,11 +222,11 @@ textarea { resize: none; height: 80px; }
     <div class="form-group">
       <label>Doctor <span class="required">*</span></label>
       <div class="search-wrapper">
-       <input type="search" id="doctorSearch"
-  placeholder="Loading doctors..."
-  autocomplete="off"
-  autocapitalize="words"
-  style="padding-right:36px" />
+        <input type="search" id="doctorSearch"
+          placeholder="Loading doctors..."
+          autocomplete="off"
+          autocapitalize="words"
+          style="padding-right:36px" />
         <button class="clear-btn" id="clearDoctor" onclick="clearDoctor()">✕</button>
         <input type="hidden" id="doctorValue" />
         <div class="search-results" id="doctorResults"></div>
@@ -391,7 +391,7 @@ textarea { resize: none; height: 80px; }
       </div>
     </div>
 
-  <div class="form-group">
+    <div class="form-group">
       <label>Total Price (IQD) <span class="required">*</span></label>
       <input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" />
       <div class="error-msg" id="retainerPriceError">Please enter the price</div>
@@ -513,7 +513,8 @@ var SHEET_ID = '1ToxldsqvuQUfI__xNoaxOwNG0iYx6FgkJC0hpngd0h8';
 var API_KEY = 'AIzaSyDGBOFL9rSp3dPkQ1No5i5IXI27xL1-9ME';
 var TG_PROXY = 'https://telegram-proxy.ajeelz99.workers.dev';
 
-var doctors = [];
+var doctorRows = []; // raw rows with all columns
+var doctors = [];    // filtered doctor names for current rep
 var reps = [];
 var selectedFiles = [];
 var detectedUsername = null;
@@ -522,7 +523,6 @@ var tg = null;
 var tgUsername = null;
 var tgUserId = null;
 
-// Format number with commas as user types
 function formatWithCommas(input) {
   input.addEventListener('input', function() {
     var pos = input.selectionStart;
@@ -762,27 +762,56 @@ function setupRepField() {
       document.getElementById('repDetected').value = matched.name;
       document.getElementById('repUsername').value = tgUsername;
       detectedUsername = tgUsername;
+
+      // Filter doctors by rep name — column D (index 3) contains rep names
+      var repNameLower = matched.name.toLowerCase().trim();
+      doctors = doctorRows
+        .filter(function(row) {
+          var docName = (row[0] || '').trim();
+          var docReps = (row[3] || '').toLowerCase().trim();
+          if (!docName) return false;
+          return docReps.split(',').some(function(r) {
+            return r.trim() === repNameLower;
+          });
+        })
+        .map(function(row) { return row[0].trim(); });
+
+      if (doctors.length === 0) {
+        document.getElementById('doctorSearch').placeholder = 'No doctors assigned yet';
+      } else {
+        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+      }
+    } else {
+      // Username not matched — no doctors shown
+      doctors = [];
+      document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
     }
+  } else {
+    // No Telegram username — no doctors shown
+    doctors = [];
+    document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
   }
 }
 
 function applyCache(parsed) {
-  doctors = parsed.doctors || [];
+  doctorRows = parsed.doctorRows || [];
   reps = parsed.reps || [];
-  document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
   setupRepField();
 }
 
 function fetchFreshData() {
+  // Fetch Customers A:D (name, raw, zone, reps) and Reps A:C
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=Customers!A:A&ranges=Reps!A:C&key=' + API_KEY;
+    '/values:batchGet?ranges=Customers!A:D&ranges=Reps!A:C&key=' + API_KEY;
 
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var drValues = data.valueRanges[0].values || [];
-      doctors = drValues.flat().filter(function(v) { return v && v.trim() !== ''; });
-      document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+      var rawRows = data.valueRanges[0].values || [];
+      // Use column A (index 0) as doctor name, column D (index 3) as rep
+      doctorRows = rawRows.filter(function(row) {
+        return row[0] && row[0].trim() !== '';
+      });
 
       var repValues = data.valueRanges[1].values || [];
       reps = repValues
@@ -795,7 +824,7 @@ function fetchFreshData() {
           };
         });
 
-      var cacheData = JSON.stringify({ doctors: doctors, reps: reps });
+      var cacheData = JSON.stringify({ doctorRows: doctorRows, reps: reps });
       try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
 
       initTelegram();
@@ -917,13 +946,13 @@ function buildTelegramMessage(data) {
     var retainerPriceVal = getFormattedValue('retainerPrice');
     var retainerNotes = document.getElementById('retainerNotes').value.trim();
     var retainerReason = document.getElementById('retainerReason').value.trim();
-if (retainerReason) msg += 'Reason: ' + retainerReason + '\n';
 
     if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
     if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
     if (retainerAsap) msg += 'ASAP\n';
     msg += 'Price: ' + retainerPriceVal + ' IQD\n';
     msg += 'Print order for Retainer\n';
+    if (retainerReason) msg += 'Reason: ' + retainerReason + '\n';
     if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n';
     if (zone) msg += zone + '\n';
     msg += repName;
@@ -1024,7 +1053,8 @@ function validateForm() {
     document.getElementById('patientError').classList.remove('show');
     document.getElementById('patient').classList.remove('error-field');
   }
-if (caseType === 'reprint') {
+
+  if (caseType === 'reprint') {
     if (!document.getElementById('reprintReason').value.trim()) {
       document.getElementById('reprintReason').classList.add('error-field');
       valid = false;
@@ -1032,6 +1062,7 @@ if (caseType === 'reprint') {
       document.getElementById('reprintReason').classList.remove('error-field');
     }
   }
+
   if (caseType === 'retainer') {
     var upperChecked = document.getElementById('retainerUpper').checked;
     var lowerChecked = document.getElementById('retainerLower').checked;
