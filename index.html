@@ -754,6 +754,9 @@ document.getElementById('doctorSearch').addEventListener('focus', function() {
 });
 
 function setupRepField() {
+  // Admin usernames who see all doctors
+  var ADMIN_USERNAMES = ['shafafmanagement', 'shafafclearaligners'];
+
   if (tgUsername) {
     var matched = reps.find(function(r) {
       return r.username.toLowerCase() === tgUsername.toLowerCase();
@@ -762,6 +765,15 @@ function setupRepField() {
       document.getElementById('repDetected').value = matched.name;
       document.getElementById('repUsername').value = tgUsername;
       detectedUsername = tgUsername;
+
+      // Admins see all doctors
+      if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
+        doctors = doctorRows
+          .filter(function(row) { return row[0] && row[0].trim() !== ''; })
+          .map(function(row) { return row[0].trim(); });
+        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+        return;
+      }
 
       // Filter doctors by rep name — column D (index 3) contains rep names
       var repNameLower = matched.name.toLowerCase().trim();
