@@ -222,10 +222,11 @@ textarea { resize: none; height: 80px; }
     <div class="form-group">
       <label>Doctor <span class="required">*</span></label>
       <div class="search-wrapper">
-        <input type="search" id="doctorSearch"
-          placeholder="Loading doctors..."
-          autocomplete="off"
-          style="padding-right:36px" />
+       <input type="search" id="doctorSearch"
+  placeholder="Loading doctors..."
+  autocomplete="off"
+  autocapitalize="words"
+  style="padding-right:36px" />
         <button class="clear-btn" id="clearDoctor" onclick="clearDoctor()">✕</button>
         <input type="hidden" id="doctorValue" />
         <div class="search-results" id="doctorResults"></div>
@@ -235,19 +236,19 @@ textarea { resize: none; height: 80px; }
 
     <div class="form-group hidden" id="newDoctorGroup">
       <label>New Doctor Full Name <span class="required">*</span></label>
-      <input type="text" id="newDoctorName" placeholder="Enter full name" />
+      <input type="text" id="newDoctorName" placeholder="Enter full name" autocapitalize="words" />
       <div class="error-msg" id="newDoctorError">Please enter the doctor name</div>
     </div>
 
     <div class="form-group">
       <label>Patient <span class="required">*</span></label>
-      <input type="text" id="patient" placeholder="Patient full name" />
+      <input type="text" id="patient" placeholder="Patient full name" autocapitalize="words" />
       <div class="error-msg" id="patientError">Patient name is required</div>
     </div>
 
     <div class="form-group">
       <label>Clinic</label>
-      <input type="text" id="clinic" placeholder="Clinic name" />
+      <input type="text" id="clinic" placeholder="Clinic name" autocapitalize="words" />
     </div>
   </div>
 
