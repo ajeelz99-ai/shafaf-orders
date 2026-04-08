@@ -1024,6 +1024,15 @@ function validateForm() {
   var valid = true;
   var caseType = document.getElementById('caseType').value;
 
+  // Block unrecognized users
+  var repName = document.getElementById('repDetected').value || '';
+  if (!repName) {
+    alert('You are not authorized to submit orders. Please contact your admin.');
+    return false;
+  }
+  var valid = true;
+  var caseType = document.getElementById('caseType').value;
+
   var caseNum = document.getElementById('caseNumber').value.trim();
   if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
     document.getElementById('caseNumberError').classList.add('show');
