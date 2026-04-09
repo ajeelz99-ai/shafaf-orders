@@ -1222,6 +1222,12 @@ function loadCaseStatus() {
       for (var i = 1; i < mainRows.length; i++) {
         var r = mainRows[i];
         if (!r[3]) continue;
+
+        // Security: only keep cases for this rep's doctors
+        var caseDoctor = (r[4] || '').trim();
+        var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
+        if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
+
         var statusRow = statusRows[i] || [];
         var paymentStatus = (statusRow[0] || '').trim().toLowerCase();
 
@@ -1229,16 +1235,28 @@ function loadCaseStatus() {
         var lowerRem = parseInt(r[12]) || 0;
         var amtRemaining = parseFloat((r[19] || '0').toString().replace(/,/g, '')) || 0;
         var batchPrice = parseFloat((r[16] || '0').toString().replace(/,/g, '')) || 0;
+        var casePrice = parseFloat((r[13] || '0').toString().replace(/,/g, '')) || 0;
         var allDelivered = upperRem === 0 && lowerRem === 0 && (parseInt(r[7]) || 0) + (parseInt(r[8]) || 0) > 0;
+
+        // Discount: if < 1, it's a percentage (e.g. 0.1 = 10%), otherwise fixed IQD
+        var rawDiscount = parseFloat((r[14] || '0').toString().replace(/,/g, '')) || 0;
+        var discountDisplay = '';
+        if (rawDiscount > 0 && rawDiscount < 1) {
+          discountDisplay = Math.round(rawDiscount * 100) + '%';
+        } else if (rawDiscount >= 1) {
+          discountDisplay = formatNum(rawDiscount) + ' IQD';
+        }
 
         // Determine display status
         var displayStatus = '';
         if (paymentStatus === 'unpaid') {
           displayStatus = 'UNPAID';
-        } else if (allDelivered && amtRemaining === 0) {
+        } else if (allDelivered && amtRemaining === 0 && casePrice > 0) {
           displayStatus = 'CASE FULLY PAID';
         } else if (batchPrice > 0) {
           displayStatus = 'BATCH PAID';
+        } else if (batchPrice === 0 && casePrice > 0 && !allDelivered) {
+          displayStatus = 'FREE BATCH';
         }
 
         allCases.push({
@@ -1246,7 +1264,7 @@ function loadCaseStatus() {
           month: (r[1] || '').trim(),
           caseType: (r[2] || '').trim(),
           caseNumber: (r[3] || '').trim(),
-          doctor: (r[4] || '').trim(),
+          doctor: caseDoctor,
           clinic: (r[5] || '').trim(),
           patient: (r[6] || '').trim(),
           upper: parseInt(r[7]) || 0,
@@ -1255,8 +1273,8 @@ function loadCaseStatus() {
           lowerDel: parseInt(r[10]) || 0,
           upperRem: upperRem,
           lowerRem: lowerRem,
-          casePrice: parseFloat((r[13] || '0').toString().replace(/,/g, '')) || 0,
-          discount: parseFloat((r[14] || '0').toString().replace(/,/g, '')) || 0,
+          casePrice: casePrice,
+          discountDisplay: discountDisplay,
           priceAfterDiscount: parseFloat((r[15] || '0').toString().replace(/,/g, '')) || 0,
           batchPrice: batchPrice,
           amtRemaining: amtRemaining,
@@ -1345,9 +1363,7 @@ function renderCases() {
     return;
   }
 
-  var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
   var filtered = allCases.filter(function(c) {
-    if (repDoctors.length > 0 && repDoctors.indexOf(c.doctor.toLowerCase()) === -1) return false;
     if (statusDoctorFilter && c.doctor !== statusDoctorFilter) return false;
     if (query) {
       var base = extractBaseCase(c.caseNumber).toLowerCase();
@@ -1392,6 +1408,8 @@ function renderCases() {
       html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">CASE FULLY PAID</span></div>';
     } else if (c.displayStatus === 'BATCH PAID') {
       html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">BATCH PAID</span></div>';
+    } else if (c.displayStatus === 'FREE BATCH') {
+      html += '<div style="margin-bottom:8px"><span style="background:#e8f0fe;color:#1a73e8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
     }
 
     html += '<div class="case-steps">';
@@ -1406,13 +1424,13 @@ function renderCases() {
     // Financial details
     html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0">';
     html += '<div class="case-steps" style="grid-template-columns:1fr 1fr 1fr">';
-    html += '<div class="step-box"><div class="step-label">Case Price</div><div class="step-value" style="font-size:13px">' + formatNum(c.casePrice) + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">Discount</div><div class="step-value" style="font-size:13px">' + (c.discount > 0 ? formatNum(c.discount) : '-') + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">After Disc.</div><div class="step-value" style="font-size:13px">' + formatNum(c.priceAfterDiscount) + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">Case Price</div><div class="step-value" style="font-size:13px">' + formatNum(c.casePrice) + ' IQD</div></div>';
+    html += '<div class="step-box"><div class="step-label">Discount</div><div class="step-value" style="font-size:13px">' + (c.discountDisplay || '-') + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">After Disc.</div><div class="step-value" style="font-size:13px">' + formatNum(c.priceAfterDiscount) + ' IQD</div></div>';
     html += '</div>';
     html += '<div class="case-steps" style="grid-template-columns:1fr 1fr;margin-top:6px">';
-    html += '<div class="step-box"><div class="step-label">Batch Price</div><div class="step-value" style="font-size:13px">' + formatNum(c.batchPrice) + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">Remaining</div><div class="step-value' + (c.amtRemaining > 0 ? ' remaining' : ' done') + '" style="font-size:13px">' + formatNum(c.amtRemaining) + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">Batch Price</div><div class="step-value" style="font-size:13px">' + (c.batchPrice > 0 ? formatNum(c.batchPrice) + ' IQD' : 'FREE') + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">Remaining</div><div class="step-value' + (c.amtRemaining > 0 ? ' remaining' : ' done') + '" style="font-size:13px">' + formatNum(c.amtRemaining) + ' IQD</div></div>';
     html += '</div>';
     html += '</div>';
 
