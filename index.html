@@ -1291,20 +1291,21 @@ function loadCaseStatus() {
         var r = mainRows[i];
         if (!r[3]) continue;
 
+        var zoneStatusRow = zoneStatusRows[i] || [];
+        var caseZone = (zoneStatusRow[0] || '').trim();
+        var paymentStatus = (zoneStatusRow[1] || '').trim().toLowerCase();
+
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
         if (isSalesRep) {
-          // Sales rep sees all cases in Karkh and Rusafa zones
-          if (caseZone !== 'Karkh' && caseZone !== 'Rusafa') continue;
+          // Sales rep sees all cases in Karkh and Rusafa zones (case-insensitive)
+          var zoneLower = caseZone.toLowerCase();
+          if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') continue;
         } else {
           // Regular rep: only see their own doctors
           var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
           if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
         }
-
-        var zoneStatusRow = zoneStatusRows[i] || [];
-        var caseZone = (zoneStatusRow[0] || '').trim();
-        var paymentStatus = (zoneStatusRow[1] || '').trim().toLowerCase();
 
         var upperRem = parseInt(r[11]) || 0;
         var lowerRem = parseInt(r[12]) || 0;
@@ -1534,7 +1535,8 @@ function renderUnpaid() {
 
   var unpaid = allCases.filter(function(c) {
     if (c.displayStatus !== 'UNPAID') return false;
-    if (isSalesRep && zoneFilter && c.zone !== zoneFilter) return false;
+    if (c.batchPrice === 0) return false; // skip free batches
+    if (isSalesRep && zoneFilter && c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false;
     return true;
   });
 
@@ -1543,11 +1545,11 @@ function renderUnpaid() {
 
   // Calculate total
   var total = 0;
-  unpaid.forEach(function(c) { total += c.amtRemaining; });
+  unpaid.forEach(function(c) { total += c.batchPrice; });
   totalEl.textContent = formatNum(total) + ' IQD';
 
   if (unpaid.length === 0) {
-    container.innerHTML = '<div class="status-empty">No unpaid cases</div>';
+    container.innerHTML = '<div class="status-empty">No pending cases</div>';
     return;
   }
 
@@ -1566,7 +1568,7 @@ function renderUnpaid() {
     html += '<td>' + c.doctor + '</td>';
     html += '<td>' + c.clinic + '</td>';
     html += '<td>' + c.patient + '</td>';
-    html += '<td class="amt">' + formatNum(c.amtRemaining) + ' IQD</td>';
+    html += '<td class="amt">' + formatNum(c.batchPrice) + ' IQD</td>';
     html += '</tr>';
   });
 
