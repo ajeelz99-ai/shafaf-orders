@@ -964,6 +964,7 @@ function setupRepField() {
 
       // Admins see all doctors and get zone dropdown on Pending tab
       if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
+        isAdmin = true;
         doctors = doctorRows
           .filter(function(row) { return row[0] && row[0].trim() !== ''; })
           .map(function(row) { return row[0].trim(); });
@@ -1264,6 +1265,7 @@ var allZones = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
 var isSalesRep = false;
+var isAdmin = false;
 var repZone = '';
 
 function extractBaseCase(caseNum) {
@@ -1295,24 +1297,36 @@ function loadCaseStatus() {
       // J(9)=UpperDel, K(10)=LowerDel, L(11)=UpperRem, M(12)=LowerRem,
       // N(13)=CasePrice, O(14)=Discount, P(15)=PriceAfterDiscount, Q(16)=BatchPrice,
       // R(17), S(18), T(19)=AmtRemaining, ... AN(39)=Zone, AO(40)=PaymentStatus
+      // Build rep -> zone lookup from Reps sheet
+      var repZoneMap = {};
+      reps.forEach(function(rep) {
+        if (rep.name && rep.zone) {
+          repZoneMap[rep.name.toLowerCase()] = rep.zone;
+        }
+      });
+
       for (var i = 1; i < rows.length; i++) {
         var r = rows[i];
         if (!r[3]) continue;
 
-        var caseZone = (r[39] || '').trim();
+        // Get zone: first try rep lookup via Reps sheet, fallback to column AN (r[39])
+        var caseRep = (r[25] || '').trim();
+        var caseZone = repZoneMap[caseRep.toLowerCase()] || (r[39] || '').trim();
         var paymentStatus = (r[40] || '').trim().toLowerCase();
 
         // Collect unique zones for admin dropdown
-        if (caseZone && allZones.indexOf(caseZone) === -1) {
+        if (caseZone && caseZone.toLowerCase() !== 'baghdad sales rep' && allZones.indexOf(caseZone) === -1) {
           allZones.push(caseZone);
         }
 
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
-        if (!isSalesRep) {
+        if (!isAdmin && !isSalesRep) {
+          // Regular rep: only see their own doctors
           var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
           if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
         }
+        // Admins and sales rep: no doctor filter
 
         var upperRem = parseInt(r[11]) || 0;
         var lowerRem = parseInt(r[12]) || 0;
@@ -1559,7 +1573,6 @@ function renderUnpaid() {
 
   var unpaid = allCases.filter(function(c) {
     if (c.displayStatus !== 'UNPAID') return false;
-    if (c.batchPrice === 0 && c.amtRemaining === 0) return false;
     if (isSalesRep) {
       // Sales rep must match zone (Karkh or Rusafa only)
       var zoneLower = c.zone.toLowerCase();
