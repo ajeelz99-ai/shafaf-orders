@@ -1251,11 +1251,11 @@ function loadCaseStatus() {
         var displayStatus = '';
         if (paymentStatus === 'unpaid') {
           displayStatus = 'UNPAID';
-        } else if (allDelivered && amtRemaining === 0 && casePrice > 0) {
+        } else if (allDelivered && amtRemaining === 0) {
           displayStatus = 'CASE FULLY PAID';
         } else if (batchPrice > 0) {
           displayStatus = 'BATCH PAID';
-        } else if (batchPrice === 0 && casePrice > 0 && !allDelivered) {
+        } else if (batchPrice === 0) {
           displayStatus = 'FREE BATCH';
         }
 
@@ -1409,7 +1409,7 @@ function renderCases() {
     } else if (c.displayStatus === 'BATCH PAID') {
       html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">BATCH PAID</span></div>';
     } else if (c.displayStatus === 'FREE BATCH') {
-      html += '<div style="margin-bottom:8px"><span style="background:#e8f0fe;color:#1a73e8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
+      html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
     }
 
     html += '<div class="case-steps">';
