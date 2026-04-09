@@ -594,9 +594,14 @@ textarea { resize: none; height: 80px; }
   <input type="search" class="status-search" id="statusSearch"
     placeholder="Search case number or patient..." oninput="renderCases()" />
   <div class="form-group" style="margin-bottom:12px">
-    <select id="statusDoctorSelect" onchange="handleStatusDoctorFilter()">
-      <option value="">All Doctors</option>
-    </select>
+    <div class="search-wrapper">
+      <input type="search" id="statusDoctorSearch"
+        placeholder="Filter by doctor..."
+        autocomplete="off"
+        style="padding-right:36px" />
+      <button class="clear-btn" id="clearStatusDoctor" onclick="clearStatusDoctor()">✕</button>
+      <div class="search-results" id="statusDoctorResults"></div>
+    </div>
   </div>
   <div class="status-count" id="statusCount"></div>
   <div id="caseList">
@@ -1235,16 +1240,61 @@ function loadCaseStatus() {
 }
 
 function buildDoctorFilterBar() {
-  var select = document.getElementById('statusDoctorSelect');
-  var html = '<option value="">All Doctors</option>';
-  doctors.forEach(function(doc) {
-    html += '<option value="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</option>';
+  // Set up event listeners for status doctor search
+  var searchEl = document.getElementById('statusDoctorSearch');
+  var resultsEl = document.getElementById('statusDoctorResults');
+
+  searchEl.addEventListener('input', function() {
+    filterStatusDoctors(this.value);
   });
-  select.innerHTML = html;
+  searchEl.addEventListener('focus', function() {
+    filterStatusDoctors(this.value);
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#statusDoctorSearch') && !e.target.closest('#statusDoctorResults')) {
+      resultsEl.style.display = 'none';
+    }
+  });
+  resultsEl.addEventListener('click', function(e) {
+    var item = e.target.closest('.search-result-item');
+    if (!item) return;
+    var doc = item.getAttribute('data-status-doc');
+    if (doc === '__ALL__') {
+      statusDoctorFilter = null;
+      searchEl.value = '';
+      document.getElementById('clearStatusDoctor').style.display = 'none';
+    } else {
+      statusDoctorFilter = doc;
+      searchEl.value = doc;
+      document.getElementById('clearStatusDoctor').style.display = 'block';
+    }
+    resultsEl.style.display = 'none';
+    renderCases();
+  });
+}
+
+function filterStatusDoctors(query) {
+  var resultsEl = document.getElementById('statusDoctorResults');
+  query = (query || '').toLowerCase().trim();
+  var filtered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
+  var html = '<div class="search-result-item" data-status-doc="__ALL__" style="color:#1a73e8;font-weight:600">All Doctors</div>';
+  filtered.slice(0, 30).forEach(function(doc) {
+    html += '<div class="search-result-item" data-status-doc="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</div>';
+  });
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+  document.getElementById('clearStatusDoctor').style.display = query ? 'block' : 'none';
+}
+
+function clearStatusDoctor() {
+  document.getElementById('statusDoctorSearch').value = '';
+  document.getElementById('clearStatusDoctor').style.display = 'none';
+  document.getElementById('statusDoctorResults').style.display = 'none';
+  statusDoctorFilter = null;
+  renderCases();
 }
 
 function handleStatusDoctorFilter() {
-  statusDoctorFilter = document.getElementById('statusDoctorSelect').value || null;
   renderCases();
 }
 
