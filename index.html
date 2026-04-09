@@ -452,25 +452,51 @@ textarea { resize: none; height: 80px; }
       </select>
     </div>
 
-    <div class="row" id="reprintUpperGroup">
+  <div id="reprintUpperGroup">
       <div class="form-group">
-        <label>Upper From</label>
-        <input type="number" id="reprintUpperFrom" placeholder="e.g. 5" min="1" />
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="reprintUpperNonSeq" onchange="toggleReprintMode('upper')" /> Non-sequential
+          </label>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Upper To</label>
-        <input type="number" id="reprintUpperTo" placeholder="e.g. 10" min="1" />
+      <div class="row" id="reprintUpperRange">
+        <div class="form-group">
+          <label>Upper From</label>
+          <input type="number" id="reprintUpperFrom" placeholder="e.g. 5" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Upper To</label>
+          <input type="number" id="reprintUpperTo" placeholder="e.g. 10" min="1" />
+        </div>
+      </div>
+      <div class="form-group hidden" id="reprintUpperStepsGroup">
+        <label>Upper Steps</label>
+        <input type="text" id="reprintUpperSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" />
       </div>
     </div>
 
-    <div class="row" id="reprintLowerGroup">
+    <div id="reprintLowerGroup">
       <div class="form-group">
-        <label>Lower From</label>
-        <input type="number" id="reprintLowerFrom" placeholder="e.g. 5" min="1" />
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="reprintLowerNonSeq" onchange="toggleReprintMode('lower')" /> Non-sequential
+          </label>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Lower To</label>
-        <input type="number" id="reprintLowerTo" placeholder="e.g. 10" min="1" />
+      <div class="row" id="reprintLowerRange">
+        <div class="form-group">
+          <label>Lower From</label>
+          <input type="number" id="reprintLowerFrom" placeholder="e.g. 5" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Lower To</label>
+          <input type="number" id="reprintLowerTo" placeholder="e.g. 10" min="1" />
+        </div>
+      </div>
+      <div class="form-group hidden" id="reprintLowerStepsGroup">
+        <label>Lower Steps</label>
+        <input type="text" id="reprintLowerSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" />
       </div>
     </div>
 
@@ -602,7 +628,13 @@ function handleRetainerArch() {
   document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked);
   document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked);
 }
-
+function toggleReprintMode(arch) {
+  var isNonSeq = document.getElementById('reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'NonSeq').checked;
+  var rangeId = 'reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'Range';
+  var stepsId = 'reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'StepsGroup';
+  document.getElementById(rangeId).classList.toggle('hidden', isNonSeq);
+  document.getElementById(stepsId).classList.toggle('hidden', !isNonSeq);
+}
 function handleReprintArch() {
   var arch = document.getElementById('reprintArch').value;
   document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower');
@@ -953,11 +985,21 @@ function buildTelegramMessage(data) {
 
     msg += 'Reprint Request\n';
     msg += 'Arch: ' + arch + '\n';
-    if ((arch === 'Both' || arch === 'Upper') && upperFrom && upperTo) {
-      msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
+  if (arch === 'Both' || arch === 'Upper') {
+      if (document.getElementById('reprintUpperNonSeq').checked) {
+        var steps = document.getElementById('reprintUpperSteps').value.trim();
+        if (steps) msg += 'Upper: steps ' + steps + '\n';
+      } else if (upperFrom && upperTo) {
+        msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
+      }
     }
-    if ((arch === 'Both' || arch === 'Lower') && lowerFrom && lowerTo) {
-      msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
+    if (arch === 'Both' || arch === 'Lower') {
+      if (document.getElementById('reprintLowerNonSeq').checked) {
+        var steps = document.getElementById('reprintLowerSteps').value.trim();
+        if (steps) msg += 'Lower: steps ' + steps + '\n';
+      } else if (lowerFrom && lowerTo) {
+        msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
+      }
     }
     if (reprintReason) msg += 'Reason: ' + reprintReason + '\n';
     if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) {
