@@ -132,11 +132,86 @@ textarea { resize: none; height: 80px; }
 .success-icon { font-size: 72px; margin-bottom: 20px; }
 .success-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; color: #1a1a1a; }
 .success-sub { font-size: 15px; color: #666; line-height: 1.6; }
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  background: white;
+  border-bottom: 1.5px solid #e0e0e0;
+  position: sticky;
+  top: 52px;
+  z-index: 49;
+}
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+}
+.tab-btn.active {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+}
+
+/* Case Status */
+#statusScreen { display: none; }
+.status-search {
+  width: 100%; padding: 11px 13px; border: 1.5px solid #e0e0e0;
+  border-radius: 8px; background: #fafafa; font-size: 15px; outline: none;
+  margin-bottom: 12px;
+}
+.status-search:focus { border-color: #1a73e8; background: white; }
+.doctor-filter-bar {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
+  margin-bottom: 8px; -webkit-overflow-scrolling: touch;
+}
+.doctor-chip {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; border: 1.5px solid #e0e0e0;
+  background: white; color: #444; cursor: pointer; white-space: nowrap;
+}
+.doctor-chip.active { background: #1a73e8; color: white; border-color: #1a73e8; }
+.case-card {
+  background: white; border-radius: 12px; padding: 14px;
+  margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.case-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 4px;
+}
+.case-number { font-size: 15px; font-weight: 700; color: #1a73e8; }
+.case-type {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; background: #e8f0fe; color: #1a73e8;
+}
+.case-patient { font-size: 13px; color: #444; margin-bottom: 8px; }
+.case-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.step-box {
+  background: #f8f9fa; border-radius: 8px; padding: 8px 10px; text-align: center;
+}
+.step-label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px; }
+.step-value { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
+.step-value.done { color: #2e7d32; }
+.step-value.remaining { color: #e53935; }
+.status-loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+.status-empty { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+.status-count { font-size: 12px; color: #999; margin-bottom: 12px; }
 </style>
 </head>
 <body>
 
-<div class="header">📋 Shafaf Order Form</div>
+<div class="header">📋 Shafaf Orders</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabOrder" onclick="switchTab('order')">New Order</button>
+  <button class="tab-btn" id="tabStatus" onclick="switchTab('status')">My Cases</button>
+</div>
 
 <input type="hidden" id="repDetected" />
 <input type="hidden" id="repUsername" />
@@ -452,11 +527,11 @@ textarea { resize: none; height: 80px; }
       </select>
     </div>
 
-  <div id="reprintUpperGroup">
+    <div id="reprintUpperGroup">
       <div class="form-group">
         <div class="checkbox-row">
           <label class="checkbox-item">
-            <input type="checkbox" id="reprintUpperNonSeq" onchange="toggleReprintMode('upper')" /> Non-sequential
+            <input type="checkbox" id="reprintUpperNonSeq" onchange="toggleReprintMode('Upper')" /> Non-sequential
           </label>
         </div>
       </div>
@@ -476,11 +551,11 @@ textarea { resize: none; height: 80px; }
       </div>
     </div>
 
-    <div id="reprintLowerGroup">
+    <div id="reprintLowerGroup" style="margin-top:12px">
       <div class="form-group">
         <div class="checkbox-row">
           <label class="checkbox-item">
-            <input type="checkbox" id="reprintLowerNonSeq" onchange="toggleReprintMode('lower')" /> Non-sequential
+            <input type="checkbox" id="reprintLowerNonSeq" onchange="toggleReprintMode('Lower')" /> Non-sequential
           </label>
         </div>
       </div>
@@ -521,6 +596,18 @@ textarea { resize: none; height: 80px; }
     </button>
   </div>
 
+</div>
+</div>
+
+<div id="statusScreen">
+<div class="form-container">
+  <input type="search" class="status-search" id="statusSearch"
+    placeholder="Search case number or patient..." oninput="renderCases()" />
+  <div class="doctor-filter-bar" id="doctorFilterBar"></div>
+  <div class="status-count" id="statusCount"></div>
+  <div id="caseList">
+    <div class="status-loading" id="statusLoading">Loading cases...</div>
+  </div>
 </div>
 </div>
 
@@ -628,13 +715,13 @@ function handleRetainerArch() {
   document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked);
   document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked);
 }
+
 function toggleReprintMode(arch) {
-  var isNonSeq = document.getElementById('reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'NonSeq').checked;
-  var rangeId = 'reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'Range';
-  var stepsId = 'reprint' + arch.charAt(0).toUpperCase() + arch.slice(1) + 'StepsGroup';
-  document.getElementById(rangeId).classList.toggle('hidden', isNonSeq);
-  document.getElementById(stepsId).classList.toggle('hidden', !isNonSeq);
+  var isNonSeq = document.getElementById('reprint' + arch + 'NonSeq').checked;
+  document.getElementById('reprint' + arch + 'Range').classList.toggle('hidden', isNonSeq);
+  document.getElementById('reprint' + arch + 'StepsGroup').classList.toggle('hidden', !isNonSeq);
 }
+
 function handleReprintArch() {
   var arch = document.getElementById('reprintArch').value;
   document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower');
@@ -726,22 +813,34 @@ function handleFileSelect(input) {
     selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : '';
 }
 
+var currentFiltered = [];
+
 function filterDoctors(query) {
   var results = document.getElementById('doctorResults');
   query = (query || '').toLowerCase().trim();
-  var filtered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
-  var html = '<div class="search-result-item new-doctor-item" onclick="selectNewDoctor()">+ New Doctor</div>';
-  filtered.slice(0, 40).forEach(function(doc) {
-    var escaped = doc.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
-    html += '<div class="search-result-item" onclick="selectDoctor(\'' + escaped + '\')">' + doc + '</div>';
+  currentFiltered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
+  var html = '<div class="search-result-item new-doctor-item">+ New Doctor</div>';
+  currentFiltered.slice(0, 40).forEach(function(doc, i) {
+    html += '<div class="search-result-item" data-doc-idx="' + i + '">' + doc + '</div>';
   });
-  if (filtered.length === 0 && query) {
+  if (currentFiltered.length === 0 && query) {
     html += '<div class="search-result-item loading-item">No match — select New Doctor</div>';
   }
   results.innerHTML = html;
   results.style.display = 'block';
   document.getElementById('clearDoctor').style.display = query ? 'block' : 'none';
 }
+
+document.getElementById('doctorResults').addEventListener('click', function(e) {
+  var item = e.target.closest('.search-result-item');
+  if (!item) return;
+  if (item.classList.contains('new-doctor-item')) { selectNewDoctor(); return; }
+  if (item.classList.contains('loading-item')) return;
+  var idx = item.getAttribute('data-doc-idx');
+  if (idx !== null && currentFiltered[parseInt(idx)]) {
+    selectDoctor(currentFiltered[parseInt(idx)]);
+  }
+});
 
 function selectDoctor(name) {
   document.getElementById('doctorSearch').value = name;
@@ -862,7 +961,6 @@ function fetchFreshData() {
         if (!seen[key]) {
           seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' };
         } else {
-          // Merge any additional rep names
           var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
           var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
           incoming.forEach(function(r) {
@@ -985,18 +1083,18 @@ function buildTelegramMessage(data) {
 
     msg += 'Reprint Request\n';
     msg += 'Arch: ' + arch + '\n';
-  if (arch === 'Both' || arch === 'Upper') {
+    if (arch === 'Both' || arch === 'Upper') {
       if (document.getElementById('reprintUpperNonSeq').checked) {
-        var steps = document.getElementById('reprintUpperSteps').value.trim();
-        if (steps) msg += 'Upper: steps ' + steps + '\n';
+        var usteps = document.getElementById('reprintUpperSteps').value.trim();
+        if (usteps) msg += 'Upper: steps ' + usteps + '\n';
       } else if (upperFrom && upperTo) {
         msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
       }
     }
     if (arch === 'Both' || arch === 'Lower') {
       if (document.getElementById('reprintLowerNonSeq').checked) {
-        var steps = document.getElementById('reprintLowerSteps').value.trim();
-        if (steps) msg += 'Lower: steps ' + steps + '\n';
+        var lsteps = document.getElementById('reprintLowerSteps').value.trim();
+        if (lsteps) msg += 'Lower: steps ' + lsteps + '\n';
       } else if (lowerFrom && lowerTo) {
         msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
       }
@@ -1064,6 +1162,155 @@ function buildTelegramMessage(data) {
   if (zone) msg += zone + '\n';
   msg += repName;
   return msg;
+}
+
+// ---- Tab switching ----
+function switchTab(tab) {
+  document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
+  document.getElementById('tabStatus').classList.toggle('active', tab === 'status');
+  document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none';
+  document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none';
+  document.getElementById('successScreen').style.display = 'none';
+  if (tab === 'status' && !statusLoaded) loadCaseStatus();
+}
+
+// ---- Case status ----
+var allCases = [];
+var statusDoctorFilter = null;
+var statusLoaded = false;
+
+function extractBaseCase(caseNum) {
+  return caseNum
+    .replace(/^reprint\/\s*/i, '')
+    .replace(/^retainer\/\s*/i, '')
+    .replace(/^MCA\d*\/\s*/i, '')
+    .replace(/^R\d+\/\s*/i, '')
+    .replace(/^(2nd|3rd|4th|5th)\/\s*/i, '')
+    .trim();
+}
+
+function loadCaseStatus() {
+  var el = document.getElementById('statusLoading');
+  if (el) el.style.display = 'block';
+
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
+    '/values/CombinedTable!C:M?key=' + API_KEY;
+
+  fetch(url)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      var rows = data.values || [];
+      allCases = [];
+      // C:M = [CaseType, CaseNumber, Doctor, Clinic, Patient, Upper, Lower, UpperDel, LowerDel, UpperRem, LowerRem]
+      for (var i = 1; i < rows.length; i++) {
+        var r = rows[i];
+        if (!r[1]) continue;
+        allCases.push({
+          caseType: (r[0] || '').trim(),
+          caseNumber: (r[1] || '').trim(),
+          doctor: (r[2] || '').trim(),
+          clinic: (r[3] || '').trim(),
+          patient: (r[4] || '').trim(),
+          upper: parseInt(r[5]) || 0,
+          lower: parseInt(r[6]) || 0,
+          upperDel: parseInt(r[7]) || 0,
+          lowerDel: parseInt(r[8]) || 0,
+          upperRem: parseInt(r[9]) || 0,
+          lowerRem: parseInt(r[10]) || 0
+        });
+      }
+      statusLoaded = true;
+      if (el) el.style.display = 'none';
+      buildDoctorFilterBar();
+      renderCases();
+    })
+    .catch(function(e) {
+      console.error('Failed to load cases', e);
+      if (el) el.textContent = 'Failed to load. Try again later.';
+    });
+}
+
+function buildDoctorFilterBar() {
+  var bar = document.getElementById('doctorFilterBar');
+  var html = '<span class="doctor-chip active" data-doctor="">All</span>';
+  doctors.forEach(function(doc) {
+    html += '<span class="doctor-chip" data-doctor="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</span>';
+  });
+  bar.innerHTML = html;
+
+  bar.addEventListener('click', function(e) {
+    var chip = e.target.closest('.doctor-chip');
+    if (!chip) return;
+    bar.querySelectorAll('.doctor-chip').forEach(function(c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    statusDoctorFilter = chip.getAttribute('data-doctor') || null;
+    renderCases();
+  });
+}
+
+function renderCases() {
+  var query = (document.getElementById('statusSearch').value || '').toLowerCase().trim();
+  var container = document.getElementById('caseList');
+  var countEl = document.getElementById('statusCount');
+
+  // Don't show anything until user searches or picks a doctor
+  if (!query && !statusDoctorFilter) {
+    container.innerHTML = '<div class="status-empty">Search by case number, patient, or select a doctor above</div>';
+    countEl.textContent = '';
+    return;
+  }
+
+  var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
+  var filtered = allCases.filter(function(c) {
+    if (repDoctors.length > 0 && repDoctors.indexOf(c.doctor.toLowerCase()) === -1) return false;
+    if (statusDoctorFilter && c.doctor !== statusDoctorFilter) return false;
+    if (query) {
+      var base = extractBaseCase(c.caseNumber).toLowerCase();
+      var full = c.caseNumber.toLowerCase();
+      var patient = c.patient.toLowerCase();
+      var doctor = c.doctor.toLowerCase();
+      if (full.indexOf(query) === -1 && base.indexOf(query) === -1 &&
+          patient.indexOf(query) === -1 && doctor.indexOf(query) === -1) return false;
+    }
+    return true;
+  });
+
+  // Most recent first
+  filtered.reverse();
+
+  countEl.textContent = filtered.length + ' case' + (filtered.length !== 1 ? 's' : '');
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="status-empty">No cases found</div>';
+    return;
+  }
+
+  var html = '';
+  var limit = Math.min(filtered.length, 50);
+  for (var i = 0; i < limit; i++) {
+    var c = filtered[i];
+    var uDone = c.upper > 0 && c.upperRem === 0;
+    var lDone = c.lower > 0 && c.lowerRem === 0;
+
+    html += '<div class="case-card">';
+    html += '<div class="case-header">';
+    html += '<div class="case-number">' + c.caseNumber + '</div>';
+    html += '<div class="case-type">' + c.caseType + '</div>';
+    html += '</div>';
+    html += '<div class="case-patient">' + c.doctor + ' — ' + c.patient + '</div>';
+    html += '<div class="case-steps">';
+    html += '<div class="step-box"><div class="step-label">⬆️ Upper</div><div class="step-value">' + c.upper + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">⬇️ Lower</div><div class="step-value">' + c.lower + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">📦 Up Del</div><div class="step-value' + (uDone ? ' done' : '') + '">' + c.upperDel + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">📦 Low Del</div><div class="step-value' + (lDone ? ' done' : '') + '">' + c.lowerDel + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">⏳ Up Rem</div><div class="step-value' + (c.upperRem > 0 ? ' remaining' : ' done') + '">' + c.upperRem + '</div></div>';
+    html += '<div class="step-box"><div class="step-label">⏳ Low Rem</div><div class="step-value' + (c.lowerRem > 0 ? ' remaining' : ' done') + '">' + c.lowerRem + '</div></div>';
+    html += '</div></div>';
+  }
+  if (filtered.length > 50) {
+    html += '<div class="status-empty">Showing first 50 of ' + filtered.length + '. Use search to narrow down.</div>';
+  }
+  container.innerHTML = html;
 }
 
 function sendToTelegram(chatId, message) {
@@ -1269,6 +1516,7 @@ function submitForm() {
         }, 500);
       }
       document.getElementById('formScreen').style.display = 'none';
+      document.getElementById('statusScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo(0, 0);
       document.getElementById('successSub').textContent = caseNumber
