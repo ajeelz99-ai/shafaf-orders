@@ -168,14 +168,14 @@ textarea { resize: none; height: 80px; }
 }
 .unpaid-total-label { font-size: 12px; color: #e53935; font-weight: 600; text-transform: uppercase; }
 .unpaid-total-value { font-size: 24px; font-weight: 700; color: #e53935; margin-top: 4px; }
-.unpaid-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.unpaid-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; position: relative; }
 .unpaid-table {
-  width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px;
+  width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px;
 }
 .unpaid-table th {
   background: #f8f9fa; padding: 8px 6px; text-align: left;
   font-weight: 700; color: #444; border-bottom: 2px solid #e0e0e0;
-  position: sticky; top: 0; white-space: nowrap;
+  white-space: nowrap;
 }
 .unpaid-table td {
   padding: 8px 6px; border-bottom: 1px solid #f0f0f0; color: #1a1a1a;
@@ -183,6 +183,12 @@ textarea { resize: none; height: 80px; }
 }
 .unpaid-table tr:last-child td { border-bottom: none; }
 .unpaid-table .amt { color: #e53935; font-weight: 600; text-align: right; }
+.unpaid-table .frozen {
+  position: sticky; background: white; z-index: 2;
+}
+.unpaid-table th.frozen { background: #f8f9fa; z-index: 3; }
+.unpaid-table .frozen-case { left: 0; min-width: 90px; }
+.unpaid-table .frozen-doctor { left: 90px; min-width: 100px; box-shadow: 2px 0 4px rgba(0,0,0,0.06); }
 .status-search {
   width: 100%; padding: 11px 13px; border: 1.5px solid #e0e0e0;
   border-radius: 8px; background: #fafafa; font-size: 15px; outline: none;
@@ -637,6 +643,7 @@ textarea { resize: none; height: 80px; }
 <div class="form-container">
   <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none">
     <select id="unpaidZoneSelect" onchange="renderUnpaid()">
+      <option value="">All Zones</option>
       <option value="Karkh">Karkh</option>
       <option value="Rusafa">Rusafa</option>
     </select>
@@ -953,16 +960,22 @@ function setupRepField() {
         document.getElementById('tabOrder').style.display = 'none';
         document.getElementById('tabStatus').style.display = 'none';
         document.getElementById('unpaidZoneGroup').style.display = 'block';
+        // Sales rep: remove "All Zones" option, default to Karkh
+        var zoneSelect = document.getElementById('unpaidZoneSelect');
+        if (zoneSelect.options[0] && zoneSelect.options[0].value === '') {
+          zoneSelect.remove(0);
+        }
         switchTab('unpaid');
         return;
       }
 
-      // Admins see all doctors
+      // Admins see all doctors and get zone dropdown on Pending tab
       if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
         doctors = doctorRows
           .filter(function(row) { return row[0] && row[0].trim() !== ''; })
           .map(function(row) { return row[0].trim(); });
         document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+        document.getElementById('unpaidZoneGroup').style.display = 'block';
         return;
       }
 
@@ -1297,15 +1310,12 @@ function loadCaseStatus() {
 
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
-        if (isSalesRep) {
-          // Sales rep sees all cases in Karkh and Rusafa zones (case-insensitive)
-          var zoneLower = caseZone.toLowerCase();
-          if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') continue;
-        } else {
+        if (!isSalesRep) {
           // Regular rep: only see their own doctors
           var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
           if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
         }
+        // Sales rep: no filter here — zone filtering done in renderUnpaid
 
         var upperRem = parseInt(r[11]) || 0;
         var lowerRem = parseInt(r[12]) || 0;
@@ -1528,24 +1538,32 @@ function renderUnpaid() {
   var container = document.getElementById('unpaidTableContainer');
   var totalEl = document.getElementById('unpaidTotalValue');
 
-  var zoneFilter = null;
-  if (isSalesRep) {
-    zoneFilter = document.getElementById('unpaidZoneSelect').value;
-  }
+  var zoneFilter = document.getElementById('unpaidZoneSelect').value || '';
 
   var unpaid = allCases.filter(function(c) {
     if (c.displayStatus !== 'UNPAID') return false;
-    if (c.batchPrice === 0) return false; // skip free batches
-    if (isSalesRep && zoneFilter && c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false;
+    if (c.batchPrice === 0 && c.amtRemaining === 0) return false;
+    if (isSalesRep) {
+      // Sales rep must match zone (Karkh or Rusafa only)
+      var zoneLower = c.zone.toLowerCase();
+      if (zoneFilter) {
+        if (zoneLower !== zoneFilter.toLowerCase()) return false;
+      } else {
+        if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') return false;
+      }
+    } else if (zoneFilter) {
+      // Admin optional zone filter
+      if (c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false;
+    }
     return true;
   });
 
   // Most recent first
   unpaid.reverse();
 
-  // Calculate total
+  // Calculate total — use batchPrice if available, otherwise amtRemaining
   var total = 0;
-  unpaid.forEach(function(c) { total += c.batchPrice; });
+  unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; });
   totalEl.textContent = formatNum(total) + ' IQD';
 
   if (unpaid.length === 0) {
@@ -1555,20 +1573,24 @@ function renderUnpaid() {
 
   var html = '<table class="unpaid-table">';
   html += '<thead><tr>';
-  html += '<th>Year</th><th>Month</th><th>Type</th><th>Case #</th>';
-  html += '<th>Doctor</th><th>Clinic</th><th>Patient</th><th style="text-align:right">Amount</th>';
+  html += '<th class="frozen frozen-case">Case #</th>';
+  html += '<th class="frozen frozen-doctor">Doctor</th>';
+  html += '<th>Year</th><th>Month</th><th>Type</th>';
+  html += '<th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th>';
   html += '</tr></thead><tbody>';
 
   unpaid.forEach(function(c) {
+    var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining;
     html += '<tr>';
+    html += '<td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td>';
+    html += '<td class="frozen frozen-doctor">' + c.doctor + '</td>';
     html += '<td>' + c.year + '</td>';
     html += '<td>' + c.month + '</td>';
     html += '<td>' + c.caseType + '</td>';
-    html += '<td style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td>';
-    html += '<td>' + c.doctor + '</td>';
     html += '<td>' + c.clinic + '</td>';
     html += '<td>' + c.patient + '</td>';
-    html += '<td class="amt">' + formatNum(c.batchPrice) + ' IQD</td>';
+    html += '<td>' + c.zone + '</td>';
+    html += '<td class="amt">' + formatNum(amt) + ' IQD</td>';
     html += '</tr>';
   });
 
