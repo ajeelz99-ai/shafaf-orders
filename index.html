@@ -643,9 +643,7 @@ textarea { resize: none; height: 80px; }
 <div class="form-container">
   <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none">
     <select id="unpaidZoneSelect" onchange="renderUnpaid()">
-      <option value="">All Zones</option>
-      <option value="Karkh">Karkh</option>
-      <option value="Rusafa">Rusafa</option>
+      <option value="">Loading zones...</option>
     </select>
   </div>
   <div class="unpaid-total" id="unpaidTotal">
@@ -960,11 +958,6 @@ function setupRepField() {
         document.getElementById('tabOrder').style.display = 'none';
         document.getElementById('tabStatus').style.display = 'none';
         document.getElementById('unpaidZoneGroup').style.display = 'block';
-        // Sales rep: remove "All Zones" option, default to Karkh
-        var zoneSelect = document.getElementById('unpaidZoneSelect');
-        if (zoneSelect.options[0] && zoneSelect.options[0].value === '') {
-          zoneSelect.remove(0);
-        }
         switchTab('unpaid');
         return;
       }
@@ -1267,6 +1260,7 @@ function switchTab(tab) {
 
 // ---- Case status ----
 var allCases = [];
+var allZones = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
 var isSalesRep = false;
@@ -1286,36 +1280,39 @@ function loadCaseStatus() {
   var el = document.getElementById('statusLoading');
   if (el) el.style.display = 'block';
 
+  // Single range A:AO ensures row alignment (AN=col39=Zone, AO=col40=PaymentStatus)
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=CombinedTable!A:T&ranges=CombinedTable!AN:AO&key=' + API_KEY;
+    '/values/CombinedTable!A:AO?key=' + API_KEY;
 
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var mainRows = data.valueRanges[0].values || [];
-      var zoneStatusRows = data.valueRanges[1].values || [];
+      var rows = data.values || [];
       allCases = [];
-      // A:T = [Year(0), Month(1), CaseType(2), CaseNumber(3), Doctor(4), Clinic(5), Patient(6),
-      //        Upper(7), Lower(8), UpperDel(9), LowerDel(10), UpperRem(11), LowerRem(12),
-      //        CasePrice(13), Discount(14), PriceAfterDiscount(15), BatchPrice(16),
-      //        empty(17), empty(18), AmountRemaining(19)]
-      // AO:AO = [PaymentStatus(0)]
-      for (var i = 1; i < mainRows.length; i++) {
-        var r = mainRows[i];
+      allZones = [];
+      // Single range: A(0), B(1), C(2)=CaseType, D(3)=CaseNumber, E(4)=Doctor,
+      // F(5)=Clinic, G(6)=Patient, H(7)=Upper, I(8)=Lower,
+      // J(9)=UpperDel, K(10)=LowerDel, L(11)=UpperRem, M(12)=LowerRem,
+      // N(13)=CasePrice, O(14)=Discount, P(15)=PriceAfterDiscount, Q(16)=BatchPrice,
+      // R(17), S(18), T(19)=AmtRemaining, ... AN(39)=Zone, AO(40)=PaymentStatus
+      for (var i = 1; i < rows.length; i++) {
+        var r = rows[i];
         if (!r[3]) continue;
 
-        var zoneStatusRow = zoneStatusRows[i] || [];
-        var caseZone = (zoneStatusRow[0] || '').trim();
-        var paymentStatus = (zoneStatusRow[1] || '').trim().toLowerCase();
+        var caseZone = (r[39] || '').trim();
+        var paymentStatus = (r[40] || '').trim().toLowerCase();
+
+        // Collect unique zones for admin dropdown
+        if (caseZone && allZones.indexOf(caseZone) === -1) {
+          allZones.push(caseZone);
+        }
 
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
         if (!isSalesRep) {
-          // Regular rep: only see their own doctors
           var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
           if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
         }
-        // Sales rep: no filter here — zone filtering done in renderUnpaid
 
         var upperRem = parseInt(r[11]) || 0;
         var lowerRem = parseInt(r[12]) || 0;
@@ -1373,6 +1370,7 @@ function loadCaseStatus() {
       statusLoaded = true;
       if (el) el.style.display = 'none';
       buildDoctorFilterBar();
+      buildUnpaidZoneDropdown();
       renderCases();
       renderUnpaid();
     })
@@ -1532,6 +1530,25 @@ function renderCases() {
     html += '<div class="status-empty">Showing first 50 of ' + filtered.length + '. Use search to narrow down.</div>';
   }
   container.innerHTML = html;
+}
+
+function buildUnpaidZoneDropdown() {
+  var select = document.getElementById('unpaidZoneSelect');
+  var html = '';
+  if (isSalesRep) {
+    // Sales rep: only Karkh and Rusafa, no All Zones
+    html += '<option value="Karkh">Karkh</option>';
+    html += '<option value="Rusafa">Rusafa</option>';
+  } else {
+    // Admin: All Zones + every zone from the data (except Baghdad Sales Rep)
+    html += '<option value="">All Zones</option>';
+    allZones.sort().forEach(function(z) {
+      if (z.toLowerCase() !== 'baghdad sales rep') {
+        html += '<option value="' + z.replace(/"/g, '&quot;') + '">' + z + '</option>';
+      }
+    });
+  }
+  select.innerHTML = html;
 }
 
 function renderUnpaid() {
