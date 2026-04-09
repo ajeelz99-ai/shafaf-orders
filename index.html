@@ -161,6 +161,28 @@ textarea { resize: none; height: 80px; }
 
 /* Case Status */
 #statusScreen { display: none; }
+#unpaidScreen { display: none; }
+.unpaid-total {
+  background: #fde8e8; border-radius: 12px; padding: 14px;
+  margin-bottom: 12px; text-align: center;
+}
+.unpaid-total-label { font-size: 12px; color: #e53935; font-weight: 600; text-transform: uppercase; }
+.unpaid-total-value { font-size: 24px; font-weight: 700; color: #e53935; margin-top: 4px; }
+.unpaid-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.unpaid-table {
+  width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px;
+}
+.unpaid-table th {
+  background: #f8f9fa; padding: 8px 6px; text-align: left;
+  font-weight: 700; color: #444; border-bottom: 2px solid #e0e0e0;
+  position: sticky; top: 0; white-space: nowrap;
+}
+.unpaid-table td {
+  padding: 8px 6px; border-bottom: 1px solid #f0f0f0; color: #1a1a1a;
+  white-space: nowrap;
+}
+.unpaid-table tr:last-child td { border-bottom: none; }
+.unpaid-table .amt { color: #e53935; font-weight: 600; text-align: right; }
 .status-search {
   width: 100%; padding: 11px 13px; border: 1.5px solid #e0e0e0;
   border-radius: 8px; background: #fafafa; font-size: 15px; outline: none;
@@ -198,9 +220,10 @@ textarea { resize: none; height: 80px; }
 
 <div class="header">📋 Shafaf Orders</div>
 
-<div class="tab-bar">
+<div class="tab-bar" id="tabBar">
   <button class="tab-btn active" id="tabOrder" onclick="switchTab('order')">New Order</button>
   <button class="tab-btn" id="tabStatus" onclick="switchTab('status')">My Cases</button>
+  <button class="tab-btn" id="tabUnpaid" onclick="switchTab('unpaid')">Pending</button>
 </div>
 
 <input type="hidden" id="repDetected" />
@@ -610,6 +633,26 @@ textarea { resize: none; height: 80px; }
 </div>
 </div>
 
+<div id="unpaidScreen">
+<div class="form-container">
+  <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none">
+    <select id="unpaidZoneSelect" onchange="renderUnpaid()">
+      <option value="Karkh">Karkh</option>
+      <option value="Rusafa">Rusafa</option>
+    </select>
+  </div>
+  <div class="unpaid-total" id="unpaidTotal">
+    <div class="unpaid-total-label">Total Pending</div>
+    <div class="unpaid-total-value" id="unpaidTotalValue">0 IQD</div>
+  </div>
+  <div class="unpaid-table-wrap">
+    <div id="unpaidTableContainer">
+      <div class="status-loading" id="unpaidLoading">Loading...</div>
+    </div>
+  </div>
+</div>
+</div>
+
 <div id="successScreen">
   <div class="success-icon">✅</div>
   <div class="success-title">Order Submitted!</div>
@@ -901,6 +944,19 @@ function setupRepField() {
       document.getElementById('repUsername').value = tgUsername;
       detectedUsername = tgUsername;
 
+      // Detect sales rep role
+      repZone = matched.zone || '';
+      isSalesRep = repZone.toLowerCase() === 'baghdad sales rep';
+
+      // Sales rep: only show Pending tab, hide Order and My Cases
+      if (isSalesRep) {
+        document.getElementById('tabOrder').style.display = 'none';
+        document.getElementById('tabStatus').style.display = 'none';
+        document.getElementById('unpaidZoneGroup').style.display = 'block';
+        switchTab('unpaid');
+        return;
+      }
+
       // Admins see all doctors
       if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
         doctors = doctorRows
@@ -1172,17 +1228,27 @@ function buildTelegramMessage(data) {
 function switchTab(tab) {
   document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
   document.getElementById('tabStatus').classList.toggle('active', tab === 'status');
+  document.getElementById('tabUnpaid').classList.toggle('active', tab === 'unpaid');
   document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none';
   document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none';
+  document.getElementById('unpaidScreen').style.display = tab === 'unpaid' ? 'block' : 'none';
   document.getElementById('successScreen').style.display = 'none';
-  if (tab === 'status') {
+  if (tab === 'status' || tab === 'unpaid') {
     var repName = document.getElementById('repDetected').value || '';
     if (!repName) {
-      document.getElementById('caseList').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
-      document.getElementById('statusCount').textContent = '';
+      if (tab === 'status') {
+        document.getElementById('caseList').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
+        document.getElementById('statusCount').textContent = '';
+      } else {
+        document.getElementById('unpaidTableContainer').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
+      }
       return;
     }
-    if (!statusLoaded) loadCaseStatus();
+    if (!statusLoaded) {
+      loadCaseStatus();
+    } else if (tab === 'unpaid') {
+      renderUnpaid();
+    }
   }
 }
 
@@ -1190,6 +1256,8 @@ function switchTab(tab) {
 var allCases = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
+var isSalesRep = false;
+var repZone = '';
 
 function extractBaseCase(caseNum) {
   return caseNum
@@ -1206,13 +1274,13 @@ function loadCaseStatus() {
   if (el) el.style.display = 'block';
 
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=CombinedTable!A:T&ranges=CombinedTable!AO:AO&key=' + API_KEY;
+    '/values:batchGet?ranges=CombinedTable!A:T&ranges=CombinedTable!AN:AO&key=' + API_KEY;
 
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var mainRows = data.valueRanges[0].values || [];
-      var statusRows = data.valueRanges[1].values || [];
+      var zoneStatusRows = data.valueRanges[1].values || [];
       allCases = [];
       // A:T = [Year(0), Month(1), CaseType(2), CaseNumber(3), Doctor(4), Clinic(5), Patient(6),
       //        Upper(7), Lower(8), UpperDel(9), LowerDel(10), UpperRem(11), LowerRem(12),
@@ -1223,13 +1291,20 @@ function loadCaseStatus() {
         var r = mainRows[i];
         if (!r[3]) continue;
 
-        // Security: only keep cases for this rep's doctors
+        // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
-        var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
-        if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
+        if (isSalesRep) {
+          // Sales rep sees all cases in Karkh and Rusafa zones
+          if (caseZone !== 'Karkh' && caseZone !== 'Rusafa') continue;
+        } else {
+          // Regular rep: only see their own doctors
+          var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
+          if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
+        }
 
-        var statusRow = statusRows[i] || [];
-        var paymentStatus = (statusRow[0] || '').trim().toLowerCase();
+        var zoneStatusRow = zoneStatusRows[i] || [];
+        var caseZone = (zoneStatusRow[0] || '').trim();
+        var paymentStatus = (zoneStatusRow[1] || '').trim().toLowerCase();
 
         var upperRem = parseInt(r[11]) || 0;
         var lowerRem = parseInt(r[12]) || 0;
@@ -1280,13 +1355,15 @@ function loadCaseStatus() {
           priceAfterDiscount: parseFloat((r[15] || '0').toString().replace(/,/g, '')) || 0,
           batchPrice: batchPrice,
           amtRemaining: amtRemaining,
-          displayStatus: displayStatus
+          displayStatus: displayStatus,
+          zone: caseZone
         });
       }
       statusLoaded = true;
       if (el) el.style.display = 'none';
       buildDoctorFilterBar();
       renderCases();
+      renderUnpaid();
     })
     .catch(function(e) {
       console.error('Failed to load cases', e);
@@ -1443,6 +1520,57 @@ function renderCases() {
   if (filtered.length > 50) {
     html += '<div class="status-empty">Showing first 50 of ' + filtered.length + '. Use search to narrow down.</div>';
   }
+  container.innerHTML = html;
+}
+
+function renderUnpaid() {
+  var container = document.getElementById('unpaidTableContainer');
+  var totalEl = document.getElementById('unpaidTotalValue');
+
+  var zoneFilter = null;
+  if (isSalesRep) {
+    zoneFilter = document.getElementById('unpaidZoneSelect').value;
+  }
+
+  var unpaid = allCases.filter(function(c) {
+    if (c.displayStatus !== 'UNPAID') return false;
+    if (isSalesRep && zoneFilter && c.zone !== zoneFilter) return false;
+    return true;
+  });
+
+  // Most recent first
+  unpaid.reverse();
+
+  // Calculate total
+  var total = 0;
+  unpaid.forEach(function(c) { total += c.amtRemaining; });
+  totalEl.textContent = formatNum(total) + ' IQD';
+
+  if (unpaid.length === 0) {
+    container.innerHTML = '<div class="status-empty">No unpaid cases</div>';
+    return;
+  }
+
+  var html = '<table class="unpaid-table">';
+  html += '<thead><tr>';
+  html += '<th>Year</th><th>Month</th><th>Type</th><th>Case #</th>';
+  html += '<th>Doctor</th><th>Clinic</th><th>Patient</th><th style="text-align:right">Amount</th>';
+  html += '</tr></thead><tbody>';
+
+  unpaid.forEach(function(c) {
+    html += '<tr>';
+    html += '<td>' + c.year + '</td>';
+    html += '<td>' + c.month + '</td>';
+    html += '<td>' + c.caseType + '</td>';
+    html += '<td style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td>';
+    html += '<td>' + c.doctor + '</td>';
+    html += '<td>' + c.clinic + '</td>';
+    html += '<td>' + c.patient + '</td>';
+    html += '<td class="amt">' + formatNum(c.amtRemaining) + ' IQD</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
   container.innerHTML = html;
 }
 
@@ -1650,6 +1778,7 @@ function submitForm() {
       }
       document.getElementById('formScreen').style.display = 'none';
       document.getElementById('statusScreen').style.display = 'none';
+      document.getElementById('unpaidScreen').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       window.scrollTo(0, 0);
       document.getElementById('successSub').textContent = caseNumber
