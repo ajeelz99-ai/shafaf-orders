@@ -812,17 +812,39 @@ function applyCache(parsed) {
 }
 
 function fetchFreshData() {
-  // Fetch Customers A:D (name, raw, zone, reps) and Reps A:C
+  // Fetch Customers B:D (raw name, zone, reps) — skip column A (UNIQUE formula has fewer rows)
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=Customers!A:D&ranges=Reps!A:C&key=' + API_KEY;
+    '/values:batchGet?ranges=Customers!B:D&ranges=Reps!A:C&key=' + API_KEY;
 
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var rawRows = data.valueRanges[0].values || [];
-      // Use column A (index 0) as doctor name, column D (index 3) as rep
-      doctorRows = rawRows.filter(function(row) {
-        return row[0] && row[0].trim() !== '';
+
+      // B:D returns [name, zone, rep] — deduplicate by doctor name, merge reps
+      var seen = {};
+      rawRows.forEach(function(row) {
+        var name = (row[0] || '').trim();
+        if (!name) return;
+        var key = name.toLowerCase();
+        if (!seen[key]) {
+          seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' };
+        } else {
+          // Merge any additional rep names
+          var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
+          var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
+          incoming.forEach(function(r) {
+            if (existing.indexOf(r) === -1) {
+              seen[key].rep = seen[key].rep ? seen[key].rep + ', ' + r : r;
+              existing.push(r);
+            }
+          });
+        }
+      });
+
+      // Rebuild doctorRows as [name, '', zone, rep] so setupRepField still reads row[0] and row[3]
+      doctorRows = Object.values(seen).map(function(entry) {
+        return [entry.name, '', entry.zone, entry.rep];
       });
 
       var repValues = data.valueRanges[1].values || [];
@@ -850,6 +872,7 @@ function fetchFreshData() {
     });
 }
 
+function loadData() {
 function loadData() {
   try {
     var cached = localStorage.getItem('shafaf_data');
