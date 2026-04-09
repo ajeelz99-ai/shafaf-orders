@@ -167,16 +167,6 @@ textarea { resize: none; height: 80px; }
   margin-bottom: 12px;
 }
 .status-search:focus { border-color: #1a73e8; background: white; }
-.doctor-filter-bar {
-  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
-  margin-bottom: 8px; -webkit-overflow-scrolling: touch;
-}
-.doctor-chip {
-  flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
-  font-size: 12px; font-weight: 600; border: 1.5px solid #e0e0e0;
-  background: white; color: #444; cursor: pointer; white-space: nowrap;
-}
-.doctor-chip.active { background: #1a73e8; color: white; border-color: #1a73e8; }
 .case-card {
   background: white; border-radius: 12px; padding: 14px;
   margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
@@ -603,7 +593,11 @@ textarea { resize: none; height: 80px; }
 <div class="form-container">
   <input type="search" class="status-search" id="statusSearch"
     placeholder="Search case number or patient..." oninput="renderCases()" />
-  <div class="doctor-filter-bar" id="doctorFilterBar"></div>
+  <div class="form-group" style="margin-bottom:12px">
+    <select id="statusDoctorSelect" onchange="handleStatusDoctorFilter()">
+      <option value="">All Doctors</option>
+    </select>
+  </div>
   <div class="status-count" id="statusCount"></div>
   <div id="caseList">
     <div class="status-loading" id="statusLoading">Loading cases...</div>
@@ -1171,7 +1165,15 @@ function switchTab(tab) {
   document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none';
   document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none';
   document.getElementById('successScreen').style.display = 'none';
-  if (tab === 'status' && !statusLoaded) loadCaseStatus();
+  if (tab === 'status') {
+    var repName = document.getElementById('repDetected').value || '';
+    if (!repName) {
+      document.getElementById('caseList').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
+      document.getElementById('statusCount').textContent = '';
+      return;
+    }
+    if (!statusLoaded) loadCaseStatus();
+  }
 }
 
 // ---- Case status ----
@@ -1194,29 +1196,31 @@ function loadCaseStatus() {
   if (el) el.style.display = 'block';
 
   var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values/CombinedTable!C:M?key=' + API_KEY;
+    '/values/CombinedTable!A:M?key=' + API_KEY;
 
   fetch(url)
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var rows = data.values || [];
       allCases = [];
-      // C:M = [CaseType, CaseNumber, Doctor, Clinic, Patient, Upper, Lower, UpperDel, LowerDel, UpperRem, LowerRem]
+      // A:M = [Year, Month, CaseType, CaseNumber, Doctor, Clinic, Patient, Upper, Lower, UpperDel, LowerDel, UpperRem, LowerRem]
       for (var i = 1; i < rows.length; i++) {
         var r = rows[i];
-        if (!r[1]) continue;
+        if (!r[3]) continue;
         allCases.push({
-          caseType: (r[0] || '').trim(),
-          caseNumber: (r[1] || '').trim(),
-          doctor: (r[2] || '').trim(),
-          clinic: (r[3] || '').trim(),
-          patient: (r[4] || '').trim(),
-          upper: parseInt(r[5]) || 0,
-          lower: parseInt(r[6]) || 0,
-          upperDel: parseInt(r[7]) || 0,
-          lowerDel: parseInt(r[8]) || 0,
-          upperRem: parseInt(r[9]) || 0,
-          lowerRem: parseInt(r[10]) || 0
+          year: (r[0] || '').trim(),
+          month: (r[1] || '').trim(),
+          caseType: (r[2] || '').trim(),
+          caseNumber: (r[3] || '').trim(),
+          doctor: (r[4] || '').trim(),
+          clinic: (r[5] || '').trim(),
+          patient: (r[6] || '').trim(),
+          upper: parseInt(r[7]) || 0,
+          lower: parseInt(r[8]) || 0,
+          upperDel: parseInt(r[9]) || 0,
+          lowerDel: parseInt(r[10]) || 0,
+          upperRem: parseInt(r[11]) || 0,
+          lowerRem: parseInt(r[12]) || 0
         });
       }
       statusLoaded = true;
@@ -1231,21 +1235,17 @@ function loadCaseStatus() {
 }
 
 function buildDoctorFilterBar() {
-  var bar = document.getElementById('doctorFilterBar');
-  var html = '<span class="doctor-chip active" data-doctor="">All</span>';
+  var select = document.getElementById('statusDoctorSelect');
+  var html = '<option value="">All Doctors</option>';
   doctors.forEach(function(doc) {
-    html += '<span class="doctor-chip" data-doctor="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</span>';
+    html += '<option value="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</option>';
   });
-  bar.innerHTML = html;
+  select.innerHTML = html;
+}
 
-  bar.addEventListener('click', function(e) {
-    var chip = e.target.closest('.doctor-chip');
-    if (!chip) return;
-    bar.querySelectorAll('.doctor-chip').forEach(function(c) { c.classList.remove('active'); });
-    chip.classList.add('active');
-    statusDoctorFilter = chip.getAttribute('data-doctor') || null;
-    renderCases();
-  });
+function handleStatusDoctorFilter() {
+  statusDoctorFilter = document.getElementById('statusDoctorSelect').value || null;
+  renderCases();
 }
 
 function renderCases() {
@@ -1298,6 +1298,7 @@ function renderCases() {
     html += '<div class="case-type">' + c.caseType + '</div>';
     html += '</div>';
     html += '<div class="case-patient">' + c.doctor + ' — ' + c.patient + '</div>';
+    html += '<div class="case-patient" style="color:#999;font-size:12px;margin-bottom:8px">' + c.month + ' ' + c.year + '</div>';
     html += '<div class="case-steps">';
     html += '<div class="step-box"><div class="step-label">⬆️ Upper</div><div class="step-value">' + c.upper + '</div></div>';
     html += '<div class="step-box"><div class="step-label">⬇️ Lower</div><div class="step-value">' + c.lower + '</div></div>';
