@@ -415,19 +415,26 @@ textarea { resize: none; height: 80px; }
         <input type="text" id="discountValue" placeholder="0" inputmode="numeric" />
       </div>
 
-      <div class="form-group" id="batch1AmountGroup">
-        <label>First Payment Amount (IQD)</label>
+    <div class="form-group" id="batch1AmountGroup">
+        <label id="batch1AmountLabel">First Payment Amount (IQD)</label>
         <input type="text" id="batch1Amount" placeholder="e.g. 500,000" inputmode="numeric" />
       </div>
 
-      <div class="form-group" id="fullPaymentGroup">
+  <div class="form-group" id="fullPaymentGroup">
         <div class="checkbox-row">
           <label class="checkbox-item">
             <input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment
           </label>
         </div>
       </div>
-    </div>
+
+      <div class="form-group hidden" id="printAllRemainingGroup">
+        <div class="checkbox-row">
+          <label class="checkbox-item">
+            <input type="checkbox" id="printAllRemaining" onchange="handlePrintAllRemaining()" /> Print All Remaining Steps
+          </label>
+        </div>
+      </div>
 
     <div class="card hidden" id="attachmentCard">
       <div class="section-title">Attachment Template</div>
@@ -745,6 +752,20 @@ function handleCaseTypeChange() {
   document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement);
   document.getElementById('paymentCard').classList.toggle('hidden', isRefinement || isReprint || isRetainer);
 
+  // Batch-specific payment card adjustments
+  document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('discountGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('discountValueGroup').classList.add('hidden'); // always reset
+  document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch);
+  document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)';
+
+  // Reset print all remaining when switching away from batch
+  if (!isBatch) {
+    document.getElementById('printAllRemaining').checked = false;
+    handlePrintAllRemaining();
+  }
+
   var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer;
   document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox);
   if (!showRetainerCheckbox) document.getElementById('retainer').checked = false;
@@ -851,7 +872,18 @@ function handleFullPayment() {
     field.placeholder = 'e.g. 500,000';
   }
 }
-
+function handlePrintAllRemaining() {
+  var checked = document.getElementById('printAllRemaining').checked;
+  var field = document.getElementById('batch1Amount');
+  if (checked) {
+    field.value = '';
+    field.placeholder = 'N/A - Printing all remaining';
+    field.disabled = true;
+  } else {
+    field.placeholder = 'e.g. 500,000';
+    field.disabled = false;
+  }
+}
 function handleDiscountChange() {
   var type = document.getElementById('discountType').value;
   document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none');
@@ -1204,20 +1236,30 @@ function buildTelegramMessage(data) {
   msg += 'Lower: ' + data.lower + '\n';
   msg += data.package + '\n';
   if (data.singleArch) msg += 'Single Arch\n';
-  if (data.discountType !== 'none' && data.discountValue) {
+ if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) {
     if (data.discountType === 'percentage') {
       msg += data.discountValue + '% DISCOUNT\n';
     } else {
       msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
     }
   }
-  var installments = document.getElementById('installments').value;
-  if (installments === 'full') msg += 'Approved (Full)\n';
-  else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
-  else msg += 'Approved\n';
-  var batch1Val = getFormattedValue('batch1Amount');
-  if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n';
-  if (data.fullPayment) msg += 'Full Payment\n';
+ if (type === 'batch') {
+    msg += 'Approved\n';
+    if (document.getElementById('printAllRemaining').checked) {
+      msg += 'Print order for Full Batch\n';
+    } else {
+      var batchPayVal = getFormattedValue('batch1Amount');
+      if (batchPayVal && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batchPayVal + ' IQD\n';
+    }
+  } else {
+    var installments = document.getElementById('installments').value;
+    if (installments === 'full') msg += 'Approved (Full)\n';
+    else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
+    else msg += 'Approved\n';
+    var batch1Val = getFormattedValue('batch1Amount');
+    if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n';
+    if (data.fullPayment) msg += 'Full Payment\n';
+  }
   msg += buildPrintOrderLine(data) + '\n';
   if (data.asap) msg += 'ASAP\n';
   if (data.retainer) msg += 'Add Retainer(s)\n';
@@ -1808,7 +1850,9 @@ function submitForm() {
       ? parseFloat(document.getElementById('discountValue').value) || 0
       : getRawNumber('discountValue'),
     batch1Amount: getRawNumber('batch1Amount'),
-    fullBatch: document.getElementById('installments').value === 'full',
+    fullBatch: document.getElementById('caseType').value === 'batch'
+      ? document.getElementById('printAllRemaining').checked
+      : document.getElementById('installments').value === 'full',
     fullPayment: document.getElementById('fullPayment').checked,
     asap: document.getElementById('asap').checked,
     retainer: document.getElementById('retainer').checked,
