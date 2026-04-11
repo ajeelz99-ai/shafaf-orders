@@ -254,8 +254,9 @@ textarea { resize: none; height: 80px; }
 
     <div class="form-group">
       <label>Case Number <span class="required" id="caseNumberRequired">*</span></label>
-      <input type="text" id="caseNumber" placeholder="e.g. XXXX" autocomplete="off" />
+      <input type="text" id="caseNumber" placeholder="e.g. XXXX" autocomplete="off" oninput="handleCaseNumberInput()" />
       <div class="error-msg" id="caseNumberError">Case number is required</div>
+      <div id="caseAutoFillHint" style="display:none;font-size:12px;color:#1a73e8;margin-top:4px;padding:4px 6px;background:#e8f0fe;border-radius:6px;"></div>
     </div>
 
     <div class="form-group hidden" id="batchNumberGroup">
@@ -872,6 +873,54 @@ function handleFullPayment() {
     field.placeholder = 'e.g. 500,000';
   }
 }
+  var caseAutoFillTimer = null;
+function handleCaseNumberInput() {
+  clearTimeout(caseAutoFillTimer);
+  caseAutoFillTimer = setTimeout(function() {
+    var type = document.getElementById('caseType').value;
+    if (type === 'retainer' || type === 'reprint') return;
+
+    var typed = document.getElementById('caseNumber').value.trim().toLowerCase();
+    if (!typed || typed.length < 3) {
+      document.getElementById('caseAutoFillHint').style.display = 'none';
+      return;
+    }
+
+    // Search unfiltered cases — first/original row wins
+    var match = null;
+    for (var i = 0; i < allCasesUnfiltered.length; i++) {
+      var c = allCasesUnfiltered[i];
+      var base = extractBaseCase(c.caseNumber).toLowerCase();
+      if (base === typed || c.caseNumber.toLowerCase() === typed) {
+        match = c;
+        break;
+      }
+    }
+
+    if (!match) {
+      document.getElementById('caseAutoFillHint').style.display = 'none';
+      return;
+    }
+
+    // Auto-fill doctor if field is empty
+    if (match.doctor && !document.getElementById('doctorValue').value) {
+      document.getElementById('doctorSearch').value = match.doctor;
+      document.getElementById('doctorValue').value = match.doctor;
+      filterDoctors();
+    }
+
+    // Auto-fill patient
+    if (match.patient) document.getElementById('patient').value = match.patient;
+
+    // Auto-fill clinic
+    if (match.clinic) document.getElementById('clinic').value = match.clinic;
+
+    // Show hint
+    var hint = document.getElementById('caseAutoFillHint');
+    hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : '');
+    hint.style.display = 'block';
+  }, 400);
+}
 function handlePrintAllRemaining() {
   var checked = document.getElementById('printAllRemaining').checked;
   var field = document.getElementById('batch1Amount');
@@ -1302,7 +1351,7 @@ function switchTab(tab) {
 }
 
 // ---- Case status ----
-var allCases = [];
+var allCases = []; var allCasesUnfiltered = [];
 var allZones = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
@@ -1363,6 +1412,15 @@ function loadCaseStatus() {
 
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
+     // Unfiltered — used for case number autofill regardless of rep
+        allCasesUnfiltered.push({
+          caseType: (r[2] || '').trim(),
+          caseNumber: (r[3] || '').trim(),
+          doctor: caseDoctor,
+          clinic: (r[5] || '').trim(),
+          patient: (r[6] || '').trim()
+        });
+
         if (!isAdmin && !isSalesRep) {
           // Regular rep: only see their own doctors
           var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
