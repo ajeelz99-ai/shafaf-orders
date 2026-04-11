@@ -291,7 +291,7 @@ textarea { resize: none; height: 80px; }
 
     <div class="form-group hidden" id="refinementNumberGroup">
       <label>Refinement Number</label>
-      <select id="refinementNumber">
+      <select id="refinementNumber" onchange="handleCaseTypeChange()">
         <option value="1">R1</option>
         <option value="2">R2</option>
         <option value="3">R3</option>
@@ -366,15 +366,15 @@ textarea { resize: none; height: 80px; }
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" id="stepsGroup">
         <div class="form-group">
           <label>Upper <span class="required" id="upperRequired">*</span></label>
-          <input type="number" id="upper" placeholder="0" min="0" />
+          <input type="number" id="upper" placeholder="0" min="0" oninput="autoDetectPackage()" />
           <div class="error-msg" id="upperError">Required</div>
         </div>
         <div class="form-group">
           <label>Lower <span class="required" id="lowerRequired">*</span></label>
-          <input type="number" id="lower" placeholder="0" min="0" />
+          <input type="number" id="lower" placeholder="0" min="0" oninput="autoDetectPackage()" />
           <div class="error-msg" id="lowerError">Required</div>
         </div>
       </div>
@@ -751,11 +751,22 @@ function handleCaseTypeChange() {
   document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement);
 
   document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer);
-  document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement);
-  document.getElementById('paymentCard').classList.toggle('hidden', isRefinement || isReprint || isRetainer);
 
-  // Batch-specific payment card adjustments
-  var isBatch = type === 'batch';
+  // Hide steps and package for non-first batches
+  var isNonFirstBatch = type === 'batch' ||
+    (isMCA && mcaBatch !== '1') ||
+    (isRefinement && rBatch !== '1');
+  document.getElementById('stepsGroup').classList.toggle('hidden', isNonFirstBatch);
+  document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement || isNonFirstBatch);
+
+  // Payment card: hide for reprint, retainer, and refinement 1st batch only
+  var rNum = isRefinement ? document.getElementById('refinementNumber').value : '1';
+  var hidePaymentCard = isReprint || isRetainer ||
+    (isRefinement && (rNum === '1' || rBatch !== '1'));
+  document.getElementById('paymentCard').classList.toggle('hidden', hidePaymentCard);
+
+  // Batch-specific payment card adjustments (no installments/discount for non-first batches)
+  var isBatch = isNonFirstBatch;
   document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch);
   document.getElementById('discountGroup').classList.toggle('hidden', isBatch);
   document.getElementById('discountValueGroup').classList.add('hidden');
@@ -887,6 +898,15 @@ function handlePrintAllRemaining() {
   }
 }
 
+function autoDetectPackage() {
+  var upper = parseInt(document.getElementById('upper').value) || 0;
+  var lower = parseInt(document.getElementById('lower').value) || 0;
+  var max = Math.max(upper, lower);
+  if (max === 0) return;
+  var pkg = max <= 12 ? 'BRONZE' : max <= 25 ? 'SILVER' : 'GOLD';
+  document.getElementById('package').value = pkg;
+}
+
 var caseAutoFillTimer = null;
 function handleCaseNumberInput() {
   clearTimeout(caseAutoFillTimer);
@@ -900,7 +920,6 @@ function handleCaseNumberInput() {
       return;
     }
 
-    // Search unfiltered cases — first/original row wins
     var match = null;
     for (var i = 0; i < allCasesUnfiltered.length; i++) {
       var c = allCasesUnfiltered[i];
@@ -916,7 +935,6 @@ function handleCaseNumberInput() {
       return;
     }
 
-// Auto-fill doctor if in this rep's assigned doctors list
     if (match.doctor) {
       var doctorInList = doctors.some(function(d) {
         return d.toLowerCase() === match.doctor.toLowerCase();
@@ -932,11 +950,9 @@ function handleCaseNumberInput() {
       }
     }
 
-    // Auto-fill patient and clinic (always overwrite)
     if (match.patient) document.getElementById('patient').value = match.patient;
     if (match.clinic) document.getElementById('clinic').value = match.clinic;
 
-    // Show hint
     var hint = document.getElementById('caseAutoFillHint');
     hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : '');
     hint.style.display = 'block';
@@ -1303,7 +1319,7 @@ function buildTelegramMessage(data) {
       msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
     }
   }
-  if (type === 'batch') {
+  if (type === 'batch' || (document.getElementById('printAllRemainingGroup') && !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))) {
     msg += 'Approved\n';
     if (document.getElementById('printAllRemaining').checked) {
       msg += 'Print order for Full Batch\n';
@@ -1426,7 +1442,7 @@ function loadCaseStatus() {
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
 
-        // Unfiltered — used for case number autofill regardless of rep
+        // Unfiltered — for autofill regardless of rep
         allCasesUnfiltered.push({
           caseType: (r[2] || '').trim(),
           caseNumber: (r[3] || '').trim(),
@@ -1843,7 +1859,13 @@ function validateForm() {
     }
   }
 
-  if (caseType !== 'reprint' && caseType !== 'retainer') {
+  var mcaBatchVal = document.getElementById('mcaBatchNumber').value;
+  var rBatchVal = document.getElementById('refinementBatch').value;
+  var isNonFirstBatch = caseType === 'batch' ||
+    (caseType === 'mca' && mcaBatchVal !== '1') ||
+    (caseType === 'refinement' && rBatchVal !== '1');
+
+  if (caseType !== 'reprint' && caseType !== 'retainer' && !isNonFirstBatch) {
     var upper = document.getElementById('upper');
     var lower = document.getElementById('lower');
     var singleArch = document.getElementById('singleArch').checked;
@@ -1922,7 +1944,7 @@ function submitForm() {
       ? parseFloat(document.getElementById('discountValue').value) || 0
       : getRawNumber('discountValue'),
     batch1Amount: getRawNumber('batch1Amount'),
-    fullBatch: document.getElementById('caseType').value === 'batch'
+    fullBatch: (document.getElementById('caseType').value === 'batch' || !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))
       ? document.getElementById('printAllRemaining').checked
       : document.getElementById('installments').value === 'full',
     fullPayment: document.getElementById('fullPayment').checked,
