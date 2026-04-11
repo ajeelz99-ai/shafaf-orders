@@ -1976,6 +1976,8 @@ formatWithCommas(document.getElementById('reprintPayment'));
 handleCaseTypeChange();
 initTelegram();
 loadData();
+// Pre-load case data in background so autofill works immediately
+setTimeout(function() { loadCaseStatus(); }, 1500);
 </script>
 </body>
 </html>
