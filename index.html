@@ -416,12 +416,12 @@ textarea { resize: none; height: 80px; }
         <input type="text" id="discountValue" placeholder="0" inputmode="numeric" />
       </div>
 
-    <div class="form-group" id="batch1AmountGroup">
+      <div class="form-group" id="batch1AmountGroup">
         <label id="batch1AmountLabel">First Payment Amount (IQD)</label>
         <input type="text" id="batch1Amount" placeholder="e.g. 500,000" inputmode="numeric" />
       </div>
 
-  <div class="form-group" id="fullPaymentGroup">
+      <div class="form-group" id="fullPaymentGroup">
         <div class="checkbox-row">
           <label class="checkbox-item">
             <input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment
@@ -436,6 +436,7 @@ textarea { resize: none; height: 80px; }
           </label>
         </div>
       </div>
+    </div>
 
     <div class="card hidden" id="attachmentCard">
       <div class="section-title">Attachment Template</div>
@@ -754,14 +755,13 @@ function handleCaseTypeChange() {
   document.getElementById('paymentCard').classList.toggle('hidden', isRefinement || isReprint || isRetainer);
 
   // Batch-specific payment card adjustments
+  var isBatch = type === 'batch';
   document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch);
   document.getElementById('discountGroup').classList.toggle('hidden', isBatch);
-  document.getElementById('discountValueGroup').classList.add('hidden'); // always reset
+  document.getElementById('discountValueGroup').classList.add('hidden');
   document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch);
   document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch);
   document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)';
-
-  // Reset print all remaining when switching away from batch
   if (!isBatch) {
     document.getElementById('printAllRemaining').checked = false;
     handlePrintAllRemaining();
@@ -873,7 +873,21 @@ function handleFullPayment() {
     field.placeholder = 'e.g. 500,000';
   }
 }
-  var caseAutoFillTimer = null;
+
+function handlePrintAllRemaining() {
+  var checked = document.getElementById('printAllRemaining').checked;
+  var field = document.getElementById('batch1Amount');
+  if (checked) {
+    field.value = '';
+    field.placeholder = 'N/A - Printing all remaining';
+    field.disabled = true;
+  } else {
+    field.placeholder = 'e.g. 500,000';
+    field.disabled = false;
+  }
+}
+
+var caseAutoFillTimer = null;
 function handleCaseNumberInput() {
   clearTimeout(caseAutoFillTimer);
   caseAutoFillTimer = setTimeout(function() {
@@ -902,11 +916,16 @@ function handleCaseNumberInput() {
       return;
     }
 
-    // Auto-fill doctor if field is empty
+    // Auto-fill doctor only if in this rep's assigned doctors list
     if (match.doctor && !document.getElementById('doctorValue').value) {
-      document.getElementById('doctorSearch').value = match.doctor;
-      document.getElementById('doctorValue').value = match.doctor;
-      filterDoctors();
+      var doctorInList = doctors.some(function(d) {
+        return d.toLowerCase() === match.doctor.toLowerCase();
+      });
+      if (doctorInList) {
+        document.getElementById('doctorSearch').value = match.doctor;
+        document.getElementById('doctorValue').value = match.doctor;
+        filterDoctors();
+      }
     }
 
     // Auto-fill patient
@@ -921,18 +940,7 @@ function handleCaseNumberInput() {
     hint.style.display = 'block';
   }, 400);
 }
-function handlePrintAllRemaining() {
-  var checked = document.getElementById('printAllRemaining').checked;
-  var field = document.getElementById('batch1Amount');
-  if (checked) {
-    field.value = '';
-    field.placeholder = 'N/A - Printing all remaining';
-    field.disabled = true;
-  } else {
-    field.placeholder = 'e.g. 500,000';
-    field.disabled = false;
-  }
-}
+
 function handleDiscountChange() {
   var type = document.getElementById('discountType').value;
   document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none');
@@ -1281,18 +1289,19 @@ function buildTelegramMessage(data) {
     return msg;
   }
 
+  var type = data.caseType;
   msg += 'Upper: ' + data.upper + '\n';
   msg += 'Lower: ' + data.lower + '\n';
   msg += data.package + '\n';
   if (data.singleArch) msg += 'Single Arch\n';
- if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) {
+  if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) {
     if (data.discountType === 'percentage') {
       msg += data.discountValue + '% DISCOUNT\n';
     } else {
       msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
     }
   }
- if (type === 'batch') {
+  if (type === 'batch') {
     msg += 'Approved\n';
     if (document.getElementById('printAllRemaining').checked) {
       msg += 'Print order for Full Batch\n';
@@ -1351,7 +1360,8 @@ function switchTab(tab) {
 }
 
 // ---- Case status ----
-var allCases = []; var allCasesUnfiltered = [];
+var allCases = [];
+var allCasesUnfiltered = [];
 var allZones = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
@@ -1382,6 +1392,7 @@ function loadCaseStatus() {
     .then(function(data) {
       var rows = data.values || [];
       allCases = [];
+      allCasesUnfiltered = [];
       allZones = [];
       // Single range: A(0), B(1), C(2)=CaseType, D(3)=CaseNumber, E(4)=Doctor,
       // F(5)=Clinic, G(6)=Patient, H(7)=Upper, I(8)=Lower,
@@ -1412,7 +1423,8 @@ function loadCaseStatus() {
 
         // Security: filter cases based on role
         var caseDoctor = (r[4] || '').trim();
-     // Unfiltered — used for case number autofill regardless of rep
+
+        // Unfiltered — used for case number autofill regardless of rep
         allCasesUnfiltered.push({
           caseType: (r[2] || '').trim(),
           caseNumber: (r[3] || '').trim(),
