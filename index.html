@@ -916,7 +916,7 @@ function handleCaseNumberInput() {
       return;
     }
 
- // Auto-fill doctor if in this rep's assigned doctors list
+// Auto-fill doctor if in this rep's assigned doctors list
     if (match.doctor) {
       var doctorInList = doctors.some(function(d) {
         return d.toLowerCase() === match.doctor.toLowerCase();
@@ -928,7 +928,7 @@ function handleCaseNumberInput() {
         document.getElementById('newDoctorGroup').classList.add('hidden');
         document.getElementById('doctorError').classList.remove('show');
         document.getElementById('doctorSearch').classList.remove('error-field');
-        filterDoctors();
+        document.getElementById('doctorResults').style.display = 'none';
       }
     }
 
