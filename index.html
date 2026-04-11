@@ -916,22 +916,24 @@ function handleCaseNumberInput() {
       return;
     }
 
-    // Auto-fill doctor only if in this rep's assigned doctors list
-    if (match.doctor && !document.getElementById('doctorValue').value) {
+ // Auto-fill doctor if in this rep's assigned doctors list
+    if (match.doctor) {
       var doctorInList = doctors.some(function(d) {
         return d.toLowerCase() === match.doctor.toLowerCase();
       });
       if (doctorInList) {
         document.getElementById('doctorSearch').value = match.doctor;
         document.getElementById('doctorValue').value = match.doctor;
+        document.getElementById('clearDoctor').style.display = 'block';
+        document.getElementById('newDoctorGroup').classList.add('hidden');
+        document.getElementById('doctorError').classList.remove('show');
+        document.getElementById('doctorSearch').classList.remove('error-field');
         filterDoctors();
       }
     }
 
-    // Auto-fill patient
+    // Auto-fill patient and clinic (always overwrite)
     if (match.patient) document.getElementById('patient').value = match.patient;
-
-    // Auto-fill clinic
     if (match.clinic) document.getElementById('clinic').value = match.clinic;
 
     // Show hint
