@@ -1476,11 +1476,13 @@ function loadCaseStatus() {
 
         // Determine display status
         var displayStatus = '';
-        if (paymentStatus === 'unpaid') {
-          displayStatus = 'UNPAID';
-        } else if (paymentStatus === 'under production') {
-          displayStatus = 'UNDER PRODUCTION';
-        } else if (allDelivered && amtRemaining === 0) {
+       if (paymentStatus === 'unpaid') {
+  displayStatus = 'UNPAID';
+} else if (paymentStatus === 'waiting pickup') {
+  displayStatus = 'WAITING PICKUP';
+} else if (paymentStatus === 'under production') {
+  displayStatus = 'UNDER PRODUCTION';
+} else if (allDelivered && amtRemaining === 0) {
           displayStatus = 'CASE FULLY PAID';
         } else if (batchPrice > 0) {
           displayStatus = 'BATCH PAID';
@@ -1633,27 +1635,28 @@ function renderCases() {
     html += '<div class="case-patient">' + c.doctor + ' — ' + c.patient + '</div>';
     html += '<div class="case-patient" style="color:#999;font-size:12px;margin-bottom:8px">' + c.month + ' ' + c.year + '</div>';
 
-    // Payment status badge
-    if (c.displayStatus === 'UNPAID') {
-      html += '<div style="margin-bottom:8px"><span style="background:#fde8e8;color:#e53935;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNPAID</span></div>';
-    } else if (c.displayStatus === 'UNDER PRODUCTION') {
-      html += '<div style="margin-bottom:8px"><span style="background:#e8f0fe;color:#1a73e8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNDER PRODUCTION</span></div>';
-    } else if (c.displayStatus === 'CASE FULLY PAID') {
-      html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">CASE FULLY PAID</span></div>';
-    } else if (c.displayStatus === 'BATCH PAID') {
-      html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">BATCH PAID</span></div>';
-    } else if (c.displayStatus === 'FREE BATCH') {
-      html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
-    }
-
-    html += '<div class="case-steps">';
-    html += '<div class="step-box"><div class="step-label">⬆️ Upper</div><div class="step-value">' + c.upper + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">⬇️ Lower</div><div class="step-value">' + c.lower + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">📦 Up Del</div><div class="step-value' + (uDone ? ' done' : '') + '">' + c.upperDel + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">📦 Low Del</div><div class="step-value' + (lDone ? ' done' : '') + '">' + c.lowerDel + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">⏳ Up Rem</div><div class="step-value' + (c.upperRem > 0 ? ' remaining' : ' done') + '">' + c.upperRem + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">⏳ Low Rem</div><div class="step-value' + (c.lowerRem > 0 ? ' remaining' : ' done') + '">' + c.lowerRem + '</div></div>';
-    html += '</div>';
+   // Payment status badge
+if (c.displayStatus === 'UNPAID') {
+  html += '<div style="margin-bottom:8px"><span style="background:#fde8e8;color:#e53935;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNPAID</span></div>';
+} else if (c.displayStatus === 'WAITING PICKUP') {
+  html += '<div style="margin-bottom:8px"><span style="background:#fce8e1;color:#b35c3e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">WAITING PICKUP</span></div>';
+} else if (c.displayStatus === 'UNDER PRODUCTION') {
+  html += '<div style="margin-bottom:8px"><span style="background:#e8f0fe;color:#1a73e8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNDER PRODUCTION</span></div>';
+} else if (c.displayStatus === 'CASE FULLY PAID') {
+  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">CASE FULLY PAID</span></div>';
+} else if (c.displayStatus === 'BATCH PAID') {
+  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">BATCH PAID</span></div>';
+} else if (c.displayStatus === 'FREE BATCH') {
+  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
+}
+html += '<div class="case-steps">';
+html += '<div class="step-box"><div class="step-label">⬆️ Upper</div><div class="step-value">' + c.upper + '</div></div>';
+html += '<div class="step-box"><div class="step-label">⬇️ Lower</div><div class="step-value">' + c.lower + '</div></div>';
+html += '<div class="step-box"><div class="step-label">📦 Up Del</div><div class="step-value' + (uDone ? ' done' : '') + '">' + c.upperDel + '</div></div>';
+html += '<div class="step-box"><div class="step-label">📦 Low Del</div><div class="step-value' + (lDone ? ' done' : '') + '">' + c.lowerDel + '</div></div>';
+html += '<div class="step-box"><div class="step-label">⏳ Up Rem</div><div class="step-value' + (c.upperRem > 0 ? ' remaining' : ' done') + '">' + c.upperRem + '</div></div>';
+html += '<div class="step-box"><div class="step-label">⏳ Low Rem</div><div class="step-value' + (c.lowerRem > 0 ? ' remaining' : ' done') + '">' + c.lowerRem + '</div></div>';
+html += '</div>';
 
     // Financial details
     html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0">';
