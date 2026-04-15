@@ -242,6 +242,7 @@ textarea { resize: none; height: 80px; }
 </div>
 <input type="hidden" id="repDetected" />
 <input type="hidden" id="repUsername" />
+
 <div id="formScreen">
 <div class="form-container">
   <div class="card">
@@ -310,6 +311,7 @@ textarea { resize: none; height: 80px; }
       </select>
     </div>
   </div>
+
   <div class="card">
     <div class="section-title">Doctor & Patient</div>
     <div class="form-group">
@@ -337,6 +339,7 @@ textarea { resize: none; height: 80px; }
       <input type="text" id="clinic" placeholder="Clinic name" autocapitalize="words" />
     </div>
   </div>
+
   <div id="normalCards">
     <div class="card">
       <div class="section-title">Steps & Package</div>
@@ -368,6 +371,7 @@ textarea { resize: none; height: 80px; }
         </select>
       </div>
     </div>
+
     <div class="card" id="paymentCard">
       <div class="section-title">Payment</div>
       <div class="form-group" id="installmentsGroup">
@@ -398,9 +402,11 @@ textarea { resize: none; height: 80px; }
       <div class="form-group" id="fullPaymentGroup"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment</label></div></div>
       <div class="form-group hidden" id="printAllRemainingGroup"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="printAllRemaining" onchange="handlePrintAllRemaining()" /> Print All Remaining Steps</label></div></div>
     </div>
+
     <div class="card hidden" id="attachmentCard"><div class="section-title">Attachment Template</div><div class="form-group"><label>Thickness</label><select id="attachmentThickness"><option value="">None</option><option value="0.5mm">0.5mm</option><option value="0.7mm">0.7mm</option></select></div></div>
     <div class="card"><div class="section-title">Notes</div><div class="form-group"><textarea id="notes" placeholder="Any additional notes..."></textarea></div></div>
   </div>
+
   <div class="card hidden" id="retainerCard">
     <div class="section-title">Retainer Details</div>
     <div class="form-group">
@@ -412,9 +418,11 @@ textarea { resize: none; height: 80px; }
     <div class="form-group"><label>Total Price (IQD) <span class="required">*</span></label><input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" /><div class="error-msg" id="retainerPriceError">Please enter the price</div></div>
     <div class="form-group"><label>Reason / Notes</label><input type="text" id="retainerReason" placeholder="e.g. Lost retainer, new patient..." /></div>
   </div>
+
   <div class="card hidden" id="stlCard"><div class="section-title">STL Files</div><div class="form-group"><div class="file-upload-area" onclick="document.getElementById('stlFiles').click()"><div class="file-upload-icon">📁</div><div class="file-upload-text">Tap to select STL files</div><div class="file-name" id="fileNames"></div></div><input type="file" id="stlFiles" accept=".stl,.STL" multiple style="display:none" onchange="handleFileSelect(this)" /></div></div>
   <div class="card hidden" id="retainerNotesCard"><div class="section-title">Notes</div><div class="form-group"><textarea id="retainerNotes" placeholder="Any additional notes..."></textarea></div></div>
   <div class="card" id="trimLineCard"><div class="section-title">Trim Line Level</div><div class="form-group"><label>Trim Line</label><select id="trimLine"><option value="Straight">Straight</option><option value="Straight 2mm above gingiva">Straight 2mm above gingiva</option><option value="Scalloped">Scalloped</option><option value="Semi Scalloped">Semi Scalloped</option></select></div></div>
+
   <div class="card hidden" id="reprintCard">
     <div class="section-title">Reprint Details</div>
     <div class="form-group"><label>Arch</label><select id="reprintArch" onchange="handleReprintArch()"><option value="Both">Both</option><option value="Upper">Upper Only</option><option value="Lower">Lower Only</option></select></div>
@@ -432,9 +440,11 @@ textarea { resize: none; height: 80px; }
     <div class="form-group"><label>Payment Amount (IQD) — leave empty if free</label><input type="text" id="reprintPayment" placeholder="Leave empty if free" inputmode="numeric" /></div>
     <div class="form-group"><textarea id="reprintNotes" placeholder="Any additional notes..."></textarea></div>
   </div>
+
   <div class="form-container" style="padding-top:0"><button class="submit-btn" id="submitBtn" onclick="submitForm()">Submit Order</button></div>
 </div>
 </div>
+
 <div id="statusScreen">
 <div class="form-container">
   <div class="card">
@@ -452,6 +462,7 @@ textarea { resize: none; height: 80px; }
   <div id="resultsArea"><div class="status-loading">Loading grouped cases…</div></div>
 </div>
 </div>
+
 <div id="unpaidScreen">
 <div class="form-container">
   <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none"><select id="unpaidZoneSelect" onchange="renderUnpaid()"><option value="">Loading zones...</option></select></div>
@@ -459,13 +470,16 @@ textarea { resize: none; height: 80px; }
   <div class="unpaid-table-wrap"><div id="unpaidTableContainer"><div class="status-loading" id="unpaidLoading">Loading...</div></div></div>
 </div>
 </div>
+
 <div id="successScreen"><div class="success-icon">✅</div><div class="success-title">Order Submitted!</div><div class="success-sub" id="successSub">Your order has been received and is being processed.</div></div>
+
 <script>
 var BOT_TOKEN = '8033845328:AAGOFIjNGXmdzAqQyg8IH3v8UWpog9RYcH0';
 var CHAT_ID = '-1002898704692';
 var SHEET_ID = '1ToxldsqvuQUfI__xNoaxOwNG0iYx6FgkJC0hpngd0h8';
 var API_KEY = 'AIzaSyDGBOFL9rSp3dPkQ1No5i5IXI27xL1-9ME';
 var TG_PROXY = 'https://telegram-proxy.ajeelz99.workers.dev';
+
 var doctorRows = [];
 var doctors = [];
 var reps = [];
@@ -475,9 +489,11 @@ var singleArchLocked = null;
 var tg = null;
 var tgUsername = null;
 var tgUserId = null;
+
 var allCases = [];
 var allCasesUnfiltered = [];
 var allZones = [];
+var allRows = [];
 var statusDoctorFilter = null;
 var statusLoaded = false;
 var isSalesRep = false;
@@ -486,72 +502,1251 @@ var repZone = '';
 var groupedCases = [];
 var selectedDoctor = '';
 var currentFiltered = [];
-function formatWithCommas(input) { input.addEventListener('input', function() { var pos = input.selectionStart; var raw = input.value.replace(/,/g, ''); if (!/^\d*$/.test(raw)) { input.value = raw.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ','); return; } var formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ','); var diff = formatted.length - input.value.length; input.value = formatted; input.setSelectionRange(pos + diff, pos + diff); }); }
+
+function formatWithCommas(input) {
+  input.addEventListener('input', function() {
+    var pos = input.selectionStart;
+    var raw = input.value.replace(/,/g, '');
+    if (!/^\d*$/.test(raw)) {
+      input.value = raw.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return;
+    }
+    var formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var diff = formatted.length - input.value.length;
+    input.value = formatted;
+    input.setSelectionRange(pos + diff, pos + diff);
+  });
+}
 function getRawNumber(id) { var val = document.getElementById(id).value.replace(/,/g, '').trim(); return parseInt(val) || 0; }
 function getFormattedValue(id) { return document.getElementById(id).value.trim(); }
 function formatNum(n) { if (!n || n === 0) return '0'; return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function safe(v){return String(v||'').trim();}
-function initTelegram() { tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null; if (tg) { tg.ready(); tg.expand(); var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null; tgUsername = tgUser ? (tgUser.username || null) : null; tgUserId = tgUser ? (tgUser.id || null) : null; } }
-function handleCaseTypeChange() { var type = document.getElementById('caseType').value; var mcaBatch = document.getElementById('mcaBatchNumber').value; var rBatch = document.getElementById('refinementBatch').value; var isReprint = type === 'reprint'; var isRetainer = type === 'retainer'; var isMCA = type === 'mca'; var isRefinement = type === 'refinement'; document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX'; document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline'; document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch'); document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA); document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA); document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement); document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement); document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer); var isNonFirstBatch = type === 'batch' || (isMCA && mcaBatch !== '1') || (isRefinement && rBatch !== '1'); document.getElementById('stepsGroup').classList.toggle('hidden', isNonFirstBatch); document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement || isNonFirstBatch); var rNum = isRefinement ? document.getElementById('refinementNumber').value : '1'; var hidePaymentCard = isReprint || isRetainer || (isRefinement && (rNum === '1' || rBatch !== '1')); document.getElementById('paymentCard').classList.toggle('hidden', hidePaymentCard); var isBatch = isNonFirstBatch; document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch); document.getElementById('discountGroup').classList.toggle('hidden', isBatch); document.getElementById('discountValueGroup').classList.add('hidden'); document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch); document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch); document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)'; if (!isBatch) { document.getElementById('printAllRemaining').checked = false; handlePrintAllRemaining(); } var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer; document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox); if (!showRetainerCheckbox) document.getElementById('retainer').checked = false; var showAttachment = !isReprint && !isRetainer && ((type === 'new') || (isMCA && mcaBatch === '1') || (isRefinement && rBatch === '1')); document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment); document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer); document.getElementById('stlCard').classList.toggle('hidden', !isRetainer); document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer); document.getElementById('reprintCard').classList.toggle('hidden', !isReprint); document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer); }
-function handleRetainerArch() { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked); document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked); }
-function toggleReprintMode(arch) { var isNonSeq = document.getElementById('reprint' + arch + 'NonSeq').checked; document.getElementById('reprint' + arch + 'Range').classList.toggle('hidden', isNonSeq); document.getElementById('reprint' + arch + 'StepsGroup').classList.toggle('hidden', !isNonSeq); }
-function handleReprintArch() { var arch = document.getElementById('reprintArch').value; document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower'); document.getElementById('reprintLowerGroup').classList.toggle('hidden', arch === 'Upper'); }
-function handleSingleArch() { var checked = document.getElementById('singleArch').checked; var upper = document.getElementById('upper'); var lower = document.getElementById('lower'); if (!checked) { upper.disabled = false; lower.disabled = false; singleArchLocked = null; document.getElementById('upperRequired').style.display = 'inline'; document.getElementById('lowerRequired').style.display = 'inline'; upper.removeEventListener('input', lockLowerOnInput); lower.removeEventListener('input', lockUpperOnInput); return; } var upperVal = upper.value.trim(); var lowerVal = lower.value.trim(); if (upperVal && !lowerVal) { lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower'; document.getElementById('lowerRequired').style.display = 'none'; } else if (lowerVal && !upperVal) { upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper'; document.getElementById('upperRequired').style.display = 'none'; } else { upper.addEventListener('input', lockLowerOnInput); lower.addEventListener('input', lockUpperOnInput); } }
-function lockLowerOnInput() { if (document.getElementById('singleArch').checked && document.getElementById('upper').value) { var lower = document.getElementById('lower'); lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower'; document.getElementById('lowerRequired').style.display = 'none'; document.getElementById('upper').removeEventListener('input', lockLowerOnInput); document.getElementById('lower').removeEventListener('input', lockUpperOnInput); } }
-function lockUpperOnInput() { if (document.getElementById('singleArch').checked && document.getElementById('lower').value) { var upper = document.getElementById('upper'); upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper'; document.getElementById('upperRequired').style.display = 'none'; document.getElementById('upper').removeEventListener('input', lockLowerOnInput); document.getElementById('lower').removeEventListener('input', lockUpperOnInput); } }
-function handleFullPayment() { var checked = document.getElementById('fullPayment').checked; var field = document.getElementById('batch1Amount'); if (checked) { field.value = ''; field.disabled = true; field.placeholder = 'N/A - Full Payment'; } else { field.disabled = false; field.placeholder = 'e.g. 500,000'; } }
-function handlePrintAllRemaining() { var checked = document.getElementById('printAllRemaining').checked; var field = document.getElementById('batch1Amount'); if (checked) { field.value = ''; field.placeholder = 'N/A - Printing all remaining'; field.disabled = true; } else { field.placeholder = 'e.g. 500,000'; field.disabled = false; } }
-function autoDetectPackage() { var upper = parseInt(document.getElementById('upper').value) || 0; var lower = parseInt(document.getElementById('lower').value) || 0; var max = Math.max(upper, lower); if (max === 0) return; var pkg = max <= 12 ? 'BRONZE' : max <= 25 ? 'SILVER' : 'GOLD'; document.getElementById('package').value = pkg; }
+function formatMonthYear(row){
+  var month = safe(row.monthDate || row.month);
+  var year = safe(row.year);
+  return [month, year].filter(Boolean).join(' ');
+}
+
+function initTelegram() {
+  tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+    tgUsername = tgUser ? (tgUser.username || null) : null;
+    tgUserId = tgUser ? (tgUser.id || null) : null;
+  }
+}
+
+/* ---------- form logic kept same ---------- */
+function handleCaseTypeChange() {
+  var type = document.getElementById('caseType').value;
+  var mcaBatch = document.getElementById('mcaBatchNumber').value;
+  var rBatch = document.getElementById('refinementBatch').value;
+  var isReprint = type === 'reprint';
+  var isRetainer = type === 'retainer';
+  var isMCA = type === 'mca';
+  var isRefinement = type === 'refinement';
+  document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
+  document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
+  document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
+  document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA);
+  document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA);
+  document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement);
+  document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement);
+  document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer);
+  var isNonFirstBatch = type === 'batch' || (isMCA && mcaBatch !== '1') || (isRefinement && rBatch !== '1');
+  document.getElementById('stepsGroup').classList.toggle('hidden', isNonFirstBatch);
+  document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement || isNonFirstBatch);
+  var rNum = isRefinement ? document.getElementById('refinementNumber').value : '1';
+  var hidePaymentCard = isReprint || isRetainer || (isRefinement && (rNum === '1' || rBatch !== '1'));
+  document.getElementById('paymentCard').classList.toggle('hidden', hidePaymentCard);
+  var isBatch = isNonFirstBatch;
+  document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('discountGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('discountValueGroup').classList.add('hidden');
+  document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch);
+  document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch);
+  document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)';
+  if (!isBatch) {
+    document.getElementById('printAllRemaining').checked = false;
+    handlePrintAllRemaining();
+  }
+  var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer;
+  document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox);
+  if (!showRetainerCheckbox) document.getElementById('retainer').checked = false;
+  var showAttachment = !isReprint && !isRetainer && ((type === 'new') || (isMCA && mcaBatch === '1') || (isRefinement && rBatch === '1'));
+  document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment);
+  document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer);
+  document.getElementById('stlCard').classList.toggle('hidden', !isRetainer);
+  document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer);
+  document.getElementById('reprintCard').classList.toggle('hidden', !isReprint);
+  document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer);
+}
+function handleRetainerArch() {
+  var upperChecked = document.getElementById('retainerUpper').checked;
+  var lowerChecked = document.getElementById('retainerLower').checked;
+  document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked);
+  document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked);
+}
+function toggleReprintMode(arch) {
+  var isNonSeq = document.getElementById('reprint' + arch + 'NonSeq').checked;
+  document.getElementById('reprint' + arch + 'Range').classList.toggle('hidden', isNonSeq);
+  document.getElementById('reprint' + arch + 'StepsGroup').classList.toggle('hidden', !isNonSeq);
+}
+function handleReprintArch() {
+  var arch = document.getElementById('reprintArch').value;
+  document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower');
+  document.getElementById('reprintLowerGroup').classList.toggle('hidden', arch === 'Upper');
+}
+function handleSingleArch() {
+  var checked = document.getElementById('singleArch').checked;
+  var upper = document.getElementById('upper');
+  var lower = document.getElementById('lower');
+  if (!checked) {
+    upper.disabled = false; lower.disabled = false; singleArchLocked = null;
+    document.getElementById('upperRequired').style.display = 'inline';
+    document.getElementById('lowerRequired').style.display = 'inline';
+    upper.removeEventListener('input', lockLowerOnInput);
+    lower.removeEventListener('input', lockUpperOnInput);
+    return;
+  }
+  var upperVal = upper.value.trim();
+  var lowerVal = lower.value.trim();
+  if (upperVal && !lowerVal) {
+    lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower';
+    document.getElementById('lowerRequired').style.display = 'none';
+  } else if (lowerVal && !upperVal) {
+    upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper';
+    document.getElementById('upperRequired').style.display = 'none';
+  } else {
+    upper.addEventListener('input', lockLowerOnInput);
+    lower.addEventListener('input', lockUpperOnInput);
+  }
+}
+function lockLowerOnInput() {
+  if (document.getElementById('singleArch').checked && document.getElementById('upper').value) {
+    var lower = document.getElementById('lower');
+    lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower';
+    document.getElementById('lowerRequired').style.display = 'none';
+    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
+    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
+  }
+}
+function lockUpperOnInput() {
+  if (document.getElementById('singleArch').checked && document.getElementById('lower').value) {
+    var upper = document.getElementById('upper');
+    upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper';
+    document.getElementById('upperRequired').style.display = 'none';
+    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
+    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
+  }
+}
+function handleFullPayment() {
+  var checked = document.getElementById('fullPayment').checked;
+  var field = document.getElementById('batch1Amount');
+  if (checked) {
+    field.value = ''; field.disabled = true; field.placeholder = 'N/A - Full Payment';
+  } else {
+    field.disabled = false; field.placeholder = 'e.g. 500,000';
+  }
+}
+function handlePrintAllRemaining() {
+  var checked = document.getElementById('printAllRemaining').checked;
+  var field = document.getElementById('batch1Amount');
+  if (checked) {
+    field.value = ''; field.placeholder = 'N/A - Printing all remaining'; field.disabled = true;
+  } else {
+    field.placeholder = 'e.g. 500,000'; field.disabled = false;
+  }
+}
+function autoDetectPackage() {
+  var upper = parseInt(document.getElementById('upper').value) || 0;
+  var lower = parseInt(document.getElementById('lower').value) || 0;
+  var max = Math.max(upper, lower);
+  if (max === 0) return;
+  var pkg = max <= 12 ? 'BRONZE' : max <= 25 ? 'SILVER' : 'GOLD';
+  document.getElementById('package').value = pkg;
+}
 var caseAutoFillTimer = null;
-function handleCaseNumberInput() { clearTimeout(caseAutoFillTimer); caseAutoFillTimer = setTimeout(function() { var type = document.getElementById('caseType').value; if (type === 'retainer' || type === 'reprint') return; var typed = document.getElementById('caseNumber').value.trim().toLowerCase(); if (!typed || typed.length < 3) { document.getElementById('caseAutoFillHint').style.display = 'none'; return; } var match = null; for (var i = 0; i < allCasesUnfiltered.length; i++) { var c = allCasesUnfiltered[i]; var base = extractBaseCase(c.caseNumber).toLowerCase(); if (base === typed || c.caseNumber.toLowerCase() === typed) { match = c; break; } } if (!match) { document.getElementById('caseAutoFillHint').style.display = 'none'; return; } if (match.doctor) { var doctorInList = doctors.some(function(d) { return d.toLowerCase() === match.doctor.toLowerCase(); }); if (doctorInList) { document.getElementById('doctorSearch').value = match.doctor; document.getElementById('doctorValue').value = match.doctor; document.getElementById('clearDoctor').style.display = 'block'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); document.getElementById('doctorResultsOrder').style.display = 'none'; } } if (match.patient) document.getElementById('patient').value = match.patient; if (match.clinic) document.getElementById('clinic').value = match.clinic; var hint = document.getElementById('caseAutoFillHint'); hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : ''); hint.style.display = 'block'; }, 400); }
-function handleDiscountChange() { var type = document.getElementById('discountType').value; document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none'); document.getElementById('discountValueLabel').textContent = type === 'percentage' ? 'Discount (%)' : 'Discount Amount (IQD)'; }
-function handleFileSelect(input) { selectedFiles = Array.from(input.files); document.getElementById('fileNames').textContent = selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : ''; }
-function filterDoctors(query) { var results = document.getElementById('doctorResultsOrder'); query = (query || '').toLowerCase().trim(); currentFiltered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors; var html = '<div class="search-result-item new-doctor-item">+ New Doctor</div>'; currentFiltered.slice(0, 40).forEach(function(doc, i) { html += '<div class="search-result-item" data-doc-idx="' + i + '">' + doc + '</div>'; }); if (currentFiltered.length === 0 && query) { html += '<div class="search-result-item loading-item">No match — select New Doctor</div>'; } results.innerHTML = html; results.style.display = 'block'; document.getElementById('clearDoctor').style.display = query ? 'block' : 'none'; }
-document.getElementById('doctorResultsOrder').addEventListener('click', function(e) { var item = e.target.closest('.search-result-item'); if (!item) return; if (item.classList.contains('new-doctor-item')) { selectNewDoctor(); return; } if (item.classList.contains('loading-item')) return; var idx = item.getAttribute('data-doc-idx'); if (idx !== null && currentFiltered[parseInt(idx)]) { selectDoctor(currentFiltered[parseInt(idx)]); } });
-function selectDoctor(name) { document.getElementById('doctorSearch').value = name; document.getElementById('doctorValue').value = name; document.getElementById('doctorResultsOrder').style.display = 'none'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('clearDoctor').style.display = 'block'; document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); }
-function selectNewDoctor() { document.getElementById('doctorSearch').value = ''; document.getElementById('doctorValue').value = 'NEW_DOCTOR'; document.getElementById('doctorResultsOrder').style.display = 'none'; document.getElementById('newDoctorGroup').classList.remove('hidden'); document.getElementById('newDoctorName').focus(); document.getElementById('doctorError').classList.remove('show'); }
-function clearDoctor() { document.getElementById('doctorSearch').value = ''; document.getElementById('doctorValue').value = ''; document.getElementById('clearDoctor').style.display = 'none'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('doctorSearch').focus(); }
-document.addEventListener('click', function(e) { if (!e.target.closest('.search-wrapper')) { document.getElementById('doctorResultsOrder').style.display = 'none'; } });
+function handleCaseNumberInput() {
+  clearTimeout(caseAutoFillTimer);
+  caseAutoFillTimer = setTimeout(function() {
+    var type = document.getElementById('caseType').value;
+    if (type === 'retainer' || type === 'reprint') return;
+    var typed = document.getElementById('caseNumber').value.trim().toLowerCase();
+    if (!typed || typed.length < 3) {
+      document.getElementById('caseAutoFillHint').style.display = 'none';
+      return;
+    }
+    var match = null;
+    for (var i = 0; i < allCasesUnfiltered.length; i++) {
+      var c = allCasesUnfiltered[i];
+      var base = extractBaseCase(c.caseNumber).toLowerCase();
+      if (base === typed || c.caseNumber.toLowerCase() === typed) { match = c; break; }
+    }
+    if (!match) { document.getElementById('caseAutoFillHint').style.display = 'none'; return; }
+    if (match.doctor) {
+      var doctorInList = doctors.some(function(d) { return d.toLowerCase() === match.doctor.toLowerCase(); });
+      if (doctorInList) {
+        document.getElementById('doctorSearch').value = match.doctor;
+        document.getElementById('doctorValue').value = match.doctor;
+        document.getElementById('clearDoctor').style.display = 'block';
+        document.getElementById('newDoctorGroup').classList.add('hidden');
+        document.getElementById('doctorError').classList.remove('show');
+        document.getElementById('doctorSearch').classList.remove('error-field');
+        document.getElementById('doctorResultsOrder').style.display = 'none';
+      }
+    }
+    if (match.patient) document.getElementById('patient').value = match.patient;
+    if (match.clinic) document.getElementById('clinic').value = match.clinic;
+    var hint = document.getElementById('caseAutoFillHint');
+    hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : '');
+    hint.style.display = 'block';
+  }, 400);
+}
+function handleDiscountChange() {
+  var type = document.getElementById('discountType').value;
+  document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none');
+  document.getElementById('discountValueLabel').textContent = type === 'percentage' ? 'Discount (%)' : 'Discount Amount (IQD)';
+}
+function handleFileSelect(input) {
+  selectedFiles = Array.from(input.files);
+  document.getElementById('fileNames').textContent = selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : '';
+}
+function filterDoctors(query) {
+  var results = document.getElementById('doctorResultsOrder');
+  query = (query || '').toLowerCase().trim();
+  currentFiltered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
+  var html = '<div class="search-result-item new-doctor-item">+ New Doctor</div>';
+  currentFiltered.slice(0, 40).forEach(function(doc, i) { html += '<div class="search-result-item" data-doc-idx="' + i + '">' + doc + '</div>'; });
+  if (currentFiltered.length === 0 && query) { html += '<div class="search-result-item loading-item">No match — select New Doctor</div>'; }
+  results.innerHTML = html;
+  results.style.display = 'block';
+  document.getElementById('clearDoctor').style.display = query ? 'block' : 'none';
+}
+document.getElementById('doctorResultsOrder').addEventListener('click', function(e) {
+  var item = e.target.closest('.search-result-item');
+  if (!item) return;
+  if (item.classList.contains('new-doctor-item')) { selectNewDoctor(); return; }
+  if (item.classList.contains('loading-item')) return;
+  var idx = item.getAttribute('data-doc-idx');
+  if (idx !== null && currentFiltered[parseInt(idx)]) { selectDoctor(currentFiltered[parseInt(idx)]); }
+});
+function selectDoctor(name) {
+  document.getElementById('doctorSearch').value = name;
+  document.getElementById('doctorValue').value = name;
+  document.getElementById('doctorResultsOrder').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.add('hidden');
+  document.getElementById('clearDoctor').style.display = 'block';
+  document.getElementById('doctorError').classList.remove('show');
+  document.getElementById('doctorSearch').classList.remove('error-field');
+}
+function selectNewDoctor() {
+  document.getElementById('doctorSearch').value = '';
+  document.getElementById('doctorValue').value = 'NEW_DOCTOR';
+  document.getElementById('doctorResultsOrder').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.remove('hidden');
+  document.getElementById('newDoctorName').focus();
+  document.getElementById('doctorError').classList.remove('show');
+}
+function clearDoctor() {
+  document.getElementById('doctorSearch').value = '';
+  document.getElementById('doctorValue').value = '';
+  document.getElementById('clearDoctor').style.display = 'none';
+  document.getElementById('newDoctorGroup').classList.add('hidden');
+  document.getElementById('doctorSearch').focus();
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrapper')) { document.getElementById('doctorResultsOrder').style.display = 'none'; }
+});
 document.getElementById('doctorSearch').addEventListener('input', function() { filterDoctors(this.value); });
 document.getElementById('doctorSearch').addEventListener('focus', function() { filterDoctors(this.value); document.getElementById('doctorResultsOrder').style.display = 'block'; });
-function setupRepField() { var ADMIN_USERNAMES = ['shafafmanagement', 'shafafclearaligners']; if (tgUsername) { var matched = reps.find(function(r) { return r.username.toLowerCase() === tgUsername.toLowerCase(); }); if (matched) { document.getElementById('repDetected').value = matched.name; document.getElementById('repUsername').value = tgUsername; detectedUsername = tgUsername; repZone = matched.zone || ''; isSalesRep = repZone.toLowerCase() === 'baghdad sales rep'; if (isSalesRep) { document.getElementById('tabOrder').style.display = 'none'; document.getElementById('tabStatus').style.display = 'none'; document.getElementById('unpaidZoneGroup').style.display = 'block'; switchTab('unpaid'); return; } if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) { isAdmin = true; doctors = doctorRows.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) { return row[0].trim(); }); document.getElementById('doctorSearch').placeholder = 'Search doctor name...'; document.getElementById('unpaidZoneGroup').style.display = 'block'; return; } var repNameLower = matched.name.toLowerCase().trim(); doctors = doctorRows.filter(function(row) { var docName = (row[0] || '').trim(); var docReps = (row[3] || '').toLowerCase().trim(); if (!docName) return false; return docReps.split(',').some(function(r) { return r.trim() === repNameLower; }); }).map(function(row) { return row[0].trim(); }); if (doctors.length === 0) { document.getElementById('doctorSearch').placeholder = 'No doctors assigned yet'; } else { document.getElementById('doctorSearch').placeholder = 'Search doctor name...'; } } else { doctors = []; document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized'; } } else { doctors = []; document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized'; } }
+
+function setupRepField() {
+  var ADMIN_USERNAMES = ['shafafmanagement', 'shafafclearaligners'];
+  if (tgUsername) {
+    var matched = reps.find(function(r) { return r.username.toLowerCase() === tgUsername.toLowerCase(); });
+    if (matched) {
+      document.getElementById('repDetected').value = matched.name;
+      document.getElementById('repUsername').value = tgUsername;
+      detectedUsername = tgUsername;
+      repZone = matched.zone || '';
+      isSalesRep = repZone.toLowerCase() === 'baghdad sales rep';
+      if (isSalesRep) {
+        document.getElementById('tabOrder').style.display = 'none';
+        document.getElementById('tabStatus').style.display = 'none';
+        document.getElementById('unpaidZoneGroup').style.display = 'block';
+        switchTab('unpaid');
+        return;
+      }
+      if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
+        isAdmin = true;
+        doctors = doctorRows.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) { return row[0].trim(); });
+        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+        document.getElementById('unpaidZoneGroup').style.display = 'block';
+        return;
+      }
+      var repNameLower = matched.name.toLowerCase().trim();
+      doctors = doctorRows.filter(function(row) {
+        var docName = (row[0] || '').trim();
+        var docReps = (row[3] || '').toLowerCase().trim();
+        if (!docName) return false;
+        return docReps.split(',').some(function(r) { return r.trim() === repNameLower; });
+      }).map(function(row) { return row[0].trim(); });
+      if (doctors.length === 0) {
+        document.getElementById('doctorSearch').placeholder = 'No doctors assigned yet';
+      } else {
+        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
+      }
+    } else {
+      doctors = [];
+      document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
+    }
+  } else {
+    doctors = [];
+    document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
+  }
+}
 function applyCache(parsed) { doctorRows = parsed.doctorRows || []; reps = parsed.reps || []; setupRepField(); }
-function fetchFreshData() { var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values:batchGet?ranges=Customers!B:D&ranges=Reps!A:C&key=' + API_KEY; fetch(url).then(function(res) { return res.json(); }).then(function(data) { var rawRows = data.valueRanges[0].values || []; var seen = {}; rawRows.forEach(function(row) { var name = (row[0] || '').trim(); if (!name) return; var key = name.toLowerCase(); if (!seen[key]) { seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' }; } else { var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean); var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean); incoming.forEach(function(r) { if (existing.indexOf(r) === -1) { seen[key].rep = seen[key].rep ? seen[key].rep + ', ' + r : r; existing.push(r); } }); } }); doctorRows = Object.values(seen).map(function(entry) { return [entry.name, '', entry.zone, entry.rep]; }); var repValues = data.valueRanges[1].values || []; reps = repValues.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) { return { name: row[0].trim(), username: (row[1] || '').trim(), zone: (row[2] || '').trim() }; }); var cacheData = JSON.stringify({ doctorRows: doctorRows, reps: reps }); try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {} initTelegram(); setupRepField(); }).catch(function(e) { console.error('Failed to load data', e); if (doctors.length === 0) { document.getElementById('doctorSearch').placeholder = 'Type doctor name manually'; } }); }
-function loadData() { try { var cached = localStorage.getItem('shafaf_data'); if (cached) { applyCache(JSON.parse(cached)); } } catch(e) {} fetchFreshData(); }
-function buildCaseNumber() { var type = document.getElementById('caseType').value; var baseNum = document.getElementById('caseNumber').value.trim(); if (type === 'reprint') return 'Reprint/ ' + baseNum; if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer'; if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum; if (type === 'mca') { var mcaNum = document.getElementById('mcaNumber').value; var mcaBatch = document.getElementById('mcaBatchNumber').value; var prefix = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum; if (mcaBatch === '1') return prefix + '/ ' + baseNum; var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th'; return prefix + '/ ' + batchSuffix + '/ ' + baseNum; } if (type === 'refinement') { var rNum = document.getElementById('refinementNumber').value; var rBatch = document.getElementById('refinementBatch').value; var rPrefix = 'R' + rNum; if (rBatch === '1') return rPrefix + '/ ' + baseNum; var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th'; return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum; } return baseNum; }
-function buildPrintOrderLine(data) { var type = data.caseType; if (type === 'new') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch'; if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch'; if (type === 'mca') { var mcaBatch = document.getElementById('mcaBatchNumber').value; var mcaNum = document.getElementById('mcaNumber').value; var mcaLabel = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum; if (mcaBatch === '1') return data.fullBatch ? 'Print order for Full Batch of ' + mcaLabel : 'Print order for 1st Batch of ' + mcaLabel; var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th'; return 'Print order for ' + batchSuffix + ' Batch of ' + mcaLabel; } if (type === 'refinement') { var rNum = document.getElementById('refinementNumber').value; var rBatch = document.getElementById('refinementBatch').value; var rLabel = 'R' + rNum; if (rBatch === '1') return 'Print order for Refinement ' + rLabel; var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th'; return 'Print order for ' + rBatchSuffix + ' Batch of ' + rLabel; } return 'Print order for 1st Batch'; }
-function buildTelegramMessage(data) { var username = detectedUsername || ''; var repName = document.getElementById('repDetected').value || ''; var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || ''; var msg = ''; msg += '🆕 Approval from @' + username + '\n'; msg += 'Case Number: ' + data.caseNumber + '\n'; msg += 'Doctor: ' + data.doctor + '\n'; msg += 'Patient: ' + data.patient + '\n'; if (data.clinic) msg += 'Clinic: ' + data.clinic + '\n'; if (data.caseType === 'reprint') { var arch = document.getElementById('reprintArch').value; var upperFrom = document.getElementById('reprintUpperFrom').value; var upperTo = document.getElementById('reprintUpperTo').value; var lowerFrom = document.getElementById('reprintLowerFrom').value; var lowerTo = document.getElementById('reprintLowerTo').value; var reprintReason = document.getElementById('reprintReason').value.trim(); var reprintPaymentVal = getFormattedValue('reprintPayment'); var reprintNotes = document.getElementById('reprintNotes').value.trim(); msg += 'Reprint Request\n'; msg += 'Arch: ' + arch + '\n'; if (arch === 'Both' || arch === 'Upper') { if (document.getElementById('reprintUpperNonSeq').checked) { var usteps = document.getElementById('reprintUpperSteps').value.trim(); if (usteps) msg += 'Upper: steps ' + usteps + '\n'; } else if (upperFrom && upperTo) { msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n'; } } if (arch === 'Both' || arch === 'Lower') { if (document.getElementById('reprintLowerNonSeq').checked) { var lsteps = document.getElementById('reprintLowerSteps').value.trim(); if (lsteps) msg += 'Lower: steps ' + lsteps + '\n'; } else if (lowerFrom && lowerTo) { msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n'; } } if (reprintReason) msg += 'Reason: ' + reprintReason + '\n'; if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) { msg += 'Payment: ' + reprintPaymentVal + ' IQD\n'; } else { msg += 'Free Reprint\n'; } if (reprintNotes) msg += 'Notes: ' + reprintNotes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; } if (data.caseType === 'retainer') { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; var upperQty = document.getElementById('retainerUpperQty').value; var lowerQty = document.getElementById('retainerLowerQty').value; var retainerAsap = document.getElementById('retainerAsap').checked; var retainerPriceVal = getFormattedValue('retainerPrice'); var retainerNotes = document.getElementById('retainerNotes').value.trim(); var retainerReason = document.getElementById('retainerReason').value.trim(); if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n'; if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n'; if (retainerAsap) msg += 'ASAP\n'; msg += 'Price: ' + retainerPriceVal + ' IQD\n'; msg += 'Print order for Retainer\n'; if (retainerReason) msg += 'Reason: ' + retainerReason + '\n'; if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; } var type = data.caseType; msg += 'Upper: ' + data.upper + '\n'; msg += 'Lower: ' + data.lower + '\n'; msg += data.package + '\n'; if (data.singleArch) msg += 'Single Arch\n'; if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) { if (data.discountType === 'percentage') { msg += data.discountValue + '% DISCOUNT\n'; } else { msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n'; } } if (type === 'batch' || (document.getElementById('printAllRemainingGroup') && !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))) { msg += 'Approved\n'; if (document.getElementById('printAllRemaining').checked) { msg += 'Print order for Full Batch\n'; } else { var batchPayVal = getFormattedValue('batch1Amount'); if (batchPayVal && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batchPayVal + ' IQD\n'; } } else { var installments = document.getElementById('installments').value; if (installments === 'full') msg += 'Approved (Full)\n'; else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n'; else msg += 'Approved\n'; var batch1Val = getFormattedValue('batch1Amount'); if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n'; if (data.fullPayment) msg += 'Full Payment\n'; } msg += buildPrintOrderLine(data) + '\n'; if (data.asap) msg += 'ASAP\n'; if (data.retainer) msg += 'Add Retainer(s)\n'; var thickness = document.getElementById('attachmentThickness').value; if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n'; var trimLine = document.getElementById('trimLine').value; if (trimLine && trimLine !== 'Straight') msg += 'Trim Line: ' + trimLine + '\n'; if (data.notes) msg += 'Notes: ' + data.notes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; }
-function switchTab(tab) { document.getElementById('tabOrder').classList.toggle('active', tab === 'order'); document.getElementById('tabStatus').classList.toggle('active', tab === 'status'); document.getElementById('tabUnpaid').classList.toggle('active', tab === 'unpaid'); document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none'; document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none'; document.getElementById('unpaidScreen').style.display = tab === 'unpaid' ? 'block' : 'none'; document.getElementById('successScreen').style.display = 'none'; if (tab === 'status' || tab === 'unpaid') { var repName = document.getElementById('repDetected').value || ''; if (!repName) { if (tab === 'status') { document.getElementById('resultsArea').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>'; document.getElementById('resultsMeta').textContent = ''; } else { document.getElementById('unpaidTableContainer').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>'; } return; } if (!statusLoaded) { loadCaseStatus(); } else if (tab === 'status') { buildGroupedCases(); renderGroupedCases(); } else if (tab === 'unpaid') { renderUnpaid(); } } }
-function extractBaseCase(caseNum) { return caseNum.replace(/^reprint\/\s*/i, '').replace(/^retainer\/\s*/i, '').replace(/^MCA\d*\/\s*/i, '').replace(/^R\d+\/\s*/i, '').replace(/^(2nd|3rd|4th|5th)\/\s*/i, '').trim(); }
-function loadCaseStatus() { var statusNode = document.getElementById('resultsArea'); if (statusNode) statusNode.innerHTML = '<div class="status-loading">Loading cases...</div>'; var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/CombinedTable!A:AR?key=' + API_KEY; fetch(url).then(function(res) { return res.json(); }).then(function(data) { var rows = data.values || []; allCases = []; allCasesUnfiltered = []; allZones = []; var header = rows[0] || []; var idx = {}; header.forEach(function(h,i){ idx[h]=i; }); var repZoneMap = {}; reps.forEach(function(rep) { if (rep.name && rep.zone) { repZoneMap[rep.name.toLowerCase()] = rep.zone; } }); for (var i = 1; i < rows.length; i++) { var r = rows[i]; var caseNumber = (r[idx['#️⃣ Case Number']] || '').trim(); if (!caseNumber) continue; var caseRep = (r[idx['Rep']] || '').trim(); var caseZone = repZoneMap[caseRep.toLowerCase()] || ''; var paymentStatus = (r[idx['Payment Status']] || '').trim().toLowerCase(); var workflowStatus = (r[idx['Workflow Status']] || '').trim(); var caseDoctor = (r[idx['Doctor 👨‍⚕️']] || '').trim(); allCasesUnfiltered.push({ caseType: (r[idx['Case Type']] || '').trim(), caseNumber: caseNumber, doctor: caseDoctor, clinic: (r[idx['🏥 Clinic']] || '').trim(), patient: (r[idx['😷 Patient']] || '').trim() }); if (!isAdmin && !isSalesRep) { var repDoctors = doctors.map(function(d) { return d.toLowerCase(); }); if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue; } if (caseZone && caseZone.toLowerCase() !== 'baghdad sales rep' && allZones.indexOf(caseZone) === -1) allZones.push(caseZone); var upperRem = parseInt(r[idx['⏳ Upper Remaining']]) || 0; var lowerRem = parseInt(r[idx['⏳ Lower Remaining']]) || 0; var amtRemaining = parseFloat(String(r[idx['Amount Remaining']] || '0').replace(/,/g,'')) || 0; var amountReceived = parseFloat(String(r[idx['Amount Recieved']] || '0').replace(/,/g,'')) || 0; var rowMoney = parseFloat(String(r[idx['Total Invoice']] || '0').replace(/,/g,'')) || 0; var batchPrice = Math.max(rowMoney, amountReceived, amtRemaining, 0); var casePrice = parseFloat(String(r[idx['Price']] || '0').replace(/,/g,'')) || 0; var afterDisc = parseFloat(String(r[idx['Price after Discount']] || '0').replace(/,/g,'')) || 0; var rawDiscount = parseFloat(String(r[idx['Discount']] || '0').replace(/,/g,'')) || 0; var discountDisplay = ''; if (rawDiscount > 0 && rawDiscount < 1) discountDisplay = Math.round(rawDiscount * 100) + '%'; else if (rawDiscount >= 1) discountDisplay = formatNum(rawDiscount) + ' IQD'; var allDelivered = upperRem === 0 && lowerRem === 0 && ((parseInt(r[idx['⬆️ Upper']])||0) + (parseInt(r[idx['⬇️ Lower']])||0) > 0); var displayStatus = ''; if (paymentStatus === 'unpaid') displayStatus = 'UNPAID'; else if (workflowStatus.toLowerCase() === 'waiting pickup') displayStatus = 'WAITING PICKUP'; else if (workflowStatus.toLowerCase() === 'under production') displayStatus = 'UNDER PRODUCTION'; else if (allDelivered && amtRemaining === 0) displayStatus = 'CASE FULLY PAID'; else if (batchPrice > 0) displayStatus = 'BATCH PAID'; else if (batchPrice === 0) displayStatus = 'FREE BATCH'; allCases.push({ year: (r[idx['Year']] || '').trim(), month: (r[idx['MonthDate']] || '').trim(), caseType: (r[idx['Case Type']] || '').trim(), caseNumber: caseNumber, doctor: caseDoctor, clinic: (r[idx['🏥 Clinic']] || '').trim(), patient: (r[idx['😷 Patient']] || '').trim(), upper: parseInt(r[idx['⬆️ Upper']]) || 0, lower: parseInt(r[idx['⬇️ Lower']]) || 0, upperDel: parseInt(r[idx['📦 Upper Delivered']] || r[idx['📦 Upper\nDelivered']]) || 0, lowerDel: parseInt(r[idx['📦 Lower Delivered']] || r[idx['📦 Lower\nDelivered']]) || 0, upperRem: upperRem, lowerRem: lowerRem, casePrice: casePrice, discountDisplay: discountDisplay, priceAfterDiscount: afterDisc, batchPrice: batchPrice, amtRemaining: amtRemaining, amountReceived: amountReceived, displayStatus: displayStatus, zone: caseZone }); }
-      statusLoaded = true; buildUnpaidZoneDropdown(); buildGroupedCases(); renderGroupedCases(); renderUnpaid(); }).catch(function(e) { console.error('Failed to load cases', e); if (statusNode) statusNode.innerHTML = '<div class="status-empty">Failed to load. Try again later.</div>'; }); }
-function buildUnpaidZoneDropdown() { var select = document.getElementById('unpaidZoneSelect'); var html = ''; if (isSalesRep) { html += '<option value="Karkh">Karkh</option>'; html += '<option value="Rusafa">Rusafa</option>'; } else { html += '<option value="">All Zones</option>'; allZones.sort().forEach(function(z) { if (z.toLowerCase() !== 'baghdad sales rep') html += '<option value="' + z.replace(/"/g, '&quot;') + '">' + z + '</option>'; }); } select.innerHTML = html; }
-function renderUnpaid() { var container = document.getElementById('unpaidTableContainer'); var totalEl = document.getElementById('unpaidTotalValue'); var zoneFilter = document.getElementById('unpaidZoneSelect').value || ''; var unpaid = allCases.filter(function(c) { if (c.displayStatus !== 'UNPAID') return false; if (isSalesRep) { var zoneLower = c.zone.toLowerCase(); if (zoneFilter) { if (zoneLower !== zoneFilter.toLowerCase()) return false; } else { if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') return false; } } else if (zoneFilter) { if (c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false; } return true; }); unpaid.reverse(); var total = 0; unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; }); totalEl.textContent = formatNum(total) + ' IQD'; if (unpaid.length === 0) { container.innerHTML = '<div class="status-empty">No pending cases</div>'; return; } var html = '<table class="unpaid-table">'; html += '<thead><tr><th class="frozen frozen-case">Case #</th><th class="frozen frozen-doctor">Doctor</th><th>Year</th><th>Month</th><th>Type</th><th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th></tr></thead><tbody>'; unpaid.forEach(function(c) { var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; html += '<tr><td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td><td class="frozen frozen-doctor">' + c.doctor + '</td><td>' + c.year + '</td><td>' + c.month + '</td><td>' + c.caseType + '</td><td>' + c.clinic + '</td><td>' + c.patient + '</td><td>' + c.zone + '</td><td class="amt">' + formatNum(amt) + ' IQD</td></tr>'; }); html += '</tbody></table>'; container.innerHTML = html; }
-function sendToTelegram(chatId, message) { return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: message }) }); }
-function sendSTLToTelegram(file, caption) { var formData = new FormData(); formData.append('chat_id', CHAT_ID); formData.append('document', file, file.name); formData.append('caption', caption); return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendDocument', { method: 'POST', body: formData }); }
-function validateForm() { var valid = true; var caseType = document.getElementById('caseType').value; var repName = document.getElementById('repDetected').value || ''; if (!repName) { alert('You are not authorized to submit orders. Please contact your admin.'); return false; } var caseNum = document.getElementById('caseNumber').value.trim(); if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') { document.getElementById('caseNumberError').classList.add('show'); document.getElementById('caseNumber').classList.add('error-field'); valid = false; } else { document.getElementById('caseNumberError').classList.remove('show'); document.getElementById('caseNumber').classList.remove('error-field'); } var doctorValue = document.getElementById('doctorValue').value; var doctorSearch = document.getElementById('doctorSearch').value.trim(); if (!doctorValue) { document.getElementById('doctorError').classList.add('show'); document.getElementById('doctorSearch').classList.add('error-field'); document.getElementById('doctorError').textContent = doctorSearch ? 'Please select a doctor from the list or click + New Doctor' : 'Please select or enter a doctor'; valid = false; } else { document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); } if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) { document.getElementById('newDoctorError').classList.add('show'); document.getElementById('newDoctorName').classList.add('error-field'); valid = false; } else { document.getElementById('newDoctorError').classList.remove('show'); document.getElementById('newDoctorName').classList.remove('error-field'); } if (!document.getElementById('patient').value.trim()) { document.getElementById('patientError').classList.add('show'); document.getElementById('patient').classList.add('error-field'); valid = false; } else { document.getElementById('patientError').classList.remove('show'); document.getElementById('patient').classList.remove('error-field'); } if (caseType === 'reprint') { if (!document.getElementById('reprintReason').value.trim()) { document.getElementById('reprintReason').classList.add('error-field'); valid = false; } else { document.getElementById('reprintReason').classList.remove('error-field'); } } if (caseType === 'retainer') { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; if (!upperChecked && !lowerChecked) { document.getElementById('retainerArchError').classList.add('show'); valid = false; } else { document.getElementById('retainerArchError').classList.remove('show'); } if (!document.getElementById('retainerPrice').value.trim()) { document.getElementById('retainerPriceError').classList.add('show'); document.getElementById('retainerPrice').classList.add('error-field'); valid = false; } else { document.getElementById('retainerPriceError').classList.remove('show'); document.getElementById('retainerPrice').classList.remove('error-field'); } } var mcaBatchVal = document.getElementById('mcaBatchNumber').value; var rBatchVal = document.getElementById('refinementBatch').value; var isNonFirstBatch = caseType === 'batch' || (caseType === 'mca' && mcaBatchVal !== '1') || (caseType === 'refinement' && rBatchVal !== '1'); if (caseType !== 'reprint' && caseType !== 'retainer' && !isNonFirstBatch) { var upper = document.getElementById('upper'); var lower = document.getElementById('lower'); var singleArch = document.getElementById('singleArch').checked; if (!singleArch) { if (upper.value === '') { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; } else { document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field'); } if (lower.value === '') { document.getElementById('lowerError').classList.add('show'); lower.classList.add('error-field'); valid = false; } else { document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field'); } } else { var upperVal = parseInt(upper.value) || 0; var lowerVal = parseInt(lower.value) || 0; if (upperVal === 0 && lowerVal === 0) { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; } else { document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field'); document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field'); } } } return valid; }
-function submitForm() { if (!validateForm()) { var firstError = document.querySelector('.error-field'); if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } var btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = 'Sending...'; var doctorValue = document.getElementById('doctorValue').value; var isNewDoctor = doctorValue === 'NEW_DOCTOR'; var newDoctorName = document.getElementById('newDoctorName').value.trim(); var finalDoctor = isNewDoctor ? newDoctorName : (doctorValue || document.getElementById('doctorSearch').value.trim()); var repName = document.getElementById('repDetected').value || ''; var caseNumber = buildCaseNumber(); var caseType = document.getElementById('caseType').value; var data = { caseType: caseType, caseNumber: caseNumber, doctor: finalDoctor, isNewDoctor: isNewDoctor, patient: document.getElementById('patient').value.trim(), clinic: document.getElementById('clinic').value.trim(), upper: parseInt(document.getElementById('upper').value) || 0, lower: parseInt(document.getElementById('lower').value) || 0, package: document.getElementById('package').value, singleArch: document.getElementById('singleArch').checked, discountType: document.getElementById('discountType').value, discountValue: document.getElementById('discountType').value === 'percentage' ? parseFloat(document.getElementById('discountValue').value) || 0 : getRawNumber('discountValue'), batch1Amount: getRawNumber('batch1Amount'), fullBatch: (document.getElementById('caseType').value === 'batch' || !document.getElementById('printAllRemainingGroup').classList.contains('hidden')) ? document.getElementById('printAllRemaining').checked : document.getElementById('installments').value === 'full', fullPayment: document.getElementById('fullPayment').checked, asap: document.getElementById('asap').checked, retainer: document.getElementById('retainer').checked, notes: document.getElementById('notes').value.trim(), rep: repName }; var message = buildTelegramMessage(data); var promises = [sendToTelegram(CHAT_ID, message)]; selectedFiles.forEach(function(file) { promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber)); }); Promise.all(promises).then(function() { if (tgUserId) { setTimeout(function() { sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!'); }, 500); } document.getElementById('formScreen').style.display = 'none'; document.getElementById('statusScreen').style.display = 'none'; document.getElementById('unpaidScreen').style.display = 'none'; document.getElementById('successScreen').style.display = 'block'; window.scrollTo(0, 0); document.getElementById('successSub').textContent = caseNumber ? 'Order for case ' + caseNumber + ' submitted successfully.' : 'Order submitted successfully.'; if (tg) { setTimeout(function() { tg.close(); }, 3000); } else { setTimeout(function() { window.location.reload(); }, 5000); } }).catch(function(err) { btn.disabled = false; btn.textContent = 'Submit Order'; alert('Failed to submit. Please try again.\n' + err.message); }); }
-function getBadgeClass(text){const t=safe(text).toLowerCase(); if(t==='active'||t==='under production'||t==='waiting pickup') return 'orange'; if(t==='finished'||t==='paid'||t==='case fully paid'||t==='batch paid'||t==='free batch') return 'green'; if(t==='unpaid') return 'red'; return 'blue';}
-function amountClass(value,kind){const num=Number(value)||0; if(num===0) return ''; return kind==='received' ? 'green-value' : 'red-value';}
-function shouldPendingDisplay(row){const workflow=safe(row.workflowStatus).toLowerCase(); const payment=safe(row.paymentStatus).toLowerCase(); return payment==='unpaid' || workflow==='under production' || workflow==='waiting pickup';}
-function isPaidRow(row){return !shouldPendingDisplay(row) && (Number(row.amountReceived)||0) > 0;}
-function deriveBatchPrice(row){if(shouldPendingDisplay(row)) return Math.max(Number(row.rowMoney)||0, Number(row.amountReceived)||0, Number(row.amountRemaining)||0); if((Number(row.amountReceived)||0)>0) return Number(row.amountReceived)||0; if((Number(row.rowMoney)||0)>0) return Number(row.rowMoney)||0; if((Number(row.amountRemaining)||0)>0) return Number(row.amountRemaining)||0; return 0;}
-function deriveAmountDue(row){if(shouldPendingDisplay(row)) return deriveBatchPrice(row); if(isPaidRow(row)) return null; return (Number(row.amountRemaining)||0)>0 ? Number(row.amountRemaining)||0 : null;}
-function forceFinishedForSupersededRows(sortedRows){const result=sortedRows.map(r=>({...r})); if(result.length<=1) return result; for(let i=0;i<result.length-1;i++){result[i].workflowStatus='Finished';} return result;}
-function buildGroupedCases(){ let visibleRows = allRows.slice(); if(!isAdmin&&!isSalesRep){ const allowed=new Set(doctors.map(d=>d.toLowerCase())); visibleRows=visibleRows.filter(r=>allowed.has(safe(r.doctor).toLowerCase())); } const map=new Map(); visibleRows.forEach(function(row){ const baseKey=safe(row.baseCaseNumber)||('STANDALONE::'+safe(row.caseNumber)+'::'+safe(row.patient)); if(!map.has(baseKey)){ map.set(baseKey,{ baseCaseNumber:safe(row.baseCaseNumber), titleCaseNumber:safe(row.baseCaseNumber)||safe(row.caseNumber), doctor:safe(row.doctor), clinic:safe(row.clinic), patient:safe(row.patient), rows:[] }); } const normalizedRow={...row}; if(shouldPendingDisplay(normalizedRow)){ const pendingAmount=Math.max(Number(normalizedRow.amountRemaining)||0, Number(normalizedRow.amountReceived)||0, Number(normalizedRow.rowMoney)||0); normalizedRow.amountReceived=0; normalizedRow.amountRemaining=pendingAmount; } normalizedRow.batchPriceDisplay=deriveBatchPrice(normalizedRow); normalizedRow.amountDueDisplay=deriveAmountDue(normalizedRow); normalizedRow.isPaidDisplay=isPaidRow(normalizedRow); map.get(baseKey).rows.push(normalizedRow); }); function pathDepth(r){const p=safe(r.casePath); return !p||p==='ROOT'?0:p.split('/').length;} groupedCases=Array.from(map.values()).map(function(group){ const rows=group.rows; const rootRow=rows.find(r=>!r.casePath||r.casePath==='ROOT')||rows[0]; const sortedRows=rows.slice().sort(function(a,b){ const depthA=pathDepth(a),depthB=pathDepth(b); if(depthA!==depthB) return depthA-depthB; return safe(a.casePath||'ROOT').localeCompare(safe(b.casePath||'ROOT')); }); const displayRows=forceFinishedForSupersededRows(sortedRows); const rootDisplayRow=displayRows.find(r=>!r.casePath||r.casePath==='ROOT')||displayRows[0]; const childRows=displayRows.filter(r=>r.casePath&&r.casePath!=='ROOT'); const currentRow=childRows.length?childRows[childRows.length-1]:rootDisplayRow; const currentDue=(currentRow.amountDueDisplay===null||typeof currentRow.amountDueDisplay==='undefined')?0:(Number(currentRow.amountDueDisplay)||0); const totalReceived=displayRows.reduce(function(s,r){ return s+(isPaidRow(r)?(Number(r.amountReceived)||0):0); },0); const totalDue=currentDue; const caseTarget=(Number(rootRow.priceAfterDiscount)||0)||(Number(rootRow.casePrice)||0); const totalRemaining=Math.max(caseTarget-totalReceived-totalDue,0); const overallWorkflow=currentRow.workflowStatus||'Finished'; const overallPayment=displayRows.some(r=>safe(r.paymentStatus).toLowerCase()==='unpaid')?'Unpaid':'Paid'; const collapsedSummary={ upper:currentRow.upper, lower:currentRow.lower, upperDelivered:currentRow.upperDelivered, lowerDelivered:currentRow.lowerDelivered, casePrice:rootRow.casePrice, discountRaw:formatDiscount(rootRow.discountRaw), priceAfterDiscount:rootRow.priceAfterDiscount }; const mainTags=[]; const caseTypeSet=new Set(displayRows.map(r=>safe(r.caseType)).filter(Boolean)); caseTypeSet.forEach(function(ct){ if(/^Refinement/i.test(ct)||/mid-course adjustment/i.test(ct)) mainTags.push(ct); }); return {...group, title:(group.titleCaseNumber||'Standalone')+' — '+(group.patient||'No patient'), overallWorkflow, overallPayment, totalDue, totalRemaining, totalReceived, rows:displayRows, collapsedSummary, rootDate:formatMonthYear(rootRow), mainTags, currentTypeTag:safe(currentRow.caseType||'')}; }).sort(function(a,b){ return a.title.localeCompare(b.title); }); }
-function buildTreeRows(rows){const rootRow=rows.find(r=>!r.casePath||r.casePath==='ROOT')||null; const childRows=rows.filter(r=>r.casePath&&r.casePath!=='ROOT'); const byParent={}; childRows.forEach(function(r){ const parent=r.parentPath||'ROOT'; if(!byParent[parent]) byParent[parent]=[]; byParent[parent].push(r); }); Object.keys(byParent).forEach(function(k){ byParent[k].sort(function(a,b){ return safe(a.casePath||'').localeCompare(safe(b.casePath||'')); }); }); const out=[]; if(rootRow) out.push({row:rootRow, depth:0}); function walk(parentKey,depth){ const list=byParent[parentKey]||[]; list.forEach(function(r){ out.push({row:r, depth:Math.min(depth,4)}); const ownKey=r.casePath||''; walk(ownKey,depth+1); }); } walk('ROOT',1); return out; }
-function filterDoctorOptions(query){const box=document.getElementById('doctorResults'); const q=safe(query).toLowerCase(); const pool=doctors.filter(Boolean).sort(); const filtered=q?pool.filter(d=>d.toLowerCase().includes(q)):pool; let html='<div class="search-result-item" data-doc="__ALL__" style="color:#1a73e8;font-weight:700">All Doctors</div>'; filtered.slice(0,40).forEach(function(doc){ html+='<div class="search-result-item" data-doc="'+doc.replace(/"/g,'&quot;')+'">'+doc+'</div>'; }); box.innerHTML=html; box.style.display='block'; }
-document.getElementById('doctorResults').addEventListener('click',function(e){ const item=e.target.closest('.search-result-item'); if(!item) return; const doc=item.getAttribute('data-doc'); selectedDoctor=doc==='__ALL__'?'':doc; document.getElementById('doctorFilterInput').value=selectedDoctor; document.getElementById('doctorResults').style.display='none'; renderGroupedCases(); });
-function renderGroupedCases(){ const query=safe(document.getElementById('searchInput').value).toLowerCase(); const area=document.getElementById('resultsArea'); const meta=document.getElementById('resultsMeta'); let filtered=groupedCases.filter(function(g){ if(selectedDoctor&&g.doctor!==selectedDoctor) return false; if(!query) return true; const hay=[g.titleCaseNumber,g.patient,g.doctor,g.clinic].join(' ').toLowerCase(); return hay.includes(query); }); meta.textContent=filtered.length?(filtered.length+' grouped case'+(filtered.length===1?'':'s')):''; if(!filtered.length){ area.innerHTML='<div class="status-empty">No grouped cases found.</div>'; return; } area.innerHTML=filtered.map(function(g,index){ const wid='tree_'+index; return `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div><button class="expand-btn" onclick="toggleTree('${wid}', this)">Expand</button></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div><div class="badges" style="margin-top:10px;justify-content:flex-start;">${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}</div>${renderCollapsedMainCard(g.collapsedSummary)}<div class="tree-wrap" id="${wid}" style="display:none;"><div class="tree-label">Case Records</div>${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('')||'<div class="status-empty" style="padding:16px 8px">No case records.</div>'}</div></div>`; }).join(''); }
-function renderCollapsedMainCard(summary){ if(!summary) return ''; return `<div class="parent-card"><div class="summary-grid steps-grid" style="margin-top:0;"><div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${summary.upper}</div></div><div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${summary.lower}</div></div><div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${summary.upperDelivered}</div></div><div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${summary.lowerDelivered}</div></div></div><div class="summary-grid financial-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">💰 Case Price</div><div class="mini-value">${formatNum(summary.casePrice)} IQD</div></div><div class="mini-box"><div class="mini-label">🏷️ Discount</div><div class="mini-value">${escapeHtml(summary.discountRaw||'-')}</div></div><div class="mini-box"><div class="mini-label">💵 After Disc.</div><div class="mini-value">${formatNum(summary.priceAfterDiscount)} IQD</div></div></div></div>`; }
-function childPriceInfo(row){ const price=Number(row.batchPriceDisplay)||0; return {label:'📦 Batch Price', value:price===0?'FREE':formatNum(price)+' IQD', valueClass:price===0?'green-value':(row.isPaidDisplay?'green-value':'')}; }
-function dueInfo(row){ if(row.amountDueDisplay===null||typeof row.amountDueDisplay==='undefined') return {label:'🧾 Amount Due', value:'-', valueClass:''}; const due=Number(row.amountDueDisplay)||0; return {label:'🧾 Amount Due', value:due===0?'-':formatNum(due)+' IQD', valueClass:due===0?'':'red-value'}; }
-function renderRecordCard(r,nested,depth){ if(!r||!Object.keys(r).length) return ''; const priceInfo=childPriceInfo(r); const due=dueInfo(r); return `<div class="${nested?`tree-node tree-indent-${depth}`:'parent-card'}"><div class="tree-line"><div class="tree-main"><div class="tree-title">${escapeHtml(r.caseType||r.caseNumber)}</div><div class="tree-meta">${escapeHtml(r.caseNumber)} • ${escapeHtml(formatMonthYear(r))}</div><div class="badges"><span class="badge blue">${escapeHtml(r.caseType||'')}</span>${r.paymentStatus?`<span class="badge ${getBadgeClass(r.paymentStatus)}">${escapeHtml(r.paymentStatus)}</span>`:''}${r.workflowStatus?`<span class="badge ${getBadgeClass(r.workflowStatus)}">${escapeHtml(r.workflowStatus)}</span>`:''}</div><div class="summary-grid steps-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${r.upper}</div></div><div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${r.lower}</div></div><div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${r.upperDelivered}</div></div><div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${r.lowerDelivered}</div></div><div class="mini-box"><div class="mini-label">⏳ Up Rem</div><div class="mini-value">${r.upperRemaining}</div></div><div class="mini-box"><div class="mini-label">⏳ Low Rem</div><div class="mini-value">${r.lowerRemaining}</div></div></div><div class="summary-grid financial-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">${escapeHtml(priceInfo.label)}</div><div class="mini-value ${priceInfo.valueClass}">${escapeHtml(priceInfo.value)}</div></div><div class="mini-box"><div class="mini-label">${escapeHtml(due.label)}</div><div class="mini-value ${due.valueClass}">${escapeHtml(due.value)}</div></div><div class="mini-box"><div class="mini-label">🔄 Workflow</div><div class="mini-value">${escapeHtml(r.workflowStatus||'-')}</div></div></div>${r.notes?`<div class="note">${escapeHtml(r.notes)}</div>`:''}</div></div></div>`; }
+function fetchFreshData() {
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values:batchGet?ranges=Customers!B:D&ranges=Reps!A:C&key=' + API_KEY;
+  fetch(url).then(function(res) { return res.json(); }).then(function(data) {
+    var rawRows = data.valueRanges[0].values || [];
+    var seen = {};
+    rawRows.forEach(function(row) {
+      var name = (row[0] || '').trim();
+      if (!name) return;
+      var key = name.toLowerCase();
+      if (!seen[key]) {
+        seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' };
+      } else {
+        var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
+        var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
+        incoming.forEach(function(r) {
+          if (existing.indexOf(r) === -1) {
+            seen[key].rep = seen[key].rep ? seen[key].rep + ', ' + r : r;
+            existing.push(r);
+          }
+        });
+      }
+    });
+    doctorRows = Object.values(seen).map(function(entry) { return [entry.name, '', entry.zone, entry.rep]; });
+    var repValues = data.valueRanges[1].values || [];
+    reps = repValues.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) {
+      return { name: row[0].trim(), username: (row[1] || '').trim(), zone: (row[2] || '').trim() };
+    });
+    var cacheData = JSON.stringify({ doctorRows: doctorRows, reps: reps });
+    try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
+    initTelegram();
+    setupRepField();
+  }).catch(function() {
+    if (doctors.length === 0) document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
+  });
+}
+function loadData() {
+  try {
+    var cached = localStorage.getItem('shafaf_data');
+    if (cached) applyCache(JSON.parse(cached));
+  } catch(e) {}
+  fetchFreshData();
+}
+
+function buildCaseNumber() {
+  var type = document.getElementById('caseType').value;
+  var baseNum = document.getElementById('caseNumber').value.trim();
+  if (type === 'reprint') return 'Reprint/ ' + baseNum;
+  if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer';
+  if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum;
+  if (type === 'mca') {
+    var mcaNum = document.getElementById('mcaNumber').value;
+    var mcaBatch = document.getElementById('mcaBatchNumber').value;
+    var prefix = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
+    if (mcaBatch === '1') return prefix + '/ ' + baseNum;
+    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
+    return prefix + '/ ' + batchSuffix + '/ ' + baseNum;
+  }
+  if (type === 'refinement') {
+    var rNum = document.getElementById('refinementNumber').value;
+    var rBatch = document.getElementById('refinementBatch').value;
+    var rPrefix = 'R' + rNum;
+    if (rBatch === '1') return rPrefix + '/ ' + baseNum;
+    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
+    return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum;
+  }
+  return baseNum;
+}
+function buildPrintOrderLine(data) {
+  var type = data.caseType;
+  if (type === 'new') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch';
+  if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch';
+  if (type === 'mca') {
+    var mcaBatch = document.getElementById('mcaBatchNumber').value;
+    var mcaNum = document.getElementById('mcaNumber').value;
+    var mcaLabel = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
+    if (mcaBatch === '1') return data.fullBatch ? 'Print order for Full Batch of ' + mcaLabel : 'Print order for 1st Batch of ' + mcaLabel;
+    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
+    return 'Print order for ' + batchSuffix + ' Batch of ' + mcaLabel;
+  }
+  if (type === 'refinement') {
+    var rNum = document.getElementById('refinementNumber').value;
+    var rBatch = document.getElementById('refinementBatch').value;
+    var rLabel = 'R' + rNum;
+    if (rBatch === '1') return 'Print order for Refinement ' + rLabel;
+    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
+    return 'Print order for ' + rBatchSuffix + ' Batch of ' + rLabel;
+  }
+  return 'Print order for 1st Batch';
+}
+function buildTelegramMessage(data) {
+  var username = detectedUsername || '';
+  var repName = document.getElementById('repDetected').value || '';
+  var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || '';
+  var msg = '';
+  msg += '🆕 Approval from @' + username + '\n';
+  msg += 'Case Number: ' + data.caseNumber + '\n';
+  msg += 'Doctor: ' + data.doctor + '\n';
+  msg += 'Patient: ' + data.patient + '\n';
+  if (data.clinic) msg += 'Clinic: ' + data.clinic + '\n';
+
+  if (data.caseType === 'reprint') {
+    var arch = document.getElementById('reprintArch').value;
+    var upperFrom = document.getElementById('reprintUpperFrom').value;
+    var upperTo = document.getElementById('reprintUpperTo').value;
+    var lowerFrom = document.getElementById('reprintLowerFrom').value;
+    var lowerTo = document.getElementById('reprintLowerTo').value;
+    var reprintReason = document.getElementById('reprintReason').value.trim();
+    var reprintPaymentVal = getFormattedValue('reprintPayment');
+    var reprintNotes = document.getElementById('reprintNotes').value.trim();
+    msg += 'Reprint Request\n';
+    msg += 'Arch: ' + arch + '\n';
+    if (arch === 'Both' || arch === 'Upper') {
+      if (document.getElementById('reprintUpperNonSeq').checked) {
+        var usteps = document.getElementById('reprintUpperSteps').value.trim();
+        if (usteps) msg += 'Upper: steps ' + usteps + '\n';
+      } else if (upperFrom && upperTo) {
+        msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
+      }
+    }
+    if (arch === 'Both' || arch === 'Lower') {
+      if (document.getElementById('reprintLowerNonSeq').checked) {
+        var lsteps = document.getElementById('reprintLowerSteps').value.trim();
+        if (lsteps) msg += 'Lower: steps ' + lsteps + '\n';
+      } else if (lowerFrom && lowerTo) {
+        msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
+      }
+    }
+    if (reprintReason) msg += 'Reason: ' + reprintReason + '\n';
+    if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) msg += 'Payment: ' + reprintPaymentVal + ' IQD\n';
+    else msg += 'Free Reprint\n';
+    if (reprintNotes) msg += 'Notes: ' + reprintNotes + '\n';
+    if (zone) msg += zone + '\n';
+    msg += repName;
+    return msg;
+  }
+
+  if (data.caseType === 'retainer') {
+    var upperChecked = document.getElementById('retainerUpper').checked;
+    var lowerChecked = document.getElementById('retainerLower').checked;
+    var upperQty = document.getElementById('retainerUpperQty').value;
+    var lowerQty = document.getElementById('retainerLowerQty').value;
+    var retainerAsap = document.getElementById('retainerAsap').checked;
+    var retainerPriceVal = getFormattedValue('retainerPrice');
+    var retainerNotes = document.getElementById('retainerNotes').value.trim();
+    var retainerReason = document.getElementById('retainerReason').value.trim();
+    if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
+    if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
+    if (retainerAsap) msg += 'ASAP\n';
+    msg += 'Price: ' + retainerPriceVal + ' IQD\n';
+    msg += 'Print order for Retainer\n';
+    if (retainerReason) msg += 'Reason: ' + retainerReason + '\n';
+    if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n';
+    if (zone) msg += zone + '\n';
+    msg += repName;
+    return msg;
+  }
+
+  var type = data.caseType;
+  msg += 'Upper: ' + data.upper + '\n';
+  msg += 'Lower: ' + data.lower + '\n';
+  msg += data.package + '\n';
+  if (data.singleArch) msg += 'Single Arch\n';
+  if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) {
+    if (data.discountType === 'percentage') msg += data.discountValue + '% DISCOUNT\n';
+    else msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
+  }
+  if (type === 'batch' || (document.getElementById('printAllRemainingGroup') && !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))) {
+    msg += 'Approved\n';
+    if (document.getElementById('printAllRemaining').checked) msg += 'Print order for Full Batch\n';
+    else {
+      var batchPayVal = getFormattedValue('batch1Amount');
+      if (batchPayVal && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batchPayVal + ' IQD\n';
+    }
+  } else {
+    var installments = document.getElementById('installments').value;
+    if (installments === 'full') msg += 'Approved (Full)\n';
+    else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
+    else msg += 'Approved\n';
+    var batch1Val = getFormattedValue('batch1Amount');
+    if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n';
+    if (data.fullPayment) msg += 'Full Payment\n';
+  }
+  msg += buildPrintOrderLine(data) + '\n';
+  if (data.asap) msg += 'ASAP\n';
+  if (data.retainer) msg += 'Add Retainer(s)\n';
+  var thickness = document.getElementById('attachmentThickness').value;
+  if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n';
+  var trimLine = document.getElementById('trimLine').value;
+  if (trimLine && trimLine !== 'Straight') msg += 'Trim Line: ' + trimLine + '\n';
+  if (data.notes) msg += 'Notes: ' + data.notes + '\n';
+  if (zone) msg += zone + '\n';
+  msg += repName;
+  return msg;
+}
+
+function switchTab(tab) {
+  document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
+  document.getElementById('tabStatus').classList.toggle('active', tab === 'status');
+  document.getElementById('tabUnpaid').classList.toggle('active', tab === 'unpaid');
+  document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none';
+  document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none';
+  document.getElementById('unpaidScreen').style.display = tab === 'unpaid' ? 'block' : 'none';
+  document.getElementById('successScreen').style.display = 'none';
+
+  if (tab === 'status' || tab === 'unpaid') {
+    var repName = document.getElementById('repDetected').value || '';
+    if (!repName) {
+      if (tab === 'status') {
+        document.getElementById('resultsArea').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
+        document.getElementById('resultsMeta').textContent = '';
+      } else {
+        document.getElementById('unpaidTableContainer').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
+      }
+      return;
+    }
+    if (!statusLoaded) loadCaseStatus();
+    else if (tab === 'status') { buildGroupedCases(); renderGroupedCases(); }
+    else if (tab === 'unpaid') renderUnpaid();
+  }
+}
+
+function extractBaseCase(caseNum) {
+  return caseNum
+    .replace(/^reprint\/\s*/i, '')
+    .replace(/^retainer\/\s*/i, '')
+    .replace(/^MCA\d*\/\s*/i, '')
+    .replace(/^R\d+\/\s*/i, '')
+    .replace(/^(2nd|3rd|4th|5th|6th|7th|8th|9th|10th)\/\s*/i, '')
+    .trim();
+}
+
+/* ---------- CRITICAL FIXED SECTION ---------- */
+function loadCaseStatus() {
+  var statusNode = document.getElementById('resultsArea');
+  if (statusNode) statusNode.innerHTML = '<div class="status-loading">Loading cases...</div>';
+
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/CombinedTable!A:AR?key=' + API_KEY;
+  fetch(url).then(function(res) { return res.json(); }).then(function(data) {
+    var rows = data.values || [];
+
+    allCases = [];
+    allCasesUnfiltered = [];
+    allZones = [];
+    allRows = [];
+
+    var header = rows[0] || [];
+    var idx = {};
+    header.forEach(function(h, i){ idx[h] = i; });
+
+    var repZoneMap = {};
+    reps.forEach(function(rep) {
+      if (rep.name && rep.zone) repZoneMap[rep.name.toLowerCase()] = rep.zone;
+    });
+
+    for (var i = 1; i < rows.length; i++) {
+      var r = rows[i];
+      var caseNumber = (r[idx['#️⃣ Case Number']] || '').trim();
+      if (!caseNumber) continue;
+
+      var caseRep = (r[idx['Rep']] || '').trim();
+      var caseZone = repZoneMap[caseRep.toLowerCase()] || '';
+      var paymentStatus = (r[idx['Payment Status']] || '').trim();
+      var paymentStatusLower = paymentStatus.toLowerCase();
+      var workflowStatus = (r[idx['Workflow Status']] || '').trim();
+      var caseDoctor = (r[idx['Doctor 👨‍⚕️']] || '').trim();
+
+      allCasesUnfiltered.push({
+        caseType: (r[idx['Case Type']] || '').trim(),
+        caseNumber: caseNumber,
+        doctor: caseDoctor,
+        clinic: (r[idx['🏥 Clinic']] || '').trim(),
+        patient: (r[idx['😷 Patient']] || '').trim()
+      });
+
+      if (!isAdmin && !isSalesRep) {
+        var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
+        if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
+      }
+
+      if (caseZone && caseZone.toLowerCase() !== 'baghdad sales rep' && allZones.indexOf(caseZone) === -1) {
+        allZones.push(caseZone);
+      }
+
+      var upper = parseInt(r[idx['⬆️ Upper']]) || 0;
+      var lower = parseInt(r[idx['⬇️ Lower']]) || 0;
+      var upperDelivered = parseInt(r[idx['📦 Upper Delivered']] || r[idx['📦 Upper\nDelivered']]) || 0;
+      var lowerDelivered = parseInt(r[idx['📦 Lower Delivered']] || r[idx['📦 Lower\nDelivered']]) || 0;
+      var upperRemaining = parseInt(r[idx['⏳ Upper Remaining']]) || 0;
+      var lowerRemaining = parseInt(r[idx['⏳ Lower Remaining']]) || 0;
+
+      var amtRemaining = parseFloat(String(r[idx['Amount Remaining']] || '0').replace(/,/g,'')) || 0;
+      var amountReceived = parseFloat(String(r[idx['Amount Recieved']] || '0').replace(/,/g,'')) || 0;
+      var rowMoney = parseFloat(String(r[idx['Total Invoice']] || '0').replace(/,/g,'')) || 0;
+      var batchPrice = Math.max(rowMoney, amountReceived, amtRemaining, 0);
+
+      var casePrice = parseFloat(String(r[idx['Price']] || '0').replace(/,/g,'')) || 0;
+      var afterDisc = parseFloat(String(r[idx['Price after Discount']] || '0').replace(/,/g,'')) || 0;
+
+      var rawDiscount = parseFloat(String(r[idx['Discount']] || '0').replace(/,/g,'')) || 0;
+      var discountDisplay = '';
+      if (rawDiscount > 0 && rawDiscount < 1) discountDisplay = Math.round(rawDiscount * 100) + '%';
+      else if (rawDiscount >= 1) discountDisplay = formatNum(rawDiscount) + ' IQD';
+
+      var allDelivered = upperRemaining === 0 && lowerRemaining === 0 && (upper + lower > 0);
+      var displayStatus = '';
+      if (paymentStatusLower === 'unpaid') displayStatus = 'UNPAID';
+      else if (workflowStatus.toLowerCase() === 'waiting pickup') displayStatus = 'WAITING PICKUP';
+      else if (workflowStatus.toLowerCase() === 'under production') displayStatus = 'UNDER PRODUCTION';
+      else if (allDelivered && amtRemaining === 0) displayStatus = 'CASE FULLY PAID';
+      else if (batchPrice > 0) displayStatus = 'BATCH PAID';
+      else displayStatus = 'FREE BATCH';
+
+      allCases.push({
+        year: (r[idx['Year']] || '').trim(),
+        month: (r[idx['MonthDate']] || '').trim(),
+        caseType: (r[idx['Case Type']] || '').trim(),
+        caseNumber: caseNumber,
+        doctor: caseDoctor,
+        clinic: (r[idx['🏥 Clinic']] || '').trim(),
+        patient: (r[idx['😷 Patient']] || '').trim(),
+        upper: upper,
+        lower: lower,
+        upperDel: upperDelivered,
+        lowerDel: lowerDelivered,
+        upperRem: upperRemaining,
+        lowerRem: lowerRemaining,
+        casePrice: casePrice,
+        discountDisplay: discountDisplay,
+        priceAfterDiscount: afterDisc,
+        batchPrice: batchPrice,
+        amtRemaining: amtRemaining,
+        amountReceived: amountReceived,
+        displayStatus: displayStatus,
+        zone: caseZone
+      });
+
+      /* this is what My Cases actually needs */
+      allRows.push({
+        year: (r[idx['Year']] || '').trim(),
+        monthDate: (r[idx['MonthDate']] || '').trim(),
+        caseType: (r[idx['Case Type']] || '').trim(),
+        caseNumber: caseNumber,
+        doctor: caseDoctor,
+        clinic: (r[idx['🏥 Clinic']] || '').trim(),
+        patient: (r[idx['😷 Patient']] || '').trim(),
+
+        upper: upper,
+        lower: lower,
+        upperDelivered: upperDelivered,
+        lowerDelivered: lowerDelivered,
+        upperRemaining: upperRemaining,
+        lowerRemaining: lowerRemaining,
+
+        casePrice: casePrice,
+        discountRaw: String(r[idx['Discount']] || '').trim(),
+        priceAfterDiscount: afterDisc,
+
+        rowMoney: rowMoney,
+        amountReceived: amountReceived,
+        amountRemaining: amtRemaining,
+
+        notes: String(r[idx['📝 Notes']] || '').trim(),
+        paymentStatus: paymentStatus,
+        workflowStatus: workflowStatus,
+
+        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(caseNumber)).trim(),
+        casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
+        parentPath: String(r[idx['Parent Path']] || '').trim()
+      });
+    }
+
+    statusLoaded = true;
+    buildUnpaidZoneDropdown();
+    buildGroupedCases();
+    renderGroupedCases();
+    renderUnpaid();
+  }).catch(function() {
+    if (statusNode) statusNode.innerHTML = '<div class="status-empty">Failed to load. Try again later.</div>';
+  });
+}
+
+/* ---------- Pending ---------- */
+function buildUnpaidZoneDropdown() {
+  var select = document.getElementById('unpaidZoneSelect');
+  var html = '';
+  if (isSalesRep) {
+    html += '<option value="Karkh">Karkh</option>';
+    html += '<option value="Rusafa">Rusafa</option>';
+  } else {
+    html += '<option value="">All Zones</option>';
+    allZones.sort().forEach(function(z) {
+      if (z.toLowerCase() !== 'baghdad sales rep') html += '<option value="' + z.replace(/"/g, '&quot;') + '">' + z + '</option>';
+    });
+  }
+  select.innerHTML = html;
+}
+function renderUnpaid() {
+  var container = document.getElementById('unpaidTableContainer');
+  var totalEl = document.getElementById('unpaidTotalValue');
+  var zoneFilter = document.getElementById('unpaidZoneSelect').value || '';
+  var unpaid = allCases.filter(function(c) {
+    if (c.displayStatus !== 'UNPAID') return false;
+    if (isSalesRep) {
+      var zoneLower = c.zone.toLowerCase();
+      if (zoneFilter) {
+        if (zoneLower !== zoneFilter.toLowerCase()) return false;
+      } else {
+        if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') return false;
+      }
+    } else if (zoneFilter) {
+      if (c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false;
+    }
+    return true;
+  });
+  unpaid.reverse();
+  var total = 0;
+  unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; });
+  totalEl.textContent = formatNum(total) + ' IQD';
+  if (unpaid.length === 0) {
+    container.innerHTML = '<div class="status-empty">No pending cases</div>';
+    return;
+  }
+  var html = '<table class="unpaid-table">';
+  html += '<thead><tr><th class="frozen frozen-case">Case #</th><th class="frozen frozen-doctor">Doctor</th><th>Year</th><th>Month</th><th>Type</th><th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
+  unpaid.forEach(function(c) {
+    var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining;
+    html += '<tr><td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td><td class="frozen frozen-doctor">' + c.doctor + '</td><td>' + c.year + '</td><td>' + c.month + '</td><td>' + c.caseType + '</td><td>' + c.clinic + '</td><td>' + c.patient + '</td><td>' + c.zone + '</td><td class="amt">' + formatNum(amt) + ' IQD</td></tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+/* ---------- submit ---------- */
+function sendToTelegram(chatId, message) {
+  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text: message })
+  });
+}
+function sendSTLToTelegram(file, caption) {
+  var formData = new FormData();
+  formData.append('chat_id', CHAT_ID);
+  formData.append('document', file, file.name);
+  formData.append('caption', caption);
+  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendDocument', { method: 'POST', body: formData });
+}
+
+function validateForm() {
+  var valid = true;
+  var caseType = document.getElementById('caseType').value;
+  var repName = document.getElementById('repDetected').value || '';
+  if (!repName) { alert('You are not authorized to submit orders. Please contact your admin.'); return false; }
+
+  var caseNum = document.getElementById('caseNumber').value.trim();
+  if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
+    document.getElementById('caseNumberError').classList.add('show');
+    document.getElementById('caseNumber').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('caseNumberError').classList.remove('show');
+    document.getElementById('caseNumber').classList.remove('error-field');
+  }
+
+  var doctorValue = document.getElementById('doctorValue').value;
+  var doctorSearch = document.getElementById('doctorSearch').value.trim();
+  if (!doctorValue) {
+    document.getElementById('doctorError').classList.add('show');
+    document.getElementById('doctorSearch').classList.add('error-field');
+    document.getElementById('doctorError').textContent = doctorSearch ? 'Please select a doctor from the list or click + New Doctor' : 'Please select or enter a doctor';
+    valid = false;
+  } else {
+    document.getElementById('doctorError').classList.remove('show');
+    document.getElementById('doctorSearch').classList.remove('error-field');
+  }
+
+  if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) {
+    document.getElementById('newDoctorError').classList.add('show');
+    document.getElementById('newDoctorName').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('newDoctorError').classList.remove('show');
+    document.getElementById('newDoctorName').classList.remove('error-field');
+  }
+
+  if (!document.getElementById('patient').value.trim()) {
+    document.getElementById('patientError').classList.add('show');
+    document.getElementById('patient').classList.add('error-field');
+    valid = false;
+  } else {
+    document.getElementById('patientError').classList.remove('show');
+    document.getElementById('patient').classList.remove('error-field');
+  }
+
+  if (caseType === 'reprint') {
+    if (!document.getElementById('reprintReason').value.trim()) {
+      document.getElementById('reprintReason').classList.add('error-field');
+      valid = false;
+    } else document.getElementById('reprintReason').classList.remove('error-field');
+  }
+
+  if (caseType === 'retainer') {
+    var upperChecked = document.getElementById('retainerUpper').checked;
+    var lowerChecked = document.getElementById('retainerLower').checked;
+    if (!upperChecked && !lowerChecked) {
+      document.getElementById('retainerArchError').classList.add('show');
+      valid = false;
+    } else document.getElementById('retainerArchError').classList.remove('show');
+
+    if (!document.getElementById('retainerPrice').value.trim()) {
+      document.getElementById('retainerPriceError').classList.add('show');
+      document.getElementById('retainerPrice').classList.add('error-field');
+      valid = false;
+    } else {
+      document.getElementById('retainerPriceError').classList.remove('show');
+      document.getElementById('retainerPrice').classList.remove('error-field');
+    }
+  }
+
+  var mcaBatchVal = document.getElementById('mcaBatchNumber').value;
+  var rBatchVal = document.getElementById('refinementBatch').value;
+  var isNonFirstBatch = caseType === 'batch' || (caseType === 'mca' && mcaBatchVal !== '1') || (caseType === 'refinement' && rBatchVal !== '1');
+  if (caseType !== 'reprint' && caseType !== 'retainer' && !isNonFirstBatch) {
+    var upper = document.getElementById('upper');
+    var lower = document.getElementById('lower');
+    var singleArch = document.getElementById('singleArch').checked;
+    if (!singleArch) {
+      if (upper.value === '') { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; }
+      else { document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field'); }
+      if (lower.value === '') { document.getElementById('lowerError').classList.add('show'); lower.classList.add('error-field'); valid = false; }
+      else { document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field'); }
+    } else {
+      var upperVal = parseInt(upper.value) || 0;
+      var lowerVal = parseInt(lower.value) || 0;
+      if (upperVal === 0 && lowerVal === 0) { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; }
+      else {
+        document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field');
+        document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field');
+      }
+    }
+  }
+  return valid;
+}
+
+function submitForm() {
+  if (!validateForm()) {
+    var firstError = document.querySelector('.error-field');
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  var doctorValue = document.getElementById('doctorValue').value;
+  var isNewDoctor = doctorValue === 'NEW_DOCTOR';
+  var newDoctorName = document.getElementById('newDoctorName').value.trim();
+  var finalDoctor = isNewDoctor ? newDoctorName : (doctorValue || document.getElementById('doctorSearch').value.trim());
+  var repName = document.getElementById('repDetected').value || '';
+  var caseNumber = buildCaseNumber();
+  var caseType = document.getElementById('caseType').value;
+
+  var data = {
+    caseType: caseType,
+    caseNumber: caseNumber,
+    doctor: finalDoctor,
+    isNewDoctor: isNewDoctor,
+    patient: document.getElementById('patient').value.trim(),
+    clinic: document.getElementById('clinic').value.trim(),
+    upper: parseInt(document.getElementById('upper').value) || 0,
+    lower: parseInt(document.getElementById('lower').value) || 0,
+    package: document.getElementById('package').value,
+    singleArch: document.getElementById('singleArch').checked,
+    discountType: document.getElementById('discountType').value,
+    discountValue: document.getElementById('discountType').value === 'percentage' ? parseFloat(document.getElementById('discountValue').value) || 0 : getRawNumber('discountValue'),
+    batch1Amount: getRawNumber('batch1Amount'),
+    fullBatch: (document.getElementById('caseType').value === 'batch' || !document.getElementById('printAllRemainingGroup').classList.contains('hidden')) ? document.getElementById('printAllRemaining').checked : document.getElementById('installments').value === 'full',
+    fullPayment: document.getElementById('fullPayment').checked,
+    asap: document.getElementById('asap').checked,
+    retainer: document.getElementById('retainer').checked,
+    notes: document.getElementById('notes').value.trim(),
+    rep: repName
+  };
+
+  var message = buildTelegramMessage(data);
+  var promises = [sendToTelegram(CHAT_ID, message)];
+  selectedFiles.forEach(function(file) { promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber)); });
+
+  Promise.all(promises).then(function() {
+    if (tgUserId) {
+      setTimeout(function() { sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!'); }, 500);
+    }
+    document.getElementById('formScreen').style.display = 'none';
+    document.getElementById('statusScreen').style.display = 'none';
+    document.getElementById('unpaidScreen').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo(0, 0);
+    document.getElementById('successSub').textContent = caseNumber ? 'Order for case ' + caseNumber + ' submitted successfully.' : 'Order submitted successfully.';
+    if (tg) setTimeout(function() { tg.close(); }, 3000);
+    else setTimeout(function() { window.location.reload(); }, 5000);
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Submit Order';
+    alert('Failed to submit. Please try again.\n' + err.message);
+  });
+}
+
+/* ---------- My Cases ---------- */
+function getBadgeClass(text){
+  const t=safe(text).toLowerCase();
+  if(t==='active'||t==='under production'||t==='waiting pickup') return 'orange';
+  if(t==='finished'||t==='paid'||t==='case fully paid'||t==='batch paid'||t==='free batch') return 'green';
+  if(t==='unpaid') return 'red';
+  return 'blue';
+}
+function amountClass(value,kind){
+  const num=Number(value)||0;
+  if(num===0) return '';
+  return kind==='received' ? 'green-value' : 'red-value';
+}
+function shouldPendingDisplay(row){
+  const workflow=safe(row.workflowStatus).toLowerCase();
+  const payment=safe(row.paymentStatus).toLowerCase();
+  return payment==='unpaid' || workflow==='under production' || workflow==='waiting pickup';
+}
+function isPaidRow(row){ return !shouldPendingDisplay(row) && (Number(row.amountReceived)||0) > 0; }
+function deriveBatchPrice(row){
+  if(shouldPendingDisplay(row)) return Math.max(Number(row.rowMoney)||0, Number(row.amountReceived)||0, Number(row.amountRemaining)||0);
+  if((Number(row.amountReceived)||0)>0) return Number(row.amountReceived)||0;
+  if((Number(row.rowMoney)||0)>0) return Number(row.rowMoney)||0;
+  if((Number(row.amountRemaining)||0)>0) return Number(row.amountRemaining)||0;
+  return 0;
+}
+function deriveAmountDue(row){
+  if(shouldPendingDisplay(row)) return deriveBatchPrice(row);
+  if(isPaidRow(row)) return null;
+  return (Number(row.amountRemaining)||0)>0 ? Number(row.amountRemaining)||0 : null;
+}
+function forceFinishedForSupersededRows(sortedRows){
+  const result=sortedRows.map(r=>({...r}));
+  if(result.length<=1) return result;
+  for(let i=0;i<result.length-1;i++) result[i].workflowStatus='Finished';
+  return result;
+}
+function formatDiscount(value){
+  const raw=safe(value);
+  if(!raw) return '-';
+  const num=Number(raw);
+  if(Number.isNaN(num)) return raw;
+  if(num===0) return '0%';
+  if(Math.abs(num)<=1) return (num*100).toFixed(num*100%1===0?0:1)+'%';
+  return num.toFixed(num%1===0?0:1)+'%';
+}
+
+function buildGroupedCases() {
+  let visibleRows = allRows.slice();
+
+  if(!isAdmin && !isSalesRep){
+    const allowed = new Set(doctors.map(d => d.toLowerCase()));
+    visibleRows = visibleRows.filter(r => allowed.has(safe(r.doctor).toLowerCase()));
+  }
+
+  const map = new Map();
+  visibleRows.forEach(function(row){
+    const baseKey = safe(row.baseCaseNumber) || ('STANDALONE::'+safe(row.caseNumber)+'::'+safe(row.patient));
+    if(!map.has(baseKey)){
+      map.set(baseKey,{
+        baseCaseNumber:safe(row.baseCaseNumber),
+        titleCaseNumber:safe(row.baseCaseNumber)||safe(row.caseNumber),
+        doctor:safe(row.doctor),
+        clinic:safe(row.clinic),
+        patient:safe(row.patient),
+        rows:[]
+      });
+    }
+
+    const normalizedRow = {...row};
+    if(shouldPendingDisplay(normalizedRow)){
+      const pendingAmount = Math.max(Number(normalizedRow.amountRemaining)||0, Number(normalizedRow.amountReceived)||0, Number(normalizedRow.rowMoney)||0);
+      normalizedRow.amountReceived = 0;
+      normalizedRow.amountRemaining = pendingAmount;
+    }
+    normalizedRow.batchPriceDisplay = deriveBatchPrice(normalizedRow);
+    normalizedRow.amountDueDisplay = deriveAmountDue(normalizedRow);
+    normalizedRow.isPaidDisplay = isPaidRow(normalizedRow);
+    map.get(baseKey).rows.push(normalizedRow);
+  });
+
+  function pathDepth(r){
+    const p=safe(r.casePath);
+    return !p || p==='ROOT' ? 0 : p.split('/').length;
+  }
+
+  groupedCases = Array.from(map.values()).map(function(group){
+    const rows = group.rows;
+    const rootRow = rows.find(r => !r.casePath || r.casePath==='ROOT') || rows[0];
+
+    const sortedRows = rows.slice().sort(function(a,b){
+      const depthA = pathDepth(a), depthB = pathDepth(b);
+      if(depthA !== depthB) return depthA - depthB;
+      return safe(a.casePath||'ROOT').localeCompare(safe(b.casePath||'ROOT'));
+    });
+
+    const displayRows = forceFinishedForSupersededRows(sortedRows);
+    const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[0];
+    const childRows = displayRows.filter(r => r.casePath && r.casePath!=='ROOT');
+    const currentRow = childRows.length ? childRows[childRows.length-1] : rootDisplayRow;
+
+    const currentDue = (currentRow.amountDueDisplay===null || typeof currentRow.amountDueDisplay==='undefined') ? 0 : (Number(currentRow.amountDueDisplay)||0);
+    const totalReceived = displayRows.reduce(function(s,r){ return s + (isPaidRow(r) ? (Number(r.amountReceived)||0) : 0); }, 0);
+    const totalDue = currentDue;
+    const caseTarget = (Number(rootRow.priceAfterDiscount)||0) || (Number(rootRow.casePrice)||0);
+    const totalRemaining = Math.max(caseTarget - totalReceived - totalDue, 0);
+
+    const overallWorkflow = currentRow.workflowStatus || 'Finished';
+    const overallPayment = displayRows.some(r => safe(r.paymentStatus).toLowerCase()==='unpaid') ? 'Unpaid' : 'Paid';
+
+    const collapsedSummary = {
+      upper: currentRow.upper,
+      lower: currentRow.lower,
+      upperDelivered: currentRow.upperDelivered,
+      lowerDelivered: currentRow.lowerDelivered,
+      casePrice: rootRow.casePrice,
+      discountRaw: formatDiscount(rootRow.discountRaw),
+      priceAfterDiscount: rootRow.priceAfterDiscount
+    };
+
+    const mainTags = [];
+    const caseTypeSet = new Set(displayRows.map(r => safe(r.caseType)).filter(Boolean));
+    caseTypeSet.forEach(function(ct){
+      if(/^Refinement/i.test(ct) || /mid-course adjustment/i.test(ct)) mainTags.push(ct);
+    });
+
+    return {
+      ...group,
+      title:(group.titleCaseNumber||'Standalone')+' — '+(group.patient||'No patient'),
+      overallWorkflow,
+      overallPayment,
+      totalDue,
+      totalRemaining,
+      totalReceived,
+      rows:displayRows,
+      collapsedSummary,
+      rootDate:formatMonthYear(rootRow),
+      mainTags,
+      currentTypeTag:safe(currentRow.caseType||'')
+    };
+  }).sort(function(a,b){ return a.title.localeCompare(b.title); });
+}
+
+function buildTreeRows(rows){
+  const rootRow = rows.find(r => !r.casePath || r.casePath==='ROOT') || null;
+  const childRows = rows.filter(r => r.casePath && r.casePath!=='ROOT');
+  const byParent = {};
+  childRows.forEach(function(r){
+    const parent = r.parentPath || 'ROOT';
+    if(!byParent[parent]) byParent[parent] = [];
+    byParent[parent].push(r);
+  });
+  Object.keys(byParent).forEach(function(k){
+    byParent[k].sort(function(a,b){ return safe(a.casePath||'').localeCompare(safe(b.casePath||'')); });
+  });
+
+  const out = [];
+  if(rootRow) out.push({row:rootRow, depth:0});
+
+  function walk(parentKey, depth){
+    const list = byParent[parentKey] || [];
+    list.forEach(function(r){
+      out.push({row:r, depth:Math.min(depth,4)});
+      const ownKey = r.casePath || '';
+      walk(ownKey, depth+1);
+    });
+  }
+  walk('ROOT', 1);
+  return out;
+}
+
+function filterDoctorOptions(query){
+  const box=document.getElementById('doctorResults');
+  const q=safe(query).toLowerCase();
+  const pool=doctors.filter(Boolean).sort();
+  const filtered=q?pool.filter(d=>d.toLowerCase().includes(q)):pool;
+  let html='<div class="search-result-item" data-doc="__ALL__" style="color:#1a73e8;font-weight:700">All Doctors</div>';
+  filtered.slice(0,40).forEach(function(doc){
+    html+='<div class="search-result-item" data-doc="'+doc.replace(/"/g,'&quot;')+'">'+doc+'</div>';
+  });
+  box.innerHTML=html;
+  box.style.display='block';
+}
+document.getElementById('doctorResults').addEventListener('click',function(e){
+  const item=e.target.closest('.search-result-item');
+  if(!item) return;
+  const doc=item.getAttribute('data-doc');
+  selectedDoctor=doc==='__ALL__'?'':doc;
+  document.getElementById('doctorFilterInput').value=selectedDoctor;
+  document.getElementById('doctorResults').style.display='none';
+  renderGroupedCases();
+});
+
+function renderGroupedCases(){
+  const query=safe(document.getElementById('searchInput').value).toLowerCase();
+  const area=document.getElementById('resultsArea');
+  const meta=document.getElementById('resultsMeta');
+
+  let filtered=groupedCases.filter(function(g){
+    if(selectedDoctor && g.doctor !== selectedDoctor) return false;
+    if(!query) return true;
+    const hay=[g.titleCaseNumber,g.patient,g.doctor,g.clinic].join(' ').toLowerCase();
+    return hay.includes(query);
+  });
+
+  meta.textContent = filtered.length ? (filtered.length+' grouped case'+(filtered.length===1?'':'s')) : '';
+
+  if(!filtered.length){
+    area.innerHTML='<div class="status-empty">No grouped cases found.</div>';
+    return;
+  }
+
+  area.innerHTML=filtered.map(function(g,index){
+    const wid='tree_'+index;
+    return `<div class="case-card">
+      <div class="case-head">
+        <div>
+          <div class="case-title">${escapeHtml(g.title)}</div>
+          <div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div>
+          <div class="case-date">${escapeHtml(g.rootDate)}</div>
+          <div class="badges">
+            <span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span>
+            <span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>
+            ${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        </div>
+        <button class="expand-btn" onclick="toggleTree('${wid}', this)">Expand</button>
+      </div>
+
+      <div class="summary-grid top-financial">
+        <div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div>
+        <div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div>
+        <div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div>
+      </div>
+
+      <div class="badges" style="margin-top:10px;justify-content:flex-start;">
+        ${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}
+      </div>
+
+      ${renderCollapsedMainCard(g.collapsedSummary)}
+
+      <div class="tree-wrap" id="${wid}" style="display:none;">
+        <div class="tree-label">Case Records</div>
+        ${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('') || '<div class="status-empty" style="padding:16px 8px">No case records.</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCollapsedMainCard(summary){
+  if(!summary) return '';
+  return `<div class="parent-card">
+    <div class="summary-grid steps-grid" style="margin-top:0;">
+      <div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${summary.upper}</div></div>
+      <div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${summary.lower}</div></div>
+      <div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${summary.upperDelivered}</div></div>
+      <div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${summary.lowerDelivered}</div></div>
+    </div>
+    <div class="summary-grid financial-grid" style="margin-top:10px;">
+      <div class="mini-box"><div class="mini-label">💰 Case Price</div><div class="mini-value">${formatNum(summary.casePrice)} IQD</div></div>
+      <div class="mini-box"><div class="mini-label">🏷️ Discount</div><div class="mini-value">${escapeHtml(summary.discountRaw||'-')}</div></div>
+      <div class="mini-box"><div class="mini-label">💵 After Disc.</div><div class="mini-value">${formatNum(summary.priceAfterDiscount)} IQD</div></div>
+    </div>
+  </div>`;
+}
+function childPriceInfo(row){
+  const price=Number(row.batchPriceDisplay)||0;
+  return {label:'📦 Batch Price', value:price===0?'FREE':formatNum(price)+' IQD', valueClass:price===0?'green-value':(row.isPaidDisplay?'green-value':'')};
+}
+function dueInfo(row){
+  if(row.amountDueDisplay===null||typeof row.amountDueDisplay==='undefined') return {label:'🧾 Amount Due', value:'-', valueClass:''};
+  const due=Number(row.amountDueDisplay)||0;
+  return {label:'🧾 Amount Due', value:due===0?'-':formatNum(due)+' IQD', valueClass:due===0?'':'red-value'};
+}
+function renderRecordCard(r,nested,depth){
+  if(!r||!Object.keys(r).length) return '';
+  const priceInfo=childPriceInfo(r);
+  const due=dueInfo(r);
+  return `<div class="${nested?`tree-node tree-indent-${depth}`:'parent-card'}">
+    <div class="tree-line">
+      <div class="tree-main">
+        <div class="tree-title">${escapeHtml(r.caseType||r.caseNumber)}</div>
+        <div class="tree-meta">${escapeHtml(r.caseNumber)} • ${escapeHtml(formatMonthYear(r))}</div>
+        <div class="badges">
+          <span class="badge blue">${escapeHtml(r.caseType||'')}</span>
+          ${r.paymentStatus?`<span class="badge ${getBadgeClass(r.paymentStatus)}">${escapeHtml(r.paymentStatus)}</span>`:''}
+          ${r.workflowStatus?`<span class="badge ${getBadgeClass(r.workflowStatus)}">${escapeHtml(r.workflowStatus)}</span>`:''}
+        </div>
+        <div class="summary-grid steps-grid" style="margin-top:10px;">
+          <div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${r.upper}</div></div>
+          <div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${r.lower}</div></div>
+          <div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${r.upperDelivered}</div></div>
+          <div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${r.lowerDelivered}</div></div>
+          <div class="mini-box"><div class="mini-label">⏳ Up Rem</div><div class="mini-value">${r.upperRemaining}</div></div>
+          <div class="mini-box"><div class="mini-label">⏳ Low Rem</div><div class="mini-value">${r.lowerRemaining}</div></div>
+        </div>
+        <div class="summary-grid financial-grid" style="margin-top:10px;">
+          <div class="mini-box"><div class="mini-label">${escapeHtml(priceInfo.label)}</div><div class="mini-value ${priceInfo.valueClass}">${escapeHtml(priceInfo.value)}</div></div>
+          <div class="mini-box"><div class="mini-label">${escapeHtml(due.label)}</div><div class="mini-value ${due.valueClass}">${escapeHtml(due.value)}</div></div>
+          <div class="mini-box"><div class="mini-label">🔄 Workflow</div><div class="mini-value">${escapeHtml(r.workflowStatus||'-')}</div></div>
+        </div>
+        ${r.notes?`<div class="note">${escapeHtml(r.notes)}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
 function renderTreeNode(r,depth){ return renderRecordCard(r,true,depth); }
-function toggleTree(id,btn){ const el=document.getElementById(id); const open=el.style.display!=='none'; el.style.display=open?'none':'block'; btn.textContent=open?'Expand':'Collapse'; }
-function formatDiscount(value){ const raw=safe(value); if(!raw) return '-'; const num=Number(raw); if(Number.isNaN(num)) return raw; if(num===0) return '0%'; if(Math.abs(num)<=1) return (num*100).toFixed(num*100%1===0?0:1)+'%'; return num.toFixed(num%1===0?0:1)+'%'; }
-function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
-formatWithCommas(document.getElementById('batch1Amount')); formatWithCommas(document.getElementById('discountValue')); formatWithCommas(document.getElementById('retainerPrice')); formatWithCommas(document.getElementById('reprintPayment')); handleCaseTypeChange(); initTelegram(); loadData(); setTimeout(function() { loadCaseStatus(); }, 1500);
+function toggleTree(id,btn){
+  const el=document.getElementById(id);
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  btn.textContent=open?'Expand':'Collapse';
+}
+function escapeHtml(str){
+  return String(str||'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+formatWithCommas(document.getElementById('batch1Amount'));
+formatWithCommas(document.getElementById('discountValue'));
+formatWithCommas(document.getElementById('retainerPrice'));
+formatWithCommas(document.getElementById('reprintPayment'));
+handleCaseTypeChange();
+initTelegram();
+loadData();
+setTimeout(function() { loadCaseStatus(); }, 1500);
 </script>
 </body>
 </html>
