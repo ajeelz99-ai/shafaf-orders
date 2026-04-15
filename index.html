@@ -1200,7 +1200,8 @@ function loadCaseStatus() {
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
-        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber) || ('ROW::' + i + '::' + (rawCaseType || 'Case'))).trim(),
+        baseCaseNumber: String(rawCaseNumber ? (r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber)) : ('ROW::' + i + '::' + (rawCaseType || 'Case'))).trim(),
+        rawCaseNumber: rawCaseNumber,
         casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
         parentPath: String(r[idx['Parent Path']] || '').trim()
       });
@@ -1453,40 +1454,12 @@ function amountClass(value,kind){
   if(num===0) return '';
   return kind==='received' ? 'green-value' : 'red-value';
 }
-function shouldPendingDisplay(row){
-  const workflow=safe(row.workflowStatus).toLowerCase();
-  const payment=safe(row.paymentStatus).toLowerCase();
-  return payment==='unpaid' || workflow==='under production' || workflow==='waiting pickup';
-}
-function isPaidRow(row){ return !shouldPendingDisplay(row) && (Number(row.amountReceived)||0) > 0; }
-function deriveBatchPrice(row){
-  if(shouldPendingDisplay(row)) return Math.max(Number(row.rowMoney)||0, Number(row.amountReceived)||0, Number(row.amountRemaining)||0);
-  if((Number(row.amountReceived)||0)>0) return Number(row.amountReceived)||0;
-  if((Number(row.rowMoney)||0)>0) return Number(row.rowMoney)||0;
-  if((Number(row.amountRemaining)||0)>0) return Number(row.amountRemaining)||0;
-  return 0;
-}
-function deriveAmountDue(row){
-  if(shouldPendingDisplay(row)) return deriveBatchPrice(row);
-  if(isPaidRow(row)) return null;
-  return (Number(row.amountRemaining)||0)>0 ? Number(row.amountRemaining)||0 : null;
-}
 function forceFinishedForSupersededRows(sortedRows){
   const result=sortedRows.map(r=>({...r}));
   if(result.length<=1) return result;
   for(let i=0;i<result.length-1;i++) result[i].workflowStatus='Finished';
   return result;
 }
-function formatDiscount(value){
-  const raw=safe(value);
-  if(!raw) return '-';
-  const num=Number(raw);
-  if(Number.isNaN(num)) return raw;
-  if(num===0) return '0%';
-  if(Math.abs(num)<=1) return (num*100).toFixed(num*100%1===0?0:1)+'%';
-  return num.toFixed(num%1===0?0:1)+'%';
-}
-
 function getCaseTypeLabel(row){
   const explicit = safe(row.caseType);
   if (explicit) return explicit;
@@ -1509,28 +1482,25 @@ function getCaseTypeLabel(row){
 }
 
 function getCaseTarget(row){
-  const direct = Math.max(Number(row.priceAfterDiscount) || 0, Number(row.casePrice) || 0);
-  if (direct > 0) return direct;
-
-  const fallback = Math.max(
-    Number(row.rowMoney) || 0,
-    Number(row.amountReceived) || 0,
-    Number(row.amountRemaining) || 0
-  );
-  return fallback;
+  const afterDisc = Number(row.priceAfterDiscount) || 0;
+  const casePrice = Number(row.casePrice) || 0;
+  if (afterDisc > 0) return afterDisc;
+  if (casePrice > 0) return casePrice;
+  return getCurrentBatchAmount(row);
 }
 
 function getCurrentBatchAmount(row){
-  return Math.max(
-    Number(row.rowMoney) || 0,
-    Number(row.amountReceived) || 0,
-    Number(row.amountRemaining) || 0
-  );
+  const rowMoney = Number(row.rowMoney) || 0;
+  const remaining = Number(row.amountRemaining) || 0;
+  const received = Number(row.amountReceived) || 0;
+  if (rowMoney > 0) return rowMoney;
+  if (remaining > 0) return remaining;
+  if (received > 0) return received;
+  return 0;
 }
 
 function isDueNow(row){
-  const payment = safe(row.paymentStatus).toLowerCase();
-  return payment === 'unpaid';
+  return safe(row.paymentStatus).toLowerCase() === 'unpaid';
 }
 
 function isHoldingStatus(row){
@@ -1539,13 +1509,31 @@ function isHoldingStatus(row){
 }
 
 function isActuallyPaidRow(row){
-  return !isDueNow(row) && !isHoldingStatus(row) && (Number(row.amountReceived) || 0) > 0;
+  return !isDueNow(row) && !isHoldingStatus(row) && getCurrentBatchAmount(row) > 0 && (Number(row.amountReceived) || 0) > 0;
 }
 
 function getOverallPaymentStatus(totalDue, totalRemaining){
   if (totalDue > 0) return 'Unpaid';
   if (totalRemaining > 0) return 'Pending';
   return 'Paid';
+}
+
+function pickCurrentStatusRow(rows){
+  return rows.find(function(r){
+    return isDueNow(r) || isHoldingStatus(r);
+  }) || rows.find(function(r){
+    return !isActuallyPaidRow(r) && getCurrentBatchAmount(r) > 0;
+  }) || rows[0] || null;
+}
+
+function formatDiscount(value){
+  const raw=safe(value);
+  if(!raw) return '-';
+  const num=Number(raw);
+  if(Number.isNaN(num)) return raw;
+  if(num===0) return '0%';
+  if(Math.abs(num)<=1) return (num*100).toFixed(num*100%1===0?0:1)+'%';
+  return num.toFixed(num%1===0?0:1)+'%';
 }
 
 function buildGroupedCases() {
@@ -1558,11 +1546,11 @@ function buildGroupedCases() {
 
   const map = new Map();
   visibleRows.forEach(function(row){
-    const baseKey = safe(row.baseCaseNumber) || ('STANDALONE::'+safe(row.caseNumber)+'::'+safe(row.patient));
+    const baseKey = safe(row.baseCaseNumber) || ('STANDALONE::'+safe(row.caseNumber)+'::'+safe(row.patient)+'::'+String(row.combinedTableRowIndex||''));
     if(!map.has(baseKey)){
       map.set(baseKey,{
         baseCaseNumber:safe(row.baseCaseNumber),
-        titleCaseNumber:safe(row.baseCaseNumber)||safe(row.caseNumber),
+        titleCaseNumber:safe(row.rawCaseNumber)||safe(row.baseCaseNumber)||safe(row.caseNumber)||getCaseTypeLabel(row),
         doctor:safe(row.doctor),
         clinic:safe(row.clinic),
         patient:safe(row.patient),
@@ -1604,27 +1592,27 @@ function buildGroupedCases() {
     const displayRows = forceFinishedForSupersededRows(sortedRows);
     const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[displayRows.length - 1];
     const currentRow = displayRows[0] || rootDisplayRow;
-    const currentStatusRow = currentRow;
+    const currentStatusRow = pickCurrentStatusRow(sortedRows) || currentRow;
 
     const currentDue = Number(currentStatusRow.amountDueDisplay) || 0;
-    const totalReceived = displayRows.reduce(function(s,r){
-      return s + (isActuallyPaidRow(r) ? (Number(r.amountReceived) || 0) : 0);
+    const totalReceived = sortedRows.reduce(function(s,r){
+      return s + (isActuallyPaidRow(r) ? getCurrentBatchAmount(r) : 0);
     }, 0);
     const caseTarget = getCaseTarget(rootRow);
     const totalDue = currentDue;
     const totalRemaining = Math.max(caseTarget - totalReceived - totalDue, 0);
 
-    const overallWorkflow = safe(currentStatusRow.workflowStatus) || 'Finished';
+    const overallWorkflow = safe(currentStatusRow.workflowStatus) || (totalRemaining > 0 ? 'Pending' : 'Finished');
     const overallPayment = getOverallPaymentStatus(totalDue, totalRemaining);
 
     const collapsedSummary = {
-      upper: currentRow.upper,
-      lower: currentRow.lower,
-      upperDelivered: currentRow.upperDelivered,
-      lowerDelivered: currentRow.lowerDelivered,
-      casePrice: rootRow.casePrice,
+      upper: currentStatusRow.upper,
+      lower: currentStatusRow.lower,
+      upperDelivered: currentStatusRow.upperDelivered,
+      lowerDelivered: currentStatusRow.lowerDelivered,
+      casePrice: getCaseTarget(rootRow),
       discountRaw: formatDiscount(rootRow.discountRaw),
-      priceAfterDiscount: rootRow.priceAfterDiscount
+      priceAfterDiscount: (Number(rootRow.priceAfterDiscount) || Number(rootRow.casePrice) || getCaseTarget(rootRow))
     };
 
     const mainTags = [];
@@ -1635,7 +1623,7 @@ function buildGroupedCases() {
 
     return {
       ...group,
-      title:(group.titleCaseNumber||'Standalone')+' — '+(group.patient||'No patient'),
+      title:((safe(group.titleCaseNumber)||safe(getCaseTypeLabel(rootRow))||'Standalone'))+' — '+(group.patient||'No patient'),
       overallWorkflow,
       overallPayment,
       totalDue,
@@ -1645,8 +1633,8 @@ function buildGroupedCases() {
       collapsedSummary,
       rootDate:formatMonthYear(rootRow),
       mainTags,
-      currentTypeTag: safe(currentRow.caseTypeLabel || getCaseTypeLabel(currentRow)),
-      currentTypeDate: formatMonthYear(currentRow),
+      currentTypeTag: safe(currentStatusRow.caseTypeLabel || getCaseTypeLabel(currentStatusRow)),
+      currentTypeDate: formatMonthYear(currentStatusRow),
       latestSortValue: groupLatestSortValue({rows: displayRows}),
       latestRowIndex: Math.max.apply(null, displayRows.map(function(r){ return Number(r.combinedTableRowIndex) || 0; }))
     };
@@ -1914,6 +1902,7 @@ formatWithCommas(document.getElementById('reprintPayment'));
 handleCaseTypeChange();
 initTelegram();
 loadData();
+setTimeout(function() { loadCaseStatus(); }, 1500);
 </script>
 </body>
 </html>
