@@ -226,6 +226,7 @@ textarea { resize: none; height: 80px; }
 .tree-title { font-size:13px; font-weight:700; color:#1a1a1a; }
 .tree-meta { font-size:12px; color:#666; margin-top:3px; }
 .note { margin-top:5px; font-size:12px; color:#555; background:#fff; border:1px dashed #e0e0e0; border-radius:8px; padding:7px 8px; }
+.detail-back-card { padding:12px; }
 @media (max-width:620px) {
   .row { flex-direction:column; }
   .summary-grid, .summary-grid.compact-top, .summary-grid.steps-grid, .summary-grid.financial-grid, .summary-grid.financial-grid-2, .summary-grid.top-financial { grid-template-columns:1fr 1fr; }
@@ -447,19 +448,26 @@ textarea { resize: none; height: 80px; }
 
 <div id="statusScreen">
 <div class="form-container">
-  <div class="card">
-    <div class="section-title">Search</div>
-    <div class="row">
-      <input type="search" id="searchInput" placeholder="Search case number or patient..." oninput="renderGroupedCases()" />
-      <div class="search-wrapper">
-        <input type="search" id="doctorFilterInput" placeholder="Filter by doctor..." autocomplete="off" oninput="filterDoctorOptions(this.value)" onfocus="filterDoctorOptions(this.value)" />
-        <div class="search-results" id="doctorResults"></div>
+  <div id="caseListScreen">
+    <div class="card">
+      <div class="section-title">Search</div>
+      <div class="row">
+        <input type="search" id="searchInput" placeholder="Search case number or patient..." oninput="renderGroupedCases()" />
+        <div class="search-wrapper">
+          <input type="search" id="doctorFilterInput" placeholder="Filter by doctor..." autocomplete="off" oninput="filterDoctorOptions(this.value)" onfocus="filterDoctorOptions(this.value)" />
+          <div class="search-results" id="doctorResults"></div>
+        </div>
       </div>
     </div>
-   
+    <div id="resultsMeta" class="hint" style="margin-bottom:10px;"></div>
+    <div id="resultsArea"><div class="status-loading">Loading grouped cases…</div></div>
   </div>
-  <div id="resultsMeta" class="hint" style="margin-bottom:10px;"></div>
-  <div id="resultsArea"><div class="status-loading">Loading grouped cases…</div></div>
+  <div id="caseDetailScreen" style="display:none;">
+    <div class="card detail-back-card">
+      <button class="expand-btn" onclick="closeCaseDetail()">← Back</button>
+    </div>
+    <div id="caseDetailArea"></div>
+  </div>
 </div>
 </div>
 
@@ -502,6 +510,7 @@ var repZone = '';
 var groupedCases = [];
 var selectedDoctor = '';
 var currentFiltered = [];
+var renderedGroups = [];
 
 function formatWithCommas(input) {
   input.addEventListener('input', function() {
@@ -526,6 +535,18 @@ function formatMonthYear(row){
   var year = safe(row.year);
   return [month, year].filter(Boolean).join(' ');
 }
+function monthIndex(name){
+  var months=['january','february','march','april','may','june','july','august','september','october','november','december'];
+  var idx = months.indexOf(safe(name).toLowerCase());
+  return idx === -1 ? 0 : idx + 1;
+}
+function rowSortValue(row){
+  return ((Number(row.year) || 0) * 100) + monthIndex(row.monthDate || row.month);
+}
+function groupLatestSortValue(group){
+  if(!group || !group.rows || !group.rows.length) return 0;
+  return Math.max.apply(null, group.rows.map(function(r){ return rowSortValue(r); }));
+}
 
 function initTelegram() {
   tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -538,7 +559,6 @@ function initTelegram() {
   }
 }
 
-/* ---------- form logic kept same ---------- */
 function handleCaseTypeChange() {
   var type = document.getElementById('caseType').value;
   var mcaBatch = document.getElementById('mcaBatchNumber').value;
@@ -1025,7 +1045,10 @@ function switchTab(tab) {
       return;
     }
     if (!statusLoaded) loadCaseStatus();
-    else if (tab === 'status') { buildGroupedCases(); renderGroupedCases(); }
+    else if (tab === 'status') {
+      buildGroupedCases();
+      renderGroupedCases();
+    }
     else if (tab === 'unpaid') renderUnpaid();
   }
 }
@@ -1040,7 +1063,6 @@ function extractBaseCase(caseNum) {
     .trim();
 }
 
-/* ---------- CRITICAL FIXED SECTION ---------- */
 function loadCaseStatus() {
   var statusNode = document.getElementById('resultsArea');
   if (statusNode) statusNode.innerHTML = '<div class="status-loading">Loading cases...</div>';
@@ -1145,7 +1167,6 @@ function loadCaseStatus() {
         zone: caseZone
       });
 
-      /* this is what My Cases actually needs */
       allRows.push({
         year: (r[idx['Year']] || '').trim(),
         monthDate: (r[idx['MonthDate']] || '').trim(),
@@ -1154,26 +1175,21 @@ function loadCaseStatus() {
         doctor: caseDoctor,
         clinic: (r[idx['🏥 Clinic']] || '').trim(),
         patient: (r[idx['😷 Patient']] || '').trim(),
-
         upper: upper,
         lower: lower,
         upperDelivered: upperDelivered,
         lowerDelivered: lowerDelivered,
         upperRemaining: upperRemaining,
         lowerRemaining: lowerRemaining,
-
         casePrice: casePrice,
         discountRaw: String(r[idx['Discount']] || '').trim(),
         priceAfterDiscount: afterDisc,
-
         rowMoney: rowMoney,
         amountReceived: amountReceived,
         amountRemaining: amtRemaining,
-
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
-
         baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(caseNumber)).trim(),
         casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
         parentPath: String(r[idx['Parent Path']] || '').trim()
@@ -1190,7 +1206,6 @@ function loadCaseStatus() {
   });
 }
 
-/* ---------- Pending ---------- */
 function buildUnpaidZoneDropdown() {
   var select = document.getElementById('unpaidZoneSelect');
   var html = '';
@@ -1241,7 +1256,6 @@ function renderUnpaid() {
   container.innerHTML = html;
 }
 
-/* ---------- submit ---------- */
 function sendToTelegram(chatId, message) {
   return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', {
     method: 'POST',
@@ -1417,7 +1431,6 @@ function submitForm() {
   });
 }
 
-/* ---------- My Cases ---------- */
 function getBadgeClass(text){
   const t=safe(text).toLowerCase();
   if(t==='active'||t==='under production'||t==='waiting pickup') return 'orange';
@@ -1508,15 +1521,17 @@ function buildGroupedCases() {
     const rootRow = rows.find(r => !r.casePath || r.casePath==='ROOT') || rows[0];
 
     const sortedRows = rows.slice().sort(function(a,b){
+      const dateDiff = rowSortValue(b) - rowSortValue(a);
+      if(dateDiff !== 0) return dateDiff;
       const depthA = pathDepth(a), depthB = pathDepth(b);
       if(depthA !== depthB) return depthA - depthB;
       return safe(a.casePath||'ROOT').localeCompare(safe(b.casePath||'ROOT'));
     });
 
     const displayRows = forceFinishedForSupersededRows(sortedRows);
-    const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[0];
+    const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[displayRows.length - 1];
     const childRows = displayRows.filter(r => r.casePath && r.casePath!=='ROOT');
-    const currentRow = childRows.length ? childRows[childRows.length-1] : rootDisplayRow;
+    const currentRow = displayRows[0] || rootDisplayRow;
 
     const currentDue = (currentRow.amountDueDisplay===null || typeof currentRow.amountDueDisplay==='undefined') ? 0 : (Number(currentRow.amountDueDisplay)||0);
     const totalReceived = displayRows.reduce(function(s,r){ return s + (isPaidRow(r) ? (Number(r.amountReceived)||0) : 0); }, 0);
@@ -1555,9 +1570,14 @@ function buildGroupedCases() {
       collapsedSummary,
       rootDate:formatMonthYear(rootRow),
       mainTags,
-      currentTypeTag:safe(currentRow.caseType||'')
+      currentTypeTag:safe(currentRow.caseType||''),
+      latestSortValue: groupLatestSortValue({rows: displayRows})
     };
-  }).sort(function(a,b){ return a.title.localeCompare(b.title); });
+  }).sort(function(a,b){
+    const diff = (b.latestSortValue||0) - (a.latestSortValue||0);
+    if(diff !== 0) return diff;
+    return a.title.localeCompare(b.title);
+  });
 }
 
 function buildTreeRows(rows){
@@ -1570,7 +1590,11 @@ function buildTreeRows(rows){
     byParent[parent].push(r);
   });
   Object.keys(byParent).forEach(function(k){
-    byParent[k].sort(function(a,b){ return safe(a.casePath||'').localeCompare(safe(b.casePath||'')); });
+    byParent[k].sort(function(a,b){
+      const dateDiff = rowSortValue(b) - rowSortValue(a);
+      if(dateDiff !== 0) return dateDiff;
+      return safe(a.casePath||'').localeCompare(safe(b.casePath||''));
+    });
   });
 
   const out = [];
@@ -1610,6 +1634,11 @@ document.getElementById('doctorResults').addEventListener('click',function(e){
   renderGroupedCases();
 });
 
+document.addEventListener('click',function(e){
+  const box=document.getElementById('doctorResults');
+  if(!e.target.closest('#doctorFilterInput')&&!e.target.closest('#doctorResults')) box.style.display='none';
+});
+
 function renderGroupedCases(){
   const query=safe(document.getElementById('searchInput').value).toLowerCase();
   const area=document.getElementById('resultsArea');
@@ -1620,9 +1649,14 @@ function renderGroupedCases(){
     if(!query) return true;
     const hay=[g.titleCaseNumber,g.patient,g.doctor,g.clinic].join(' ').toLowerCase();
     return hay.includes(query);
+  }).sort(function(a,b){
+    const diff = (b.latestSortValue||0) - (a.latestSortValue||0);
+    if(diff !== 0) return diff;
+    return a.title.localeCompare(b.title);
   });
 
-  meta.textContent = filtered.length ? (filtered.length+' grouped case'+(filtered.length===1?'':'s')) : '';
+  renderedGroups = filtered;
+  meta.textContent = isAdmin && filtered.length ? (filtered.length+' grouped case'+(filtered.length===1?'':'s')) : '';
 
   if(!filtered.length){
     area.innerHTML='<div class="status-empty">No grouped cases found.</div>';
@@ -1630,40 +1664,23 @@ function renderGroupedCases(){
   }
 
   area.innerHTML=filtered.map(function(g,index){
-    const wid='tree_'+index;
-    return `<div class="case-card">
-      <div class="case-head">
-        <div>
-          <div class="case-title">${escapeHtml(g.title)}</div>
-          <div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div>
-          <div class="case-date">${escapeHtml(g.rootDate)}</div>
-          <div class="badges">
-            <span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span>
-            <span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>
-            ${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}
-          </div>
-        </div>
-        <button class="expand-btn" onclick="toggleTree('${wid}', this)">Expand</button>
-      </div>
-
-      <div class="summary-grid top-financial">
-        <div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div>
-        <div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div>
-        <div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div>
-      </div>
-
-      <div class="badges" style="margin-top:10px;justify-content:flex-start;">
-        ${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}
-      </div>
-
-      ${renderCollapsedMainCard(g.collapsedSummary)}
-
-      <div class="tree-wrap" id="${wid}" style="display:none;">
-        <div class="tree-label">Case Records</div>
-        ${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('') || '<div class="status-empty" style="padding:16px 8px">No case records.</div>'}
-      </div>
-    </div>`;
+    return `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div><button class="expand-btn" onclick="openCaseDetail(${index})">View Case</button></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div><div class="badges" style="margin-top:10px;justify-content:flex-start;">${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}</div>${renderCollapsedMainCard(g.collapsedSummary)}</div>`;
   }).join('');
+}
+
+function openCaseDetail(index){
+  const g = renderedGroups[index];
+  if(!g) return;
+  document.getElementById('caseListScreen').style.display = 'none';
+  document.getElementById('caseDetailScreen').style.display = 'block';
+  const area = document.getElementById('caseDetailArea');
+  area.innerHTML = `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div>${renderCollapsedMainCard(g.collapsedSummary)}<div class="tree-wrap" style="display:block;"><div class="tree-label">Case Records</div>${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('')||'<div class="status-empty" style="padding:16px 8px">No case records.</div>'}</div></div>`;
+  window.scrollTo(0,0);
+}
+function closeCaseDetail(){
+  document.getElementById('caseDetailScreen').style.display = 'none';
+  document.getElementById('caseListScreen').style.display = 'block';
+  window.scrollTo(0,0);
 }
 
 function renderCollapsedMainCard(summary){
@@ -1724,12 +1741,6 @@ function renderRecordCard(r,nested,depth){
   </div>`;
 }
 function renderTreeNode(r,depth){ return renderRecordCard(r,true,depth); }
-function toggleTree(id,btn){
-  const el=document.getElementById(id);
-  const open=el.style.display!=='none';
-  el.style.display=open?'none':'block';
-  btn.textContent=open?'Expand':'Collapse';
-}
 function escapeHtml(str){
   return String(str||'')
     .replace(/&/g,'&amp;')
