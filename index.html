@@ -1460,7 +1460,11 @@ function amountClass(value,kind){
 function forceFinishedForSupersededRows(sortedRows){
   const result=sortedRows.map(r=>({...r}));
   if(result.length<=1) return result;
-  for(let i=0;i<result.length-1;i++) result[i].workflowStatus='Finished';
+  for(let i=1;i<result.length;i++){
+    if (safe(result[i].workflowStatus).toLowerCase() !== 'finished') {
+      result[i].workflowStatus='Finished';
+    }
+  }
   return result;
 }
 function getCaseTypeLabel(row){
@@ -1531,11 +1535,7 @@ function buildGroupedCases() {
     let baseKey = safe(row.baseCaseNumber) || genericFallbackKey;
 
     if (!safe(row.rawCaseNumber) && /retainer/i.test(caseTypeLabel)) {
-      if (safe(row.doctor) && safe(row.patient)) {
-        baseKey = 'RET::' + safe(row.doctor) + '::' + safe(row.patient);
-      } else {
-        baseKey = 'RET::' + safe(row.doctor) + '::' + safe(row.patient) + '::' + safe(row.clinic) + '::ROW::' + String(row.combinedTableRowIndex || '');
-      }
+      baseKey = 'RET::ROW::' + String(row.combinedTableRowIndex || '') + '::' + safe(row.doctor) + '::' + safe(row.patient) + '::' + safe(row.clinic);
     }
 
     if(!map.has(baseKey)){
