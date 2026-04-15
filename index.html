@@ -512,6 +512,10 @@ var selectedDoctor = '';
 var currentFiltered = [];
 var renderedGroups = [];
 
+/* My Cases scroll restore */
+var lastCaseListScrollY = 0;
+var lastOpenedCaseIndex = null;
+
 function formatWithCommas(input) {
   input.addEventListener('input', function() {
     var pos = input.selectionStart;
@@ -1168,6 +1172,7 @@ function loadCaseStatus() {
       });
 
       allRows.push({
+        combinedTableRowIndex: i,
         year: (r[idx['Year']] || '').trim(),
         monthDate: (r[idx['MonthDate']] || '').trim(),
         caseType: (r[idx['Case Type']] || '').trim(),
@@ -1521,10 +1526,15 @@ function buildGroupedCases() {
     const rootRow = rows.find(r => !r.casePath || r.casePath==='ROOT') || rows[0];
 
     const sortedRows = rows.slice().sort(function(a,b){
-      const dateDiff = rowSortValue(b) - rowSortValue(a);
-      if(dateDiff !== 0) return dateDiff;
+      const monthDiff = rowSortValue(b) - rowSortValue(a);
+      if (monthDiff !== 0) return monthDiff;
+
+      const rowDiff = (Number(b.combinedTableRowIndex) || 0) - (Number(a.combinedTableRowIndex) || 0);
+      if (rowDiff !== 0) return rowDiff;
+
       const depthA = pathDepth(a), depthB = pathDepth(b);
-      if(depthA !== depthB) return depthA - depthB;
+      if (depthA !== depthB) return depthA - depthB;
+
       return safe(a.casePath||'ROOT').localeCompare(safe(b.casePath||'ROOT'));
     });
 
@@ -1571,11 +1581,16 @@ function buildGroupedCases() {
       rootDate:formatMonthYear(rootRow),
       mainTags,
       currentTypeTag:safe(currentRow.caseType||''),
-      latestSortValue: groupLatestSortValue({rows: displayRows})
+      latestSortValue: groupLatestSortValue({rows: displayRows}),
+      latestRowIndex: Math.max.apply(null, displayRows.map(function(r){ return Number(r.combinedTableRowIndex) || 0; }))
     };
   }).sort(function(a,b){
     const diff = (b.latestSortValue||0) - (a.latestSortValue||0);
     if(diff !== 0) return diff;
+
+    const rowDiff = (b.latestRowIndex||0) - (a.latestRowIndex||0);
+    if(rowDiff !== 0) return rowDiff;
+
     return a.title.localeCompare(b.title);
   });
 }
@@ -1591,8 +1606,12 @@ function buildTreeRows(rows){
   });
   Object.keys(byParent).forEach(function(k){
     byParent[k].sort(function(a,b){
-      const dateDiff = rowSortValue(b) - rowSortValue(a);
-      if(dateDiff !== 0) return dateDiff;
+      const monthDiff = rowSortValue(b) - rowSortValue(a);
+      if (monthDiff !== 0) return monthDiff;
+
+      const rowDiff = (Number(b.combinedTableRowIndex) || 0) - (Number(a.combinedTableRowIndex) || 0);
+      if (rowDiff !== 0) return rowDiff;
+
       return safe(a.casePath||'').localeCompare(safe(b.casePath||''));
     });
   });
@@ -1652,6 +1671,10 @@ function renderGroupedCases(){
   }).sort(function(a,b){
     const diff = (b.latestSortValue||0) - (a.latestSortValue||0);
     if(diff !== 0) return diff;
+
+    const rowDiff = (b.latestRowIndex||0) - (a.latestRowIndex||0);
+    if(rowDiff !== 0) return rowDiff;
+
     return a.title.localeCompare(b.title);
   });
 
@@ -1664,23 +1687,32 @@ function renderGroupedCases(){
   }
 
   area.innerHTML=filtered.map(function(g,index){
-    return `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div><button class="expand-btn" onclick="openCaseDetail(${index})">View Case</button></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div><div class="badges" style="margin-top:10px;justify-content:flex-start;">${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}</div>${renderCollapsedMainCard(g.collapsedSummary)}</div>`;
+    return `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div><button class="expand-btn" onclick="openCaseDetail(${index})">View Case</button></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div><div class="badges" style="margin-top:10px;justify-content:flex-start;">${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}</div></div>`;
   }).join('');
 }
 
 function openCaseDetail(index){
   const g = renderedGroups[index];
   if(!g) return;
+
+  lastCaseListScrollY = window.scrollY || window.pageYOffset || 0;
+  lastOpenedCaseIndex = index;
+
   document.getElementById('caseListScreen').style.display = 'none';
   document.getElementById('caseDetailScreen').style.display = 'block';
   const area = document.getElementById('caseDetailArea');
-  area.innerHTML = `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div>${renderCollapsedMainCard(g.collapsedSummary)}<div class="tree-wrap" style="display:block;"><div class="tree-label">Case Records</div>${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('')||'<div class="status-empty" style="padding:16px 8px">No case records.</div>'}</div></div>`;
+
+  area.innerHTML = `<div class="tree-wrap" style="display:block; margin-top:0; padding-top:0; border-top:none;"><div class="tree-label">Case Records</div>${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('')||'<div class="status-empty" style="padding:16px 8px">No case records.</div>'}</div>`;
   window.scrollTo(0,0);
 }
+
 function closeCaseDetail(){
   document.getElementById('caseDetailScreen').style.display = 'none';
   document.getElementById('caseListScreen').style.display = 'block';
-  window.scrollTo(0,0);
+
+  setTimeout(function(){
+    window.scrollTo(0, lastCaseListScrollY || 0);
+  }, 0);
 }
 
 function renderCollapsedMainCard(summary){
