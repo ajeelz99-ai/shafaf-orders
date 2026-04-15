@@ -1453,7 +1453,9 @@ function getBadgeClass(text){
 function amountClass(value,kind){
   const num=Number(value)||0;
   if(num===0) return '';
-  return kind==='received' ? 'green-value' : 'red-value';
+  if(kind==='received') return 'green-value';
+  if(kind==='due') return 'red-value';
+  return '';
 }
 function forceFinishedForSupersededRows(sortedRows){
   const result=sortedRows.map(r=>({...r}));
@@ -1489,9 +1491,7 @@ function getOverallPaymentStatus(totalDue, totalRemaining){
 }
 
 function pickCurrentStatusRow(rows){
-  return rows.find(function(r){
-    return isDueNow(r) || isHoldingStatus(r);
-  }) || rows[0] || null;
+  return rows[0] || null;
 }
 
 function getGroupCaseTarget(rootRow, rows){
@@ -1526,8 +1526,17 @@ function buildGroupedCases() {
 
   const map = new Map();
   visibleRows.forEach(function(row){
-    const fallbackKey = (safe(row.caseType) || 'Case') + '::' + safe(row.doctor) + '::' + safe(row.patient) + '::' + safe(row.clinic);
-    const baseKey = safe(row.baseCaseNumber) || fallbackKey;
+    const caseTypeLabel = getCaseTypeLabel(row);
+    const genericFallbackKey = (safe(row.caseType) || 'Case') + '::' + safe(row.doctor) + '::' + safe(row.patient) + '::' + safe(row.clinic);
+    let baseKey = safe(row.baseCaseNumber) || genericFallbackKey;
+
+    if (!safe(row.rawCaseNumber) && /retainer/i.test(caseTypeLabel)) {
+      if (safe(row.doctor) && safe(row.patient)) {
+        baseKey = 'RET::' + safe(row.doctor) + '::' + safe(row.patient);
+      } else {
+        baseKey = 'RET::' + safe(row.doctor) + '::' + safe(row.patient) + '::' + safe(row.clinic) + '::ROW::' + String(row.combinedTableRowIndex || '');
+      }
+    }
 
     if(!map.has(baseKey)){
       map.set(baseKey,{
@@ -1541,7 +1550,7 @@ function buildGroupedCases() {
     }
 
     const normalizedRow = {...row};
-    normalizedRow.caseTypeLabel = getCaseTypeLabel(normalizedRow);
+    normalizedRow.caseTypeLabel = caseTypeLabel;
     normalizedRow.batchPriceDisplay = getCurrentBatchAmount(normalizedRow);
     normalizedRow.amountDueDisplay = isDueNow(normalizedRow) ? getCurrentBatchAmount(normalizedRow) : 0;
     normalizedRow.isPaidDisplay = isActuallyPaidRow(normalizedRow);
@@ -1743,7 +1752,7 @@ function renderGroupedCases(){
       <div class="summary-grid top-financial">
         <div class="mini-box">
           <div class="mini-label">🧾 Amount Due</div>
-          <div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div>
+          <div class="mini-value ${amountClass(g.totalDue,'due')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div>
         </div>
         <div class="mini-box">
           <div class="mini-label">✅ Amount Received</div>
