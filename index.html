@@ -1091,22 +1091,27 @@ function loadCaseStatus() {
 
     for (var i = 1; i < rows.length; i++) {
       var r = rows[i];
-      var caseNumber = (r[idx['#️⃣ Case Number']] || '').trim();
-      if (!caseNumber) continue;
+      var rawCaseNumber = (r[idx['#️⃣ Case Number']] || '').trim();
+      var rawCaseType = (r[idx['Case Type']] || '').trim();
+      var caseDoctor = (r[idx['Doctor 👨‍⚕️']] || '').trim();
+      var casePatient = (r[idx['😷 Patient']] || '').trim();
+
+      if (!rawCaseNumber && !rawCaseType && !caseDoctor && !casePatient) continue;
+
+      var caseNumber = rawCaseNumber || rawCaseType || 'Case';
 
       var caseRep = (r[idx['Rep']] || '').trim();
       var caseZone = repZoneMap[caseRep.toLowerCase()] || '';
       var paymentStatus = (r[idx['Payment Status']] || '').trim();
       var paymentStatusLower = paymentStatus.toLowerCase();
       var workflowStatus = (r[idx['Workflow Status']] || '').trim();
-      var caseDoctor = (r[idx['Doctor 👨‍⚕️']] || '').trim();
 
       allCasesUnfiltered.push({
-        caseType: (r[idx['Case Type']] || '').trim(),
+        caseType: rawCaseType,
         caseNumber: caseNumber,
         doctor: caseDoctor,
         clinic: (r[idx['🏥 Clinic']] || '').trim(),
-        patient: (r[idx['😷 Patient']] || '').trim()
+        patient: casePatient
       });
 
       if (!isAdmin && !isSalesRep) {
@@ -1195,7 +1200,7 @@ function loadCaseStatus() {
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
-        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(caseNumber)).trim(),
+        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber) || (rawCaseType ? (rawCaseType + '::' + caseDoctor + '::' + casePatient) : '')).trim(),
         casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
         parentPath: String(r[idx['Parent Path']] || '').trim()
       });
@@ -1482,6 +1487,50 @@ function formatDiscount(value){
   return num.toFixed(num%1===0?0:1)+'%';
 }
 
+function getCaseTypeLabel(row){
+  const explicit = safe(row.caseType);
+  if (explicit) return explicit;
+
+  const cn = safe(row.caseNumber);
+
+  if (/^retainer/i.test(cn)) return 'Retainer';
+  if (/^reprint/i.test(cn)) return 'Reprint';
+
+  let m = cn.match(/^MCA(\d*)\//i);
+  if (m) return m[1] && m[1] !== '1' ? 'Mid-course adjustment ' + m[1] : 'Mid-course adjustment';
+
+  m = cn.match(/^R(\d+)\//i);
+  if (m) return 'Refinement ' + m[1];
+
+  m = cn.match(/^(2nd|3rd|4th|5th|6th|7th|8th|9th|10th)\//i);
+  if (m) return m[1] + ' Batch';
+
+  return 'New Case';
+}
+
+function getCurrentBatchAmount(row){
+  return Math.max(
+    Number(row.rowMoney) || 0,
+    Number(row.amountReceived) || 0,
+    Number(row.amountRemaining) || 0
+  );
+}
+
+function isDueNow(row){
+  const payment = safe(row.paymentStatus).toLowerCase();
+  const workflow = safe(row.workflowStatus).toLowerCase();
+  return payment === 'unpaid' || workflow === 'waiting pickup';
+}
+
+function isProductionOnly(row){
+  const workflow = safe(row.workflowStatus).toLowerCase();
+  return workflow === 'under production' && !isDueNow(row);
+}
+
+function isActuallyPaidRow(row){
+  return !isDueNow(row) && !isProductionOnly(row) && (Number(row.amountReceived) || 0) > 0;
+}
+
 function buildGroupedCases() {
   let visibleRows = allRows.slice();
 
@@ -1505,14 +1554,10 @@ function buildGroupedCases() {
     }
 
     const normalizedRow = {...row};
-    if(shouldPendingDisplay(normalizedRow)){
-      const pendingAmount = Math.max(Number(normalizedRow.amountRemaining)||0, Number(normalizedRow.amountReceived)||0, Number(normalizedRow.rowMoney)||0);
-      normalizedRow.amountReceived = 0;
-      normalizedRow.amountRemaining = pendingAmount;
-    }
-    normalizedRow.batchPriceDisplay = deriveBatchPrice(normalizedRow);
-    normalizedRow.amountDueDisplay = deriveAmountDue(normalizedRow);
-    normalizedRow.isPaidDisplay = isPaidRow(normalizedRow);
+    normalizedRow.caseTypeLabel = getCaseTypeLabel(normalizedRow);
+    normalizedRow.batchPriceDisplay = getCurrentBatchAmount(normalizedRow);
+    normalizedRow.amountDueDisplay = isDueNow(normalizedRow) ? getCurrentBatchAmount(normalizedRow) : 0;
+    normalizedRow.isPaidDisplay = isActuallyPaidRow(normalizedRow);
     map.get(baseKey).rows.push(normalizedRow);
   });
 
@@ -1542,14 +1587,16 @@ function buildGroupedCases() {
     const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[displayRows.length - 1];
     const currentRow = displayRows[0] || rootDisplayRow;
 
-    const currentDue = (currentRow.amountDueDisplay===null || typeof currentRow.amountDueDisplay==='undefined') ? 0 : (Number(currentRow.amountDueDisplay)||0);
-    const totalReceived = displayRows.reduce(function(s,r){ return s + (isPaidRow(r) ? (Number(r.amountReceived)||0) : 0); }, 0);
+    const currentDue = Number(currentRow.amountDueDisplay) || 0;
+    const totalReceived = displayRows.reduce(function(s,r){
+      return s + (isActuallyPaidRow(r) ? (Number(r.amountReceived) || 0) : 0);
+    }, 0);
+    const caseTarget = (Number(rootRow.priceAfterDiscount) || 0) || (Number(rootRow.casePrice) || 0);
     const totalDue = currentDue;
-    const caseTarget = (Number(rootRow.priceAfterDiscount)||0) || (Number(rootRow.casePrice)||0);
     const totalRemaining = Math.max(caseTarget - totalReceived - totalDue, 0);
 
     const overallWorkflow = currentRow.workflowStatus || 'Finished';
-    const overallPayment = displayRows.some(r => safe(r.paymentStatus).toLowerCase()==='unpaid') ? 'Unpaid' : 'Paid';
+    const overallPayment = totalDue > 0 ? 'Unpaid' : 'Paid';
 
     const collapsedSummary = {
       upper: currentRow.upper,
@@ -1579,7 +1626,8 @@ function buildGroupedCases() {
       collapsedSummary,
       rootDate:formatMonthYear(rootRow),
       mainTags,
-      currentTypeTag:safe(currentRow.caseType||''),
+      currentTypeTag: safe(currentRow.caseTypeLabel || getCaseTypeLabel(currentRow)),
+      currentTypeDate: formatMonthYear(currentRow),
       latestSortValue: groupLatestSortValue({rows: displayRows}),
       latestRowIndex: Math.max.apply(null, displayRows.map(function(r){ return Number(r.combinedTableRowIndex) || 0; }))
     };
@@ -1595,23 +1643,25 @@ function buildGroupedCases() {
 }
 
 function buildTreeRows(rows){
-  const rootRow = rows.find(r => !r.casePath || r.casePath==='ROOT') || null;
-  const childRows = rows.filter(r => r.casePath && r.casePath!=='ROOT');
+  const rootRow = rows.find(r => !r.casePath || r.casePath === 'ROOT') || null;
+  const childRows = rows.filter(r => r.casePath && r.casePath !== 'ROOT');
   const byParent = {};
+
   childRows.forEach(function(r){
     const parent = r.parentPath || 'ROOT';
     if(!byParent[parent]) byParent[parent] = [];
     byParent[parent].push(r);
   });
+
   Object.keys(byParent).forEach(function(k){
     byParent[k].sort(function(a,b){
-      const monthDiff = rowSortValue(b) - rowSortValue(a);
+      const monthDiff = rowSortValue(a) - rowSortValue(b);
       if (monthDiff !== 0) return monthDiff;
 
-      const rowDiff = (Number(b.combinedTableRowIndex) || 0) - (Number(a.combinedTableRowIndex) || 0);
+      const rowDiff = (Number(a.combinedTableRowIndex) || 0) - (Number(b.combinedTableRowIndex) || 0);
       if (rowDiff !== 0) return rowDiff;
 
-      return safe(a.casePath||'').localeCompare(safe(b.casePath||''));
+      return safe(a.casePath || '').localeCompare(safe(b.casePath || ''));
     });
   });
 
@@ -1626,6 +1676,8 @@ function buildTreeRows(rows){
       walk(ownKey, depth+1);
     });
   }
+
+
   walk('ROOT', 1);
   return out;
 }
@@ -1717,7 +1769,7 @@ function renderGroupedCases(){
       </div>
 
       <div class="badges" style="margin-top:10px;justify-content:flex-start;">
-        ${g.currentTypeTag ? `<span class="last-printed-label">Last Printed:</span><span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>` : ''}
+        ${g.currentTypeTag ? `<span class="last-printed-label">Last Printed:</span><span class="badge blue">${escapeHtml(g.currentTypeTag)}</span><span style="font-size:12px;color:#666;font-style:italic;">${escapeHtml(g.currentTypeDate || '')}</span>` : ''}
       </div>
 
       ${renderCollapsedMainCard(g.collapsedSummary)}
@@ -1737,11 +1789,27 @@ function openCaseDetail(index){
   const area = document.getElementById('caseDetailArea');
 
   area.innerHTML = `
-    <div class="tree-wrap" style="display:block; margin-top:0; padding-top:0; border-top:none;">
+    <div class="case-card">
+      <div class="case-head">
+        <div>
+          <div class="case-title">${escapeHtml(g.title)}</div>
+          <div class="case-sub">${escapeHtml(g.doctor)}${g.clinic ? ' — ' + escapeHtml(g.clinic) : ''}</div>
+          <div class="case-date">${escapeHtml(g.rootDate)}</div>
+          <div class="badges">
+            <span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span>
+            <span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>
+            ${g.mainTags.map(tag => `<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tree-wrap" style="display:block; margin-top:12px;">
       <div class="tree-label">Case Records</div>
-      ${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('') || '<div class="status-empty" style="padding:16px 8px">No case records.</div>'}
+      ${buildTreeRows(g.rows).map(item => renderTreeNode(item.row, item.depth)).join('') || '<div class="status-empty" style="padding:16px 8px">No case records.</div>'}
     </div>
   `;
+
   window.scrollTo(0,0);
 }
 function closeCaseDetail(){
@@ -1785,10 +1853,10 @@ function renderRecordCard(r,nested,depth){
   return `<div class="${nested?`tree-node tree-indent-${depth}`:'parent-card'}">
     <div class="tree-line">
       <div class="tree-main">
-        <div class="tree-title">${escapeHtml(r.caseType||r.caseNumber)}</div>
+        <div class="tree-title">${escapeHtml(r.caseTypeLabel || getCaseTypeLabel(r) || r.caseNumber)}</div>
         <div class="tree-meta">${escapeHtml(r.caseNumber)} • ${escapeHtml(formatMonthYear(r))}</div>
         <div class="badges">
-          <span class="badge blue">${escapeHtml(r.caseType||'')}</span>
+          <span class="badge blue">${escapeHtml(r.caseTypeLabel || getCaseTypeLabel(r) || '')}</span>
           ${r.paymentStatus?`<span class="badge ${getBadgeClass(r.paymentStatus)}">${escapeHtml(r.paymentStatus)}</span>`:''}
           ${r.workflowStatus?`<span class="badge ${getBadgeClass(r.workflowStatus)}">${escapeHtml(r.workflowStatus)}</span>`:''}
         </div>
