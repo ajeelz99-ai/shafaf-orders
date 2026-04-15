@@ -1200,7 +1200,7 @@ function loadCaseStatus() {
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
-        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber) || (rawCaseType ? (rawCaseType + '::' + caseDoctor + '::' + casePatient) : '')).trim(),
+        baseCaseNumber: String(r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber) || ('ROW::' + i + '::' + (rawCaseType || 'Case'))).trim(),
         casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
         parentPath: String(r[idx['Parent Path']] || '').trim()
       });
@@ -1508,6 +1508,18 @@ function getCaseTypeLabel(row){
   return 'New Case';
 }
 
+function getCaseTarget(row){
+  const direct = Math.max(Number(row.priceAfterDiscount) || 0, Number(row.casePrice) || 0);
+  if (direct > 0) return direct;
+
+  const fallback = Math.max(
+    Number(row.rowMoney) || 0,
+    Number(row.amountReceived) || 0,
+    Number(row.amountRemaining) || 0
+  );
+  return fallback;
+}
+
 function getCurrentBatchAmount(row){
   return Math.max(
     Number(row.rowMoney) || 0,
@@ -1518,17 +1530,22 @@ function getCurrentBatchAmount(row){
 
 function isDueNow(row){
   const payment = safe(row.paymentStatus).toLowerCase();
-  const workflow = safe(row.workflowStatus).toLowerCase();
-  return payment === 'unpaid' || workflow === 'waiting pickup';
+  return payment === 'unpaid';
 }
 
-function isProductionOnly(row){
+function isHoldingStatus(row){
   const workflow = safe(row.workflowStatus).toLowerCase();
-  return workflow === 'under production' && !isDueNow(row);
+  return workflow === 'under production' || workflow === 'waiting pickup';
 }
 
 function isActuallyPaidRow(row){
-  return !isDueNow(row) && !isProductionOnly(row) && (Number(row.amountReceived) || 0) > 0;
+  return !isDueNow(row) && !isHoldingStatus(row) && (Number(row.amountReceived) || 0) > 0;
+}
+
+function getOverallPaymentStatus(totalDue, totalRemaining){
+  if (totalDue > 0) return 'Unpaid';
+  if (totalRemaining > 0) return 'Pending';
+  return 'Paid';
 }
 
 function buildGroupedCases() {
@@ -1555,6 +1572,7 @@ function buildGroupedCases() {
 
     const normalizedRow = {...row};
     normalizedRow.caseTypeLabel = getCaseTypeLabel(normalizedRow);
+    normalizedRow.caseTargetDisplay = getCaseTarget(normalizedRow);
     normalizedRow.batchPriceDisplay = getCurrentBatchAmount(normalizedRow);
     normalizedRow.amountDueDisplay = isDueNow(normalizedRow) ? getCurrentBatchAmount(normalizedRow) : 0;
     normalizedRow.isPaidDisplay = isActuallyPaidRow(normalizedRow);
@@ -1586,17 +1604,18 @@ function buildGroupedCases() {
     const displayRows = forceFinishedForSupersededRows(sortedRows);
     const rootDisplayRow = displayRows.find(r => !r.casePath || r.casePath==='ROOT') || displayRows[displayRows.length - 1];
     const currentRow = displayRows[0] || rootDisplayRow;
+    const currentStatusRow = currentRow;
 
-    const currentDue = Number(currentRow.amountDueDisplay) || 0;
+    const currentDue = Number(currentStatusRow.amountDueDisplay) || 0;
     const totalReceived = displayRows.reduce(function(s,r){
       return s + (isActuallyPaidRow(r) ? (Number(r.amountReceived) || 0) : 0);
     }, 0);
-    const caseTarget = (Number(rootRow.priceAfterDiscount) || 0) || (Number(rootRow.casePrice) || 0);
+    const caseTarget = getCaseTarget(rootRow);
     const totalDue = currentDue;
     const totalRemaining = Math.max(caseTarget - totalReceived - totalDue, 0);
 
-    const overallWorkflow = currentRow.workflowStatus || 'Finished';
-    const overallPayment = totalDue > 0 ? 'Unpaid' : 'Paid';
+    const overallWorkflow = safe(currentStatusRow.workflowStatus) || 'Finished';
+    const overallPayment = getOverallPaymentStatus(totalDue, totalRemaining);
 
     const collapsedSummary = {
       upper: currentRow.upper,
@@ -1609,7 +1628,7 @@ function buildGroupedCases() {
     };
 
     const mainTags = [];
-    const caseTypeSet = new Set(displayRows.map(r => safe(r.caseType)).filter(Boolean));
+    const caseTypeSet = new Set(displayRows.map(r => safe(r.caseTypeLabel || r.caseType)).filter(Boolean));
     caseTypeSet.forEach(function(ct){
       if(/^Refinement/i.test(ct) || /mid-course adjustment/i.test(ct)) mainTags.push(ct);
     });
@@ -1895,7 +1914,6 @@ formatWithCommas(document.getElementById('reprintPayment'));
 handleCaseTypeChange();
 initTelegram();
 loadData();
-setTimeout(function() { loadCaseStatus(); }, 1500);
 </script>
 </body>
 </html>
