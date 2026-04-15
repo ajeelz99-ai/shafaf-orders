@@ -25,7 +25,7 @@ body {
   z-index: 50;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
-.form-container { max-width: 500px; margin: 0 auto; padding: 16px; }
+.form-container { max-width: 760px; margin: 0 auto; padding: 16px; }
 .card {
   background: white;
   border-radius: 12px;
@@ -132,8 +132,6 @@ textarea { resize: none; height: 80px; }
 .success-icon { font-size: 72px; margin-bottom: 20px; }
 .success-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; color: #1a1a1a; }
 .success-sub { font-size: 15px; color: #666; line-height: 1.6; }
-
-/* Tab bar */
 .tab-bar {
   display: flex;
   background: white;
@@ -158,8 +156,6 @@ textarea { resize: none; height: 80px; }
   color: #1a73e8;
   border-bottom-color: #1a73e8;
 }
-
-/* Case Status */
 #statusScreen { display: none; }
 #unpaidScreen { display: none; }
 .unpaid-total {
@@ -189,55 +185,65 @@ textarea { resize: none; height: 80px; }
 .unpaid-table th.frozen { background: #f8f9fa; z-index: 3; }
 .unpaid-table .frozen-case { left: 0; min-width: 90px; }
 .unpaid-table .frozen-doctor { left: 90px; min-width: 100px; box-shadow: 2px 0 4px rgba(0,0,0,0.06); }
-.status-search {
-  width: 100%; padding: 11px 13px; border: 1.5px solid #e0e0e0;
-  border-radius: 8px; background: #fafafa; font-size: 15px; outline: none;
-  margin-bottom: 12px;
-}
-.status-search:focus { border-color: #1a73e8; background: white; }
-.case-card {
-  background: white; border-radius: 12px; padding: 14px;
-  margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-.case-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 4px;
-}
-.case-number { font-size: 15px; font-weight: 700; color: #1a73e8; }
-.case-type {
-  font-size: 11px; font-weight: 600; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 4px; background: #e8f0fe; color: #1a73e8;
-}
-.case-patient { font-size: 13px; color: #444; margin-bottom: 8px; }
-.case-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.step-box {
-  background: #f8f9fa; border-radius: 8px; padding: 8px 10px; text-align: center;
-}
-.step-label { font-size: 10px; color: #999; text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px; }
-.step-value { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-top: 2px; }
-.step-value.done { color: #2e7d32; }
-.step-value.remaining { color: #e53935; }
 .status-loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
 .status-empty { text-align: center; padding: 40px; color: #999; font-size: 14px; }
 .status-count { font-size: 12px; color: #999; margin-bottom: 12px; }
+.case-card {
+  background:#fff; border-radius:16px; padding:14px; margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08); border:1px solid #f1f3f6;
+}
+.case-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.case-title { font-size:16px; font-weight:800; color:#1a73e8; }
+.case-sub { font-size:13px; color:#666; margin-top:4px; }
+.case-date { font-size:12px; color:#8a94a6; margin-top:6px; }
+.expand-btn { border:none; background:#eef4ff; color:#1a73e8; border-radius:10px; padding:8px 10px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.badge { display:inline-block; padding:5px 9px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.2px; }
+.badge.blue { background:#e8f0fe; color:#1a73e8; }
+.badge.green { background:#e8f5e9; color:#2e7d32; }
+.badge.red { background:#fde8e8; color:#e53935; }
+.badge.orange { background:#fff1e6; color:#c96a12; }
+.summary-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; margin-top:12px; }
+.summary-grid.compact-top, .summary-grid.steps-grid, .summary-grid.financial-grid-2 { grid-template-columns:repeat(2, minmax(0,1fr)); }
+.summary-grid.financial-grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
+.summary-grid.top-financial { grid-template-columns:repeat(3, minmax(0,1fr)); }
+.mini-box { background:#fff; border-radius:10px; padding:10px; text-align:center; border:1px solid #eef1f4; }
+.mini-label { font-size:10px; color:#999; font-weight:700; text-transform:uppercase; }
+.mini-value { font-size:14px; font-weight:800; margin-top:3px; color:#1a1a1a; }
+.mini-value.green-value { color:#2e7d32; }
+.mini-value.red-value { color:#e53935; }
+.tree-wrap { margin-top:12px; padding-top:12px; border-top:1px solid #eef1f4; }
+.parent-card { margin-top:12px; padding:10px; border:1px solid #eef1f4; border-radius:10px; background:#f8f9fa; }
+.tree-node { margin-bottom:8px; }
+.tree-label { font-size:11px; font-weight:700; text-transform:uppercase; color:#8a94a6; margin-bottom:8px; letter-spacing:.4px; }
+.tree-line { display:flex; align-items:flex-start; gap:8px; padding:10px; border-radius:10px; background:#f8f9fa; border:1px solid #eef1f4; }
+.tree-indent-0 { margin-left:0; }
+.tree-indent-1 { margin-left:16px; }
+.tree-indent-2 { margin-left:32px; }
+.tree-indent-3 { margin-left:48px; }
+.tree-indent-4 { margin-left:64px; }
+.tree-main { flex:1; }
+.tree-title { font-size:13px; font-weight:700; color:#1a1a1a; }
+.tree-meta { font-size:12px; color:#666; margin-top:3px; }
+.note { margin-top:5px; font-size:12px; color:#555; background:#fff; border:1px dashed #e0e0e0; border-radius:8px; padding:7px 8px; }
+@media (max-width:620px) {
+  .row { flex-direction:column; }
+  .summary-grid, .summary-grid.compact-top, .summary-grid.steps-grid, .summary-grid.financial-grid, .summary-grid.financial-grid-2, .summary-grid.top-financial { grid-template-columns:1fr 1fr; }
+  .summary-grid.financial-grid > .mini-box:last-child:nth-child(odd), .summary-grid.top-financial > .mini-box:last-child:nth-child(odd) { grid-column: 1 / -1; width: 100%; max-width: calc(50% - 4px); justify-self: center; }
+}
 </style>
 </head>
 <body>
-
 <div class="header">📋 Shafaf Orders</div>
-
 <div class="tab-bar" id="tabBar">
   <button class="tab-btn active" id="tabOrder" onclick="switchTab('order')">New Order</button>
   <button class="tab-btn" id="tabStatus" onclick="switchTab('status')">My Cases</button>
   <button class="tab-btn" id="tabUnpaid" onclick="switchTab('unpaid')">Pending</button>
 </div>
-
 <input type="hidden" id="repDetected" />
 <input type="hidden" id="repUsername" />
-
 <div id="formScreen">
 <div class="form-container">
-
   <div class="card">
     <div class="section-title">Case Details</div>
     <div class="form-group">
@@ -251,14 +257,12 @@ textarea { resize: none; height: 80px; }
         <option value="reprint">Reprint</option>
       </select>
     </div>
-
     <div class="form-group">
       <label>Case Number <span class="required" id="caseNumberRequired">*</span></label>
       <input type="text" id="caseNumber" placeholder="e.g. XXXX" autocomplete="off" oninput="this.value=this.value.toUpperCase();handleCaseNumberInput()" />
       <div class="error-msg" id="caseNumberError">Case number is required</div>
       <div id="caseAutoFillHint" style="display:none;font-size:12px;color:#1a73e8;margin-top:4px;padding:4px 6px;background:#e8f0fe;border-radius:6px;"></div>
     </div>
-
     <div class="form-group hidden" id="batchNumberGroup">
       <label>Batch Number</label>
       <select id="batchNumber">
@@ -268,7 +272,6 @@ textarea { resize: none; height: 80px; }
         <option value="5th">5th Batch</option>
       </select>
     </div>
-
     <div class="form-group hidden" id="mcaNumberGroup">
       <label>MCA Number</label>
       <select id="mcaNumber">
@@ -278,7 +281,6 @@ textarea { resize: none; height: 80px; }
         <option value="4">4th MCA</option>
       </select>
     </div>
-
     <div class="form-group hidden" id="mcaBatchNumberGroup">
       <label>MCA Batch</label>
       <select id="mcaBatchNumber" onchange="handleCaseTypeChange()">
@@ -288,7 +290,6 @@ textarea { resize: none; height: 80px; }
         <option value="4">4th Batch</option>
       </select>
     </div>
-
     <div class="form-group hidden" id="refinementNumberGroup">
       <label>Refinement Number</label>
       <select id="refinementNumber" onchange="handleCaseTypeChange()">
@@ -300,7 +301,6 @@ textarea { resize: none; height: 80px; }
         <option value="6">R6</option>
       </select>
     </div>
-
     <div class="form-group hidden" id="refinementBatchGroup">
       <label>Refinement Batch</label>
       <select id="refinementBatch" onchange="handleCaseTypeChange()">
@@ -310,62 +310,43 @@ textarea { resize: none; height: 80px; }
       </select>
     </div>
   </div>
-
   <div class="card">
     <div class="section-title">Doctor & Patient</div>
-
     <div class="form-group">
       <label>Doctor <span class="required">*</span></label>
       <div class="search-wrapper">
-        <input type="search" id="doctorSearch"
-          placeholder="Loading doctors..."
-          autocomplete="off"
-          autocapitalize="words"
-          style="padding-right:36px" />
+        <input type="search" id="doctorSearch" placeholder="Loading doctors..." autocomplete="off" autocapitalize="words" style="padding-right:36px" />
         <button class="clear-btn" id="clearDoctor" onclick="clearDoctor()">✕</button>
         <input type="hidden" id="doctorValue" />
-        <div class="search-results" id="doctorResults"></div>
+        <div class="search-results" id="doctorResultsOrder"></div>
       </div>
       <div class="error-msg" id="doctorError">Please select or enter a doctor</div>
     </div>
-
     <div class="form-group hidden" id="newDoctorGroup">
       <label>New Doctor Full Name <span class="required">*</span></label>
       <input type="text" id="newDoctorName" placeholder="Enter full name" autocapitalize="words" />
       <div class="error-msg" id="newDoctorError">Please enter the doctor name</div>
     </div>
-
     <div class="form-group">
       <label>Patient <span class="required">*</span></label>
       <input type="text" id="patient" placeholder="Patient full name" autocapitalize="words" />
       <div class="error-msg" id="patientError">Patient name is required</div>
     </div>
-
     <div class="form-group">
       <label>Clinic</label>
       <input type="text" id="clinic" placeholder="Clinic name" autocapitalize="words" />
     </div>
   </div>
-
-  <!-- Normal cards (new, batch, mca, refinement) -->
   <div id="normalCards">
     <div class="card">
       <div class="section-title">Steps & Package</div>
-
       <div class="form-group">
         <div class="checkbox-row">
-          <label class="checkbox-item">
-            <input type="checkbox" id="singleArch" onchange="handleSingleArch()" /> Single Arch
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" id="asap" /> ASAP
-          </label>
-          <label class="checkbox-item" id="retainerCheckboxGroup">
-            <input type="checkbox" id="retainer" /> Add Retainer(s)
-          </label>
+          <label class="checkbox-item"><input type="checkbox" id="singleArch" onchange="handleSingleArch()" /> Single Arch</label>
+          <label class="checkbox-item"><input type="checkbox" id="asap" /> ASAP</label>
+          <label class="checkbox-item" id="retainerCheckboxGroup"><input type="checkbox" id="retainer" /> Add Retainer(s)</label>
         </div>
       </div>
-
       <div class="row" id="stepsGroup">
         <div class="form-group">
           <label>Upper <span class="required" id="upperRequired">*</span></label>
@@ -378,7 +359,6 @@ textarea { resize: none; height: 80px; }
           <div class="error-msg" id="lowerError">Required</div>
         </div>
       </div>
-
       <div class="form-group" id="packageGroup">
         <label>Package</label>
         <select id="package">
@@ -388,10 +368,8 @@ textarea { resize: none; height: 80px; }
         </select>
       </div>
     </div>
-
     <div class="card" id="paymentCard">
       <div class="section-title">Payment</div>
-
       <div class="form-group" id="installmentsGroup">
         <label>Installments</label>
         <select id="installments">
@@ -401,7 +379,6 @@ textarea { resize: none; height: 80px; }
           <option value="3">3 Installments</option>
         </select>
       </div>
-
       <div class="form-group" id="discountGroup">
         <label>Discount</label>
         <select id="discountType" onchange="handleDiscountChange()">
@@ -410,280 +387,87 @@ textarea { resize: none; height: 80px; }
           <option value="fixed">Fixed Amount (IQD)</option>
         </select>
       </div>
-
       <div class="form-group hidden" id="discountValueGroup">
         <label id="discountValueLabel">Discount Value</label>
         <input type="text" id="discountValue" placeholder="0" inputmode="numeric" />
       </div>
-
       <div class="form-group" id="batch1AmountGroup">
         <label id="batch1AmountLabel">First Payment Amount (IQD)</label>
         <input type="text" id="batch1Amount" placeholder="e.g. 500,000" inputmode="numeric" />
       </div>
-
-      <div class="form-group" id="fullPaymentGroup">
-        <div class="checkbox-row">
-          <label class="checkbox-item">
-            <input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment
-          </label>
-        </div>
-      </div>
-
-      <div class="form-group hidden" id="printAllRemainingGroup">
-        <div class="checkbox-row">
-          <label class="checkbox-item">
-            <input type="checkbox" id="printAllRemaining" onchange="handlePrintAllRemaining()" /> Print All Remaining Steps
-          </label>
-        </div>
-      </div>
+      <div class="form-group" id="fullPaymentGroup"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="fullPayment" onchange="handleFullPayment()" /> Full Payment</label></div></div>
+      <div class="form-group hidden" id="printAllRemainingGroup"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="printAllRemaining" onchange="handlePrintAllRemaining()" /> Print All Remaining Steps</label></div></div>
     </div>
-
-    <div class="card hidden" id="attachmentCard">
-      <div class="section-title">Attachment Template</div>
-      <div class="form-group">
-        <label>Thickness</label>
-        <select id="attachmentThickness">
-          <option value="">None</option>
-          <option value="0.5mm">0.5mm</option>
-          <option value="0.7mm">0.7mm</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">Notes</div>
-      <div class="form-group">
-        <textarea id="notes" placeholder="Any additional notes..."></textarea>
-      </div>
-    </div>
+    <div class="card hidden" id="attachmentCard"><div class="section-title">Attachment Template</div><div class="form-group"><label>Thickness</label><select id="attachmentThickness"><option value="">None</option><option value="0.5mm">0.5mm</option><option value="0.7mm">0.7mm</option></select></div></div>
+    <div class="card"><div class="section-title">Notes</div><div class="form-group"><textarea id="notes" placeholder="Any additional notes..."></textarea></div></div>
   </div>
-
-  <!-- Retainer card -->
   <div class="card hidden" id="retainerCard">
     <div class="section-title">Retainer Details</div>
-
     <div class="form-group">
-      <div class="arch-row">
-        <label class="checkbox-item">
-          <input type="checkbox" id="retainerUpper" onchange="handleRetainerArch()" /> Upper Arch
-        </label>
-        <select id="retainerUpperQty" class="hidden">
-          <option value="1">1x</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-        </select>
-      </div>
-      <div class="arch-row">
-        <label class="checkbox-item">
-          <input type="checkbox" id="retainerLower" onchange="handleRetainerArch()" /> Lower Arch
-        </label>
-        <select id="retainerLowerQty" class="hidden">
-          <option value="1">1x</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-        </select>
-      </div>
+      <div class="arch-row"><label class="checkbox-item"><input type="checkbox" id="retainerUpper" onchange="handleRetainerArch()" /> Upper Arch</label><select id="retainerUpperQty" class="hidden"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option></select></div>
+      <div class="arch-row"><label class="checkbox-item"><input type="checkbox" id="retainerLower" onchange="handleRetainerArch()" /> Lower Arch</label><select id="retainerLowerQty" class="hidden"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option></select></div>
       <div class="error-msg" id="retainerArchError">Please select at least one arch</div>
     </div>
-
-    <div class="form-group">
-      <div class="checkbox-row">
-        <label class="checkbox-item">
-          <input type="checkbox" id="retainerAsap" /> ASAP
-        </label>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Total Price (IQD) <span class="required">*</span></label>
-      <input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" />
-      <div class="error-msg" id="retainerPriceError">Please enter the price</div>
-    </div>
-
-    <div class="form-group">
-      <label>Reason / Notes</label>
-      <input type="text" id="retainerReason" placeholder="e.g. Lost retainer, new patient..." />
-    </div>
+    <div class="form-group"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="retainerAsap" /> ASAP</label></div></div>
+    <div class="form-group"><label>Total Price (IQD) <span class="required">*</span></label><input type="text" id="retainerPrice" placeholder="e.g. 150,000" inputmode="numeric" /><div class="error-msg" id="retainerPriceError">Please enter the price</div></div>
+    <div class="form-group"><label>Reason / Notes</label><input type="text" id="retainerReason" placeholder="e.g. Lost retainer, new patient..." /></div>
   </div>
-
-  <!-- Retainer STL card -->
-  <div class="card hidden" id="stlCard">
-    <div class="section-title">STL Files</div>
-    <div class="form-group">
-      <div class="file-upload-area" onclick="document.getElementById('stlFiles').click()">
-        <div class="file-upload-icon">📁</div>
-        <div class="file-upload-text">Tap to select STL files</div>
-        <div class="file-name" id="fileNames"></div>
-      </div>
-      <input type="file" id="stlFiles" accept=".stl,.STL" multiple
-        style="display:none" onchange="handleFileSelect(this)" />
-    </div>
-  </div>
-
-  <!-- Retainer notes card -->
-  <div class="card hidden" id="retainerNotesCard">
-    <div class="section-title">Notes</div>
-    <div class="form-group">
-      <textarea id="retainerNotes" placeholder="Any additional notes..."></textarea>
-    </div>
-  </div>
-
-  <!-- Trim line card -->
-  <div class="card" id="trimLineCard">
-    <div class="section-title">Trim Line Level</div>
-    <div class="form-group">
-      <label>Trim Line</label>
-      <select id="trimLine">
-        <option value="Straight">Straight</option>
-        <option value="Straight 2mm above gingiva">Straight 2mm above gingiva</option>
-        <option value="Scalloped">Scalloped</option>
-        <option value="Semi Scalloped">Semi Scalloped</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Reprint card -->
+  <div class="card hidden" id="stlCard"><div class="section-title">STL Files</div><div class="form-group"><div class="file-upload-area" onclick="document.getElementById('stlFiles').click()"><div class="file-upload-icon">📁</div><div class="file-upload-text">Tap to select STL files</div><div class="file-name" id="fileNames"></div></div><input type="file" id="stlFiles" accept=".stl,.STL" multiple style="display:none" onchange="handleFileSelect(this)" /></div></div>
+  <div class="card hidden" id="retainerNotesCard"><div class="section-title">Notes</div><div class="form-group"><textarea id="retainerNotes" placeholder="Any additional notes..."></textarea></div></div>
+  <div class="card" id="trimLineCard"><div class="section-title">Trim Line Level</div><div class="form-group"><label>Trim Line</label><select id="trimLine"><option value="Straight">Straight</option><option value="Straight 2mm above gingiva">Straight 2mm above gingiva</option><option value="Scalloped">Scalloped</option><option value="Semi Scalloped">Semi Scalloped</option></select></div></div>
   <div class="card hidden" id="reprintCard">
     <div class="section-title">Reprint Details</div>
-
-    <div class="form-group">
-      <label>Arch</label>
-      <select id="reprintArch" onchange="handleReprintArch()">
-        <option value="Both">Both</option>
-        <option value="Upper">Upper Only</option>
-        <option value="Lower">Lower Only</option>
-      </select>
-    </div>
-
+    <div class="form-group"><label>Arch</label><select id="reprintArch" onchange="handleReprintArch()"><option value="Both">Both</option><option value="Upper">Upper Only</option><option value="Lower">Lower Only</option></select></div>
     <div id="reprintUpperGroup">
-      <div class="form-group">
-        <div class="checkbox-row">
-          <label class="checkbox-item">
-            <input type="checkbox" id="reprintUpperNonSeq" onchange="toggleReprintMode('Upper')" /> Non-sequential
-          </label>
-        </div>
-      </div>
-      <div class="row" id="reprintUpperRange">
-        <div class="form-group">
-          <label>Upper From</label>
-          <input type="number" id="reprintUpperFrom" placeholder="e.g. 5" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Upper To</label>
-          <input type="number" id="reprintUpperTo" placeholder="e.g. 10" min="1" />
-        </div>
-      </div>
-      <div class="form-group hidden" id="reprintUpperStepsGroup">
-        <label>Upper Steps</label>
-        <input type="text" id="reprintUpperSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" />
-      </div>
+      <div class="form-group"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="reprintUpperNonSeq" onchange="toggleReprintMode('Upper')" /> Non-sequential</label></div></div>
+      <div class="row" id="reprintUpperRange"><div class="form-group"><label>Upper From</label><input type="number" id="reprintUpperFrom" placeholder="e.g. 5" min="1" /></div><div class="form-group"><label>Upper To</label><input type="number" id="reprintUpperTo" placeholder="e.g. 10" min="1" /></div></div>
+      <div class="form-group hidden" id="reprintUpperStepsGroup"><label>Upper Steps</label><input type="text" id="reprintUpperSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" /></div>
     </div>
-
     <div id="reprintLowerGroup" style="margin-top:12px">
-      <div class="form-group">
-        <div class="checkbox-row">
-          <label class="checkbox-item">
-            <input type="checkbox" id="reprintLowerNonSeq" onchange="toggleReprintMode('Lower')" /> Non-sequential
-          </label>
-        </div>
-      </div>
-      <div class="row" id="reprintLowerRange">
-        <div class="form-group">
-          <label>Lower From</label>
-          <input type="number" id="reprintLowerFrom" placeholder="e.g. 5" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Lower To</label>
-          <input type="number" id="reprintLowerTo" placeholder="e.g. 10" min="1" />
-        </div>
-      </div>
-      <div class="form-group hidden" id="reprintLowerStepsGroup">
-        <label>Lower Steps</label>
-        <input type="text" id="reprintLowerSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" />
-      </div>
+      <div class="form-group"><div class="checkbox-row"><label class="checkbox-item"><input type="checkbox" id="reprintLowerNonSeq" onchange="toggleReprintMode('Lower')" /> Non-sequential</label></div></div>
+      <div class="row" id="reprintLowerRange"><div class="form-group"><label>Lower From</label><input type="number" id="reprintLowerFrom" placeholder="e.g. 5" min="1" /></div><div class="form-group"><label>Lower To</label><input type="number" id="reprintLowerTo" placeholder="e.g. 10" min="1" /></div></div>
+      <div class="form-group hidden" id="reprintLowerStepsGroup"><label>Lower Steps</label><input type="text" id="reprintLowerSteps" placeholder="e.g. 1, 4, 6" inputmode="numeric" /></div>
     </div>
-
-    <div class="form-group">
-      <label>Reason for Reprint <span class="required">*</span></label>
-      <input type="text" id="reprintReason" placeholder="e.g. Broken aligner, Lost aligner..." />
-    </div>
-
-    <div class="form-group">
-      <label>Payment Amount (IQD) — leave empty if free</label>
-      <input type="text" id="reprintPayment" placeholder="Leave empty if free" inputmode="numeric" />
-    </div>
-
-    <div class="form-group">
-      <textarea id="reprintNotes" placeholder="Any additional notes..."></textarea>
-    </div>
+    <div class="form-group"><label>Reason for Reprint <span class="required">*</span></label><input type="text" id="reprintReason" placeholder="e.g. Broken aligner, Lost aligner..." /></div>
+    <div class="form-group"><label>Payment Amount (IQD) — leave empty if free</label><input type="text" id="reprintPayment" placeholder="Leave empty if free" inputmode="numeric" /></div>
+    <div class="form-group"><textarea id="reprintNotes" placeholder="Any additional notes..."></textarea></div>
   </div>
-
-  <div class="form-container" style="padding-top:0">
-    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
-      Submit Order
-    </button>
-  </div>
-
+  <div class="form-container" style="padding-top:0"><button class="submit-btn" id="submitBtn" onclick="submitForm()">Submit Order</button></div>
 </div>
 </div>
-
 <div id="statusScreen">
 <div class="form-container">
-  <input type="search" class="status-search" id="statusSearch"
-    placeholder="Search case number or patient..." oninput="renderCases()" />
-  <div class="form-group" style="margin-bottom:12px">
-    <div class="search-wrapper">
-      <input type="search" id="statusDoctorSearch"
-        placeholder="Filter by doctor..."
-        autocomplete="off"
-        style="padding-right:36px" />
-      <button class="clear-btn" id="clearStatusDoctor" onclick="clearStatusDoctor()">✕</button>
-      <div class="search-results" id="statusDoctorResults"></div>
+  <div class="card">
+    <div class="section-title">Search</div>
+    <div class="row">
+      <input type="search" id="searchInput" placeholder="Search case number or patient..." oninput="renderGroupedCases()" />
+      <div class="search-wrapper">
+        <input type="search" id="doctorFilterInput" placeholder="Filter by doctor..." autocomplete="off" oninput="filterDoctorOptions(this.value)" onfocus="filterDoctorOptions(this.value)" />
+        <div class="search-results" id="doctorResults"></div>
+      </div>
     </div>
+    <div class="hint">Doctor search card title format: <b>Case Number — Patient Name</b></div>
   </div>
-  <div class="status-count" id="statusCount"></div>
-  <div id="caseList">
-    <div class="status-loading" id="statusLoading">Loading cases...</div>
-  </div>
+  <div id="resultsMeta" class="hint" style="margin-bottom:10px;"></div>
+  <div id="resultsArea"><div class="status-loading">Loading grouped cases…</div></div>
 </div>
 </div>
-
 <div id="unpaidScreen">
 <div class="form-container">
-  <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none">
-    <select id="unpaidZoneSelect" onchange="renderUnpaid()">
-      <option value="">Loading zones...</option>
-    </select>
-  </div>
-  <div class="unpaid-total" id="unpaidTotal">
-    <div class="unpaid-total-label">Total Pending</div>
-    <div class="unpaid-total-value" id="unpaidTotalValue">0 IQD</div>
-  </div>
-  <div class="unpaid-table-wrap">
-    <div id="unpaidTableContainer">
-      <div class="status-loading" id="unpaidLoading">Loading...</div>
-    </div>
-  </div>
+  <div class="form-group" id="unpaidZoneGroup" style="margin-bottom:12px;display:none"><select id="unpaidZoneSelect" onchange="renderUnpaid()"><option value="">Loading zones...</option></select></div>
+  <div class="unpaid-total" id="unpaidTotal"><div class="unpaid-total-label">Total Pending</div><div class="unpaid-total-value" id="unpaidTotalValue">0 IQD</div></div>
+  <div class="unpaid-table-wrap"><div id="unpaidTableContainer"><div class="status-loading" id="unpaidLoading">Loading...</div></div></div>
 </div>
 </div>
-
-<div id="successScreen">
-  <div class="success-icon">✅</div>
-  <div class="success-title">Order Submitted!</div>
-  <div class="success-sub" id="successSub">
-    Your order has been received and is being processed.
-  </div>
-</div>
-
+<div id="successScreen"><div class="success-icon">✅</div><div class="success-title">Order Submitted!</div><div class="success-sub" id="successSub">Your order has been received and is being processed.</div></div>
 <script>
 var BOT_TOKEN = '8033845328:AAGOFIjNGXmdzAqQyg8IH3v8UWpog9RYcH0';
 var CHAT_ID = '-1002898704692';
 var SHEET_ID = '1ToxldsqvuQUfI__xNoaxOwNG0iYx6FgkJC0hpngd0h8';
 var API_KEY = 'AIzaSyDGBOFL9rSp3dPkQ1No5i5IXI27xL1-9ME';
 var TG_PROXY = 'https://telegram-proxy.ajeelz99.workers.dev';
-
-var doctorRows = []; // raw rows with all columns
-var doctors = [];    // filtered doctor names for current rep
+var doctorRows = [];
+var doctors = [];
 var reps = [];
 var selectedFiles = [];
 var detectedUsername = null;
@@ -691,693 +475,6 @@ var singleArchLocked = null;
 var tg = null;
 var tgUsername = null;
 var tgUserId = null;
-
-function formatWithCommas(input) {
-  input.addEventListener('input', function() {
-    var pos = input.selectionStart;
-    var raw = input.value.replace(/,/g, '');
-    if (!/^\d*$/.test(raw)) {
-      input.value = raw.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      return;
-    }
-    var formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    var diff = formatted.length - input.value.length;
-    input.value = formatted;
-    input.setSelectionRange(pos + diff, pos + diff);
-  });
-}
-
-function getRawNumber(id) {
-  var val = document.getElementById(id).value.replace(/,/g, '').trim();
-  return parseInt(val) || 0;
-}
-
-function getFormattedValue(id) {
-  return document.getElementById(id).value.trim();
-}
-
-function formatNum(n) {
-  if (!n || n === 0) return '0';
-  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-function initTelegram() {
-  tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-  if (tg) {
-    tg.ready();
-    tg.expand();
-    var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-    tgUsername = tgUser ? (tgUser.username || null) : null;
-    tgUserId = tgUser ? (tgUser.id || null) : null;
-  }
-}
-
-function handleCaseTypeChange() {
-  var type = document.getElementById('caseType').value;
-  var mcaBatch = document.getElementById('mcaBatchNumber').value;
-  var rBatch = document.getElementById('refinementBatch').value;
-  var isReprint = type === 'reprint';
-  var isRetainer = type === 'retainer';
-  var isMCA = type === 'mca';
-  var isRefinement = type === 'refinement';
-
-  document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
-  document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
-
-  document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
-  document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA);
-  document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA);
-  document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement);
-  document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement);
-
-  document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer);
-
-  // Hide steps and package for non-first batches
-  var isNonFirstBatch = type === 'batch' ||
-    (isMCA && mcaBatch !== '1') ||
-    (isRefinement && rBatch !== '1');
-  document.getElementById('stepsGroup').classList.toggle('hidden', isNonFirstBatch);
-  document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement || isNonFirstBatch);
-
-  // Payment card: hide for reprint, retainer, and refinement 1st batch only
-  var rNum = isRefinement ? document.getElementById('refinementNumber').value : '1';
-  var hidePaymentCard = isReprint || isRetainer ||
-    (isRefinement && (rNum === '1' || rBatch !== '1'));
-  document.getElementById('paymentCard').classList.toggle('hidden', hidePaymentCard);
-
-  // Batch-specific payment card adjustments (no installments/discount for non-first batches)
-  var isBatch = isNonFirstBatch;
-  document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch);
-  document.getElementById('discountGroup').classList.toggle('hidden', isBatch);
-  document.getElementById('discountValueGroup').classList.add('hidden');
-  document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch);
-  document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch);
-  document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)';
-  if (!isBatch) {
-    document.getElementById('printAllRemaining').checked = false;
-    handlePrintAllRemaining();
-  }
-
-  var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer;
-  document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox);
-  if (!showRetainerCheckbox) document.getElementById('retainer').checked = false;
-
-  var showAttachment = !isReprint && !isRetainer && ((type === 'new') ||
-    (isMCA && mcaBatch === '1') ||
-    (isRefinement && rBatch === '1'));
-  document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment);
-
-  document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer);
-  document.getElementById('stlCard').classList.toggle('hidden', !isRetainer);
-  document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer);
-  document.getElementById('reprintCard').classList.toggle('hidden', !isReprint);
-  document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer);
-}
-
-function handleRetainerArch() {
-  var upperChecked = document.getElementById('retainerUpper').checked;
-  var lowerChecked = document.getElementById('retainerLower').checked;
-  document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked);
-  document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked);
-}
-
-function toggleReprintMode(arch) {
-  var isNonSeq = document.getElementById('reprint' + arch + 'NonSeq').checked;
-  document.getElementById('reprint' + arch + 'Range').classList.toggle('hidden', isNonSeq);
-  document.getElementById('reprint' + arch + 'StepsGroup').classList.toggle('hidden', !isNonSeq);
-}
-
-function handleReprintArch() {
-  var arch = document.getElementById('reprintArch').value;
-  document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower');
-  document.getElementById('reprintLowerGroup').classList.toggle('hidden', arch === 'Upper');
-}
-
-function handleSingleArch() {
-  var checked = document.getElementById('singleArch').checked;
-  var upper = document.getElementById('upper');
-  var lower = document.getElementById('lower');
-
-  if (!checked) {
-    upper.disabled = false;
-    lower.disabled = false;
-    singleArchLocked = null;
-    document.getElementById('upperRequired').style.display = 'inline';
-    document.getElementById('lowerRequired').style.display = 'inline';
-    upper.removeEventListener('input', lockLowerOnInput);
-    lower.removeEventListener('input', lockUpperOnInput);
-    return;
-  }
-
-  var upperVal = upper.value.trim();
-  var lowerVal = lower.value.trim();
-
-  if (upperVal && !lowerVal) {
-    lower.value = '0';
-    lower.disabled = true;
-    singleArchLocked = 'lower';
-    document.getElementById('lowerRequired').style.display = 'none';
-  } else if (lowerVal && !upperVal) {
-    upper.value = '0';
-    upper.disabled = true;
-    singleArchLocked = 'upper';
-    document.getElementById('upperRequired').style.display = 'none';
-  } else {
-    upper.addEventListener('input', lockLowerOnInput);
-    lower.addEventListener('input', lockUpperOnInput);
-  }
-}
-
-function lockLowerOnInput() {
-  if (document.getElementById('singleArch').checked && document.getElementById('upper').value) {
-    var lower = document.getElementById('lower');
-    lower.value = '0';
-    lower.disabled = true;
-    singleArchLocked = 'lower';
-    document.getElementById('lowerRequired').style.display = 'none';
-    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
-    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
-  }
-}
-
-function lockUpperOnInput() {
-  if (document.getElementById('singleArch').checked && document.getElementById('lower').value) {
-    var upper = document.getElementById('upper');
-    upper.value = '0';
-    upper.disabled = true;
-    singleArchLocked = 'upper';
-    document.getElementById('upperRequired').style.display = 'none';
-    document.getElementById('upper').removeEventListener('input', lockLowerOnInput);
-    document.getElementById('lower').removeEventListener('input', lockUpperOnInput);
-  }
-}
-
-function handleFullPayment() {
-  var checked = document.getElementById('fullPayment').checked;
-  var field = document.getElementById('batch1Amount');
-  if (checked) {
-    field.value = '';
-    field.disabled = true;
-    field.placeholder = 'N/A - Full Payment';
-  } else {
-    field.disabled = false;
-    field.placeholder = 'e.g. 500,000';
-  }
-}
-
-function handlePrintAllRemaining() {
-  var checked = document.getElementById('printAllRemaining').checked;
-  var field = document.getElementById('batch1Amount');
-  if (checked) {
-    field.value = '';
-    field.placeholder = 'N/A - Printing all remaining';
-    field.disabled = true;
-  } else {
-    field.placeholder = 'e.g. 500,000';
-    field.disabled = false;
-  }
-}
-
-function autoDetectPackage() {
-  var upper = parseInt(document.getElementById('upper').value) || 0;
-  var lower = parseInt(document.getElementById('lower').value) || 0;
-  var max = Math.max(upper, lower);
-  if (max === 0) return;
-  var pkg = max <= 12 ? 'BRONZE' : max <= 25 ? 'SILVER' : 'GOLD';
-  document.getElementById('package').value = pkg;
-}
-
-var caseAutoFillTimer = null;
-function handleCaseNumberInput() {
-  clearTimeout(caseAutoFillTimer);
-  caseAutoFillTimer = setTimeout(function() {
-    var type = document.getElementById('caseType').value;
-    if (type === 'retainer' || type === 'reprint') return;
-
-    var typed = document.getElementById('caseNumber').value.trim().toLowerCase();
-    if (!typed || typed.length < 3) {
-      document.getElementById('caseAutoFillHint').style.display = 'none';
-      return;
-    }
-
-    var match = null;
-    for (var i = 0; i < allCasesUnfiltered.length; i++) {
-      var c = allCasesUnfiltered[i];
-      var base = extractBaseCase(c.caseNumber).toLowerCase();
-      if (base === typed || c.caseNumber.toLowerCase() === typed) {
-        match = c;
-        break;
-      }
-    }
-
-    if (!match) {
-      document.getElementById('caseAutoFillHint').style.display = 'none';
-      return;
-    }
-
-    if (match.doctor) {
-      var doctorInList = doctors.some(function(d) {
-        return d.toLowerCase() === match.doctor.toLowerCase();
-      });
-      if (doctorInList) {
-        document.getElementById('doctorSearch').value = match.doctor;
-        document.getElementById('doctorValue').value = match.doctor;
-        document.getElementById('clearDoctor').style.display = 'block';
-        document.getElementById('newDoctorGroup').classList.add('hidden');
-        document.getElementById('doctorError').classList.remove('show');
-        document.getElementById('doctorSearch').classList.remove('error-field');
-        document.getElementById('doctorResults').style.display = 'none';
-      }
-    }
-
-    if (match.patient) document.getElementById('patient').value = match.patient;
-    if (match.clinic) document.getElementById('clinic').value = match.clinic;
-
-    var hint = document.getElementById('caseAutoFillHint');
-    hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : '');
-    hint.style.display = 'block';
-  }, 400);
-}
-
-function handleDiscountChange() {
-  var type = document.getElementById('discountType').value;
-  document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none');
-  document.getElementById('discountValueLabel').textContent =
-    type === 'percentage' ? 'Discount (%)' : 'Discount Amount (IQD)';
-}
-
-function handleFileSelect(input) {
-  selectedFiles = Array.from(input.files);
-  document.getElementById('fileNames').textContent =
-    selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : '';
-}
-
-var currentFiltered = [];
-
-function filterDoctors(query) {
-  var results = document.getElementById('doctorResults');
-  query = (query || '').toLowerCase().trim();
-  currentFiltered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
-  var html = '<div class="search-result-item new-doctor-item">+ New Doctor</div>';
-  currentFiltered.slice(0, 40).forEach(function(doc, i) {
-    html += '<div class="search-result-item" data-doc-idx="' + i + '">' + doc + '</div>';
-  });
-  if (currentFiltered.length === 0 && query) {
-    html += '<div class="search-result-item loading-item">No match — select New Doctor</div>';
-  }
-  results.innerHTML = html;
-  results.style.display = 'block';
-  document.getElementById('clearDoctor').style.display = query ? 'block' : 'none';
-}
-
-document.getElementById('doctorResults').addEventListener('click', function(e) {
-  var item = e.target.closest('.search-result-item');
-  if (!item) return;
-  if (item.classList.contains('new-doctor-item')) { selectNewDoctor(); return; }
-  if (item.classList.contains('loading-item')) return;
-  var idx = item.getAttribute('data-doc-idx');
-  if (idx !== null && currentFiltered[parseInt(idx)]) {
-    selectDoctor(currentFiltered[parseInt(idx)]);
-  }
-});
-
-function selectDoctor(name) {
-  document.getElementById('doctorSearch').value = name;
-  document.getElementById('doctorValue').value = name;
-  document.getElementById('doctorResults').style.display = 'none';
-  document.getElementById('newDoctorGroup').classList.add('hidden');
-  document.getElementById('clearDoctor').style.display = 'block';
-  document.getElementById('doctorError').classList.remove('show');
-  document.getElementById('doctorSearch').classList.remove('error-field');
-}
-
-function selectNewDoctor() {
-  document.getElementById('doctorSearch').value = '';
-  document.getElementById('doctorValue').value = 'NEW_DOCTOR';
-  document.getElementById('doctorResults').style.display = 'none';
-  document.getElementById('newDoctorGroup').classList.remove('hidden');
-  document.getElementById('newDoctorName').focus();
-  document.getElementById('doctorError').classList.remove('show');
-}
-
-function clearDoctor() {
-  document.getElementById('doctorSearch').value = '';
-  document.getElementById('doctorValue').value = '';
-  document.getElementById('clearDoctor').style.display = 'none';
-  document.getElementById('newDoctorGroup').classList.add('hidden');
-  document.getElementById('doctorSearch').focus();
-}
-
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.search-wrapper')) {
-    document.getElementById('doctorResults').style.display = 'none';
-  }
-});
-
-document.getElementById('doctorSearch').addEventListener('input', function() {
-  filterDoctors(this.value);
-});
-
-document.getElementById('doctorSearch').addEventListener('focus', function() {
-  filterDoctors(this.value);
-  document.getElementById('doctorResults').style.display = 'block';
-});
-
-function setupRepField() {
-  // Admin usernames who see all doctors
-  var ADMIN_USERNAMES = ['shafafmanagement', 'shafafclearaligners'];
-
-  if (tgUsername) {
-    var matched = reps.find(function(r) {
-      return r.username.toLowerCase() === tgUsername.toLowerCase();
-    });
-    if (matched) {
-      document.getElementById('repDetected').value = matched.name;
-      document.getElementById('repUsername').value = tgUsername;
-      detectedUsername = tgUsername;
-
-      // Detect sales rep role
-      repZone = matched.zone || '';
-      isSalesRep = repZone.toLowerCase() === 'baghdad sales rep';
-
-      // Sales rep: only show Pending tab, hide Order and My Cases
-      if (isSalesRep) {
-        document.getElementById('tabOrder').style.display = 'none';
-        document.getElementById('tabStatus').style.display = 'none';
-        document.getElementById('unpaidZoneGroup').style.display = 'block';
-        switchTab('unpaid');
-        return;
-      }
-
-      // Admins see all doctors and get zone dropdown on Pending tab
-      if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) {
-        isAdmin = true;
-        doctors = doctorRows
-          .filter(function(row) { return row[0] && row[0].trim() !== ''; })
-          .map(function(row) { return row[0].trim(); });
-        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
-        document.getElementById('unpaidZoneGroup').style.display = 'block';
-        return;
-      }
-
-      // Filter doctors by rep name — column D (index 3) contains rep names
-      var repNameLower = matched.name.toLowerCase().trim();
-      doctors = doctorRows
-        .filter(function(row) {
-          var docName = (row[0] || '').trim();
-          var docReps = (row[3] || '').toLowerCase().trim();
-          if (!docName) return false;
-          return docReps.split(',').some(function(r) {
-            return r.trim() === repNameLower;
-          });
-        })
-        .map(function(row) { return row[0].trim(); });
-
-      if (doctors.length === 0) {
-        document.getElementById('doctorSearch').placeholder = 'No doctors assigned yet';
-      } else {
-        document.getElementById('doctorSearch').placeholder = 'Search doctor name...';
-      }
-    } else {
-      // Username not matched — no doctors shown
-      doctors = [];
-      document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
-    }
-  } else {
-    // No Telegram username — no doctors shown
-    doctors = [];
-    document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized';
-  }
-}
-
-function applyCache(parsed) {
-  doctorRows = parsed.doctorRows || [];
-  reps = parsed.reps || [];
-  setupRepField();
-}
-
-function fetchFreshData() {
-  // Fetch Customers B:D (raw name, zone, reps) — skip column A (UNIQUE formula has fewer rows)
-  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values:batchGet?ranges=Customers!B:D&ranges=Reps!A:C&key=' + API_KEY;
-
-  fetch(url)
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      var rawRows = data.valueRanges[0].values || [];
-
-      // B:D returns [name, zone, rep] — deduplicate by doctor name, merge reps
-      var seen = {};
-      rawRows.forEach(function(row) {
-        var name = (row[0] || '').trim();
-        if (!name) return;
-        var key = name.toLowerCase();
-        if (!seen[key]) {
-          seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' };
-        } else {
-          var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
-          var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean);
-          incoming.forEach(function(r) {
-            if (existing.indexOf(r) === -1) {
-              seen[key].rep = seen[key].rep ? seen[key].rep + ', ' + r : r;
-              existing.push(r);
-            }
-          });
-        }
-      });
-
-      // Rebuild doctorRows as [name, '', zone, rep] so setupRepField still reads row[0] and row[3]
-      doctorRows = Object.values(seen).map(function(entry) {
-        return [entry.name, '', entry.zone, entry.rep];
-      });
-
-      var repValues = data.valueRanges[1].values || [];
-      reps = repValues
-        .filter(function(row) { return row[0] && row[0].trim() !== ''; })
-        .map(function(row) {
-          return {
-            name: row[0].trim(),
-            username: (row[1] || '').trim(),
-            zone: (row[2] || '').trim()
-          };
-        });
-
-      var cacheData = JSON.stringify({ doctorRows: doctorRows, reps: reps });
-      try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {}
-
-      initTelegram();
-      setupRepField();
-    })
-    .catch(function(e) {
-      console.error('Failed to load data', e);
-      if (doctors.length === 0) {
-        document.getElementById('doctorSearch').placeholder = 'Type doctor name manually';
-      }
-    });
-}
-
-function loadData() {
-  try {
-    var cached = localStorage.getItem('shafaf_data');
-    if (cached) { applyCache(JSON.parse(cached)); }
-  } catch(e) {}
-  fetchFreshData();
-}
-
-function buildCaseNumber() {
-  var type = document.getElementById('caseType').value;
-  var baseNum = document.getElementById('caseNumber').value.trim();
-
-  if (type === 'reprint') return 'Reprint/ ' + baseNum;
-  if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer';
-  if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum;
-  if (type === 'mca') {
-    var mcaNum = document.getElementById('mcaNumber').value;
-    var mcaBatch = document.getElementById('mcaBatchNumber').value;
-    var prefix = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
-    if (mcaBatch === '1') return prefix + '/ ' + baseNum;
-    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
-    return prefix + '/ ' + batchSuffix + '/ ' + baseNum;
-  }
-  if (type === 'refinement') {
-    var rNum = document.getElementById('refinementNumber').value;
-    var rBatch = document.getElementById('refinementBatch').value;
-    var rPrefix = 'R' + rNum;
-    if (rBatch === '1') return rPrefix + '/ ' + baseNum;
-    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
-    return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum;
-  }
-  return baseNum;
-}
-
-function buildPrintOrderLine(data) {
-  var type = data.caseType;
-  if (type === 'new') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch';
-  if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch';
-  if (type === 'mca') {
-    var mcaBatch = document.getElementById('mcaBatchNumber').value;
-    var mcaNum = document.getElementById('mcaNumber').value;
-    var mcaLabel = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum;
-    if (mcaBatch === '1') return data.fullBatch ? 'Print order for Full Batch of ' + mcaLabel : 'Print order for 1st Batch of ' + mcaLabel;
-    var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th';
-    return 'Print order for ' + batchSuffix + ' Batch of ' + mcaLabel;
-  }
-  if (type === 'refinement') {
-    var rNum = document.getElementById('refinementNumber').value;
-    var rBatch = document.getElementById('refinementBatch').value;
-    var rLabel = 'R' + rNum;
-    if (rBatch === '1') return 'Print order for Refinement ' + rLabel;
-    var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th';
-    return 'Print order for ' + rBatchSuffix + ' Batch of ' + rLabel;
-  }
-  return 'Print order for 1st Batch';
-}
-
-function buildTelegramMessage(data) {
-  var username = detectedUsername || '';
-  var repName = document.getElementById('repDetected').value || '';
-  var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || '';
-
-  var msg = '';
-  msg += '🆕 Approval from @' + username + '\n';
-  msg += 'Case Number: ' + data.caseNumber + '\n';
-  msg += 'Doctor: ' + data.doctor + '\n';
-  msg += 'Patient: ' + data.patient + '\n';
-  if (data.clinic) msg += 'Clinic: ' + data.clinic + '\n';
-
-  if (data.caseType === 'reprint') {
-    var arch = document.getElementById('reprintArch').value;
-    var upperFrom = document.getElementById('reprintUpperFrom').value;
-    var upperTo = document.getElementById('reprintUpperTo').value;
-    var lowerFrom = document.getElementById('reprintLowerFrom').value;
-    var lowerTo = document.getElementById('reprintLowerTo').value;
-    var reprintReason = document.getElementById('reprintReason').value.trim();
-    var reprintPaymentVal = getFormattedValue('reprintPayment');
-    var reprintNotes = document.getElementById('reprintNotes').value.trim();
-
-    msg += 'Reprint Request\n';
-    msg += 'Arch: ' + arch + '\n';
-    if (arch === 'Both' || arch === 'Upper') {
-      if (document.getElementById('reprintUpperNonSeq').checked) {
-        var usteps = document.getElementById('reprintUpperSteps').value.trim();
-        if (usteps) msg += 'Upper: steps ' + usteps + '\n';
-      } else if (upperFrom && upperTo) {
-        msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n';
-      }
-    }
-    if (arch === 'Both' || arch === 'Lower') {
-      if (document.getElementById('reprintLowerNonSeq').checked) {
-        var lsteps = document.getElementById('reprintLowerSteps').value.trim();
-        if (lsteps) msg += 'Lower: steps ' + lsteps + '\n';
-      } else if (lowerFrom && lowerTo) {
-        msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n';
-      }
-    }
-    if (reprintReason) msg += 'Reason: ' + reprintReason + '\n';
-    if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) {
-      msg += 'Payment: ' + reprintPaymentVal + ' IQD\n';
-    } else {
-      msg += 'Free Reprint\n';
-    }
-    if (reprintNotes) msg += 'Notes: ' + reprintNotes + '\n';
-    if (zone) msg += zone + '\n';
-    msg += repName;
-    return msg;
-  }
-
-  if (data.caseType === 'retainer') {
-    var upperChecked = document.getElementById('retainerUpper').checked;
-    var lowerChecked = document.getElementById('retainerLower').checked;
-    var upperQty = document.getElementById('retainerUpperQty').value;
-    var lowerQty = document.getElementById('retainerLowerQty').value;
-    var retainerAsap = document.getElementById('retainerAsap').checked;
-    var retainerPriceVal = getFormattedValue('retainerPrice');
-    var retainerNotes = document.getElementById('retainerNotes').value.trim();
-    var retainerReason = document.getElementById('retainerReason').value.trim();
-
-    if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n';
-    if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n';
-    if (retainerAsap) msg += 'ASAP\n';
-    msg += 'Price: ' + retainerPriceVal + ' IQD\n';
-    msg += 'Print order for Retainer\n';
-    if (retainerReason) msg += 'Reason: ' + retainerReason + '\n';
-    if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n';
-    if (zone) msg += zone + '\n';
-    msg += repName;
-    return msg;
-  }
-
-  var type = data.caseType;
-  msg += 'Upper: ' + data.upper + '\n';
-  msg += 'Lower: ' + data.lower + '\n';
-  msg += data.package + '\n';
-  if (data.singleArch) msg += 'Single Arch\n';
-  if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) {
-    if (data.discountType === 'percentage') {
-      msg += data.discountValue + '% DISCOUNT\n';
-    } else {
-      msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n';
-    }
-  }
-  if (type === 'batch' || (document.getElementById('printAllRemainingGroup') && !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))) {
-    msg += 'Approved\n';
-    if (document.getElementById('printAllRemaining').checked) {
-      msg += 'Print order for Full Batch\n';
-    } else {
-      var batchPayVal = getFormattedValue('batch1Amount');
-      if (batchPayVal && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batchPayVal + ' IQD\n';
-    }
-  } else {
-    var installments = document.getElementById('installments').value;
-    if (installments === 'full') msg += 'Approved (Full)\n';
-    else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n';
-    else msg += 'Approved\n';
-    var batch1Val = getFormattedValue('batch1Amount');
-    if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n';
-    if (data.fullPayment) msg += 'Full Payment\n';
-  }
-  msg += buildPrintOrderLine(data) + '\n';
-  if (data.asap) msg += 'ASAP\n';
-  if (data.retainer) msg += 'Add Retainer(s)\n';
-  var thickness = document.getElementById('attachmentThickness').value;
-  if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n';
-  var trimLine = document.getElementById('trimLine').value;
-  if (trimLine && trimLine !== 'Straight') msg += 'Trim Line: ' + trimLine + '\n';
-  if (data.notes) msg += 'Notes: ' + data.notes + '\n';
-  if (zone) msg += zone + '\n';
-  msg += repName;
-  return msg;
-}
-
-// ---- Tab switching ----
-function switchTab(tab) {
-  document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
-  document.getElementById('tabStatus').classList.toggle('active', tab === 'status');
-  document.getElementById('tabUnpaid').classList.toggle('active', tab === 'unpaid');
-  document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none';
-  document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none';
-  document.getElementById('unpaidScreen').style.display = tab === 'unpaid' ? 'block' : 'none';
-  document.getElementById('successScreen').style.display = 'none';
-  if (tab === 'status' || tab === 'unpaid') {
-    var repName = document.getElementById('repDetected').value || '';
-    if (!repName) {
-      if (tab === 'status') {
-        document.getElementById('caseList').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
-        document.getElementById('statusCount').textContent = '';
-      } else {
-        document.getElementById('unpaidTableContainer').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>';
-      }
-      return;
-    }
-    if (!statusLoaded) {
-      loadCaseStatus();
-    } else if (tab === 'unpaid') {
-      renderUnpaid();
-    }
-  }
-}
-
-// ---- Case status ----
 var allCases = [];
 var allCasesUnfiltered = [];
 var allZones = [];
@@ -1386,623 +483,75 @@ var statusLoaded = false;
 var isSalesRep = false;
 var isAdmin = false;
 var repZone = '';
-
-function extractBaseCase(caseNum) {
-  return caseNum
-    .replace(/^reprint\/\s*/i, '')
-    .replace(/^retainer\/\s*/i, '')
-    .replace(/^MCA\d*\/\s*/i, '')
-    .replace(/^R\d+\/\s*/i, '')
-    .replace(/^(2nd|3rd|4th|5th)\/\s*/i, '')
-    .trim();
-}
-
-function loadCaseStatus() {
-  var el = document.getElementById('statusLoading');
-  if (el) el.style.display = 'block';
-
-  // Single range A:AO ensures row alignment (AN=col39=Zone, AO=col40=PaymentStatus)
-  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID +
-    '/values/CombinedTable!A:AO?key=' + API_KEY;
-
-  fetch(url)
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      var rows = data.values || [];
-      allCases = [];
-      allCasesUnfiltered = [];
-      allZones = [];
-      // Single range: A(0), B(1), C(2)=CaseType, D(3)=CaseNumber, E(4)=Doctor,
-      // F(5)=Clinic, G(6)=Patient, H(7)=Upper, I(8)=Lower,
-      // J(9)=UpperDel, K(10)=LowerDel, L(11)=UpperRem, M(12)=LowerRem,
-      // N(13)=CasePrice, O(14)=Discount, P(15)=PriceAfterDiscount, Q(16)=BatchPrice,
-      // R(17), S(18), T(19)=AmtRemaining, ... AN(39)=Zone, AO(40)=PaymentStatus
-      // Build rep -> zone lookup from Reps sheet
-      var repZoneMap = {};
-      reps.forEach(function(rep) {
-        if (rep.name && rep.zone) {
-          repZoneMap[rep.name.toLowerCase()] = rep.zone;
-        }
-      });
-
-      for (var i = 1; i < rows.length; i++) {
-        var r = rows[i];
-        if (!r[3]) continue;
-
-        // Get zone: first try rep lookup via Reps sheet, fallback to column AN (r[39])
-        var caseRep = (r[25] || '').trim();
-        var caseZone = repZoneMap[caseRep.toLowerCase()] || (r[39] || '').trim();
-        var paymentStatus = (r[40] || '').trim().toLowerCase();
-
-        // Collect unique zones for admin dropdown
-        if (caseZone && caseZone.toLowerCase() !== 'baghdad sales rep' && allZones.indexOf(caseZone) === -1) {
-          allZones.push(caseZone);
-        }
-
-        // Security: filter cases based on role
-        var caseDoctor = (r[4] || '').trim();
-
-        // Unfiltered — for autofill regardless of rep
-        allCasesUnfiltered.push({
-          caseType: (r[2] || '').trim(),
-          caseNumber: (r[3] || '').trim(),
-          doctor: caseDoctor,
-          clinic: (r[5] || '').trim(),
-          patient: (r[6] || '').trim()
-        });
-
-        if (!isAdmin && !isSalesRep) {
-          // Regular rep: only see their own doctors
-          var repDoctors = doctors.map(function(d) { return d.toLowerCase(); });
-          if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue;
-        }
-        // Admins and sales rep: no doctor filter
-
-        var upperRem = parseInt(r[11]) || 0;
-        var lowerRem = parseInt(r[12]) || 0;
-        var amtRemaining = parseFloat((r[19] || '0').toString().replace(/,/g, '')) || 0;
-        var batchPrice = parseFloat((r[16] || '0').toString().replace(/,/g, '')) || 0;
-        var casePrice = parseFloat((r[13] || '0').toString().replace(/,/g, '')) || 0;
-        var allDelivered = upperRem === 0 && lowerRem === 0 && (parseInt(r[7]) || 0) + (parseInt(r[8]) || 0) > 0;
-
-        // Discount: if < 1, it's a percentage (e.g. 0.1 = 10%), otherwise fixed IQD
-        var rawDiscount = parseFloat((r[14] || '0').toString().replace(/,/g, '')) || 0;
-        var discountDisplay = '';
-        if (rawDiscount > 0 && rawDiscount < 1) {
-          discountDisplay = Math.round(rawDiscount * 100) + '%';
-        } else if (rawDiscount >= 1) {
-          discountDisplay = formatNum(rawDiscount) + ' IQD';
-        }
-
-        // Determine display status
-        var displayStatus = '';
-       if (paymentStatus === 'unpaid') {
-  displayStatus = 'UNPAID';
-} else if (paymentStatus === 'waiting pickup') {
-  displayStatus = 'WAITING PICKUP';
-} else if (paymentStatus === 'under production') {
-  displayStatus = 'UNDER PRODUCTION';
-} else if (allDelivered && amtRemaining === 0) {
-          displayStatus = 'CASE FULLY PAID';
-        } else if (batchPrice > 0) {
-          displayStatus = 'BATCH PAID';
-        } else if (batchPrice === 0) {
-          displayStatus = 'FREE BATCH';
-        }
-
-        allCases.push({
-          year: (r[0] || '').trim(),
-          month: (r[1] || '').trim(),
-          caseType: (r[2] || '').trim(),
-          caseNumber: (r[3] || '').trim(),
-          doctor: caseDoctor,
-          clinic: (r[5] || '').trim(),
-          patient: (r[6] || '').trim(),
-          upper: parseInt(r[7]) || 0,
-          lower: parseInt(r[8]) || 0,
-          upperDel: parseInt(r[9]) || 0,
-          lowerDel: parseInt(r[10]) || 0,
-          upperRem: upperRem,
-          lowerRem: lowerRem,
-          casePrice: casePrice,
-          discountDisplay: discountDisplay,
-          priceAfterDiscount: parseFloat((r[15] || '0').toString().replace(/,/g, '')) || 0,
-          batchPrice: batchPrice,
-          amtRemaining: amtRemaining,
-          displayStatus: displayStatus,
-          zone: caseZone
-        });
-      }
-      statusLoaded = true;
-      if (el) el.style.display = 'none';
-      buildDoctorFilterBar();
-      buildUnpaidZoneDropdown();
-      renderCases();
-      renderUnpaid();
-    })
-    .catch(function(e) {
-      console.error('Failed to load cases', e);
-      if (el) el.textContent = 'Failed to load. Try again later.';
-    });
-}
-
-function buildDoctorFilterBar() {
-  // Set up event listeners for status doctor search
-  var searchEl = document.getElementById('statusDoctorSearch');
-  var resultsEl = document.getElementById('statusDoctorResults');
-
-  searchEl.addEventListener('input', function() {
-    filterStatusDoctors(this.value);
-  });
-  searchEl.addEventListener('focus', function() {
-    filterStatusDoctors(this.value);
-  });
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#statusDoctorSearch') && !e.target.closest('#statusDoctorResults')) {
-      resultsEl.style.display = 'none';
-    }
-  });
-  resultsEl.addEventListener('click', function(e) {
-    var item = e.target.closest('.search-result-item');
-    if (!item) return;
-    var doc = item.getAttribute('data-status-doc');
-    if (doc === '__ALL__') {
-      statusDoctorFilter = null;
-      searchEl.value = '';
-      document.getElementById('clearStatusDoctor').style.display = 'none';
-    } else {
-      statusDoctorFilter = doc;
-      searchEl.value = doc;
-      document.getElementById('clearStatusDoctor').style.display = 'block';
-    }
-    resultsEl.style.display = 'none';
-    renderCases();
-  });
-}
-
-function filterStatusDoctors(query) {
-  var resultsEl = document.getElementById('statusDoctorResults');
-  query = (query || '').toLowerCase().trim();
-  var filtered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors;
-  var html = '<div class="search-result-item" data-status-doc="__ALL__" style="color:#1a73e8;font-weight:600">All Doctors</div>';
-  filtered.slice(0, 30).forEach(function(doc) {
-    html += '<div class="search-result-item" data-status-doc="' + doc.replace(/"/g, '&quot;') + '">' + doc + '</div>';
-  });
-  resultsEl.innerHTML = html;
-  resultsEl.style.display = 'block';
-  document.getElementById('clearStatusDoctor').style.display = query ? 'block' : 'none';
-}
-
-function clearStatusDoctor() {
-  document.getElementById('statusDoctorSearch').value = '';
-  document.getElementById('clearStatusDoctor').style.display = 'none';
-  document.getElementById('statusDoctorResults').style.display = 'none';
-  statusDoctorFilter = null;
-  renderCases();
-}
-
-function handleStatusDoctorFilter() {
-  renderCases();
-}
-
-function renderCases() {
-  var query = (document.getElementById('statusSearch').value || '').toLowerCase().trim();
-  var container = document.getElementById('caseList');
-  var countEl = document.getElementById('statusCount');
-
-  // Don't show anything until user searches or picks a doctor
-  if (!query && !statusDoctorFilter) {
-    container.innerHTML = '<div class="status-empty">Search by case number, patient, or select a doctor above</div>';
-    countEl.textContent = '';
-    return;
-  }
-
-  var filtered = allCases.filter(function(c) {
-    if (statusDoctorFilter && c.doctor !== statusDoctorFilter) return false;
-    if (query) {
-      var base = extractBaseCase(c.caseNumber).toLowerCase();
-      var full = c.caseNumber.toLowerCase();
-      var patient = c.patient.toLowerCase();
-      var doctor = c.doctor.toLowerCase();
-      if (full.indexOf(query) === -1 && base.indexOf(query) === -1 &&
-          patient.indexOf(query) === -1 && doctor.indexOf(query) === -1) return false;
-    }
-    return true;
-  });
-
-  // Most recent first
-  filtered.reverse();
-
-  countEl.textContent = filtered.length + ' case' + (filtered.length !== 1 ? 's' : '');
-
-  if (filtered.length === 0) {
-    container.innerHTML = '<div class="status-empty">No cases found</div>';
-    return;
-  }
-
-  var html = '';
-  var limit = Math.min(filtered.length, 50);
-  for (var i = 0; i < limit; i++) {
-    var c = filtered[i];
-    var uDone = c.upper > 0 && c.upperRem === 0;
-    var lDone = c.lower > 0 && c.lowerRem === 0;
-
-    html += '<div class="case-card">';
-    html += '<div class="case-header">';
-    html += '<div class="case-number">' + c.caseNumber + '</div>';
-    html += '<div class="case-type">' + c.caseType + '</div>';
-    html += '</div>';
-    html += '<div class="case-patient">' + c.doctor + ' — ' + c.patient + '</div>';
-    html += '<div class="case-patient" style="color:#999;font-size:12px;margin-bottom:8px">' + c.month + ' ' + c.year + '</div>';
-
-   // Payment status badge
-if (c.displayStatus === 'UNPAID') {
-  html += '<div style="margin-bottom:8px"><span style="background:#fde8e8;color:#e53935;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNPAID</span></div>';
-} else if (c.displayStatus === 'WAITING PICKUP') {
-  html += '<div style="margin-bottom:8px"><span style="background:#fce8e1;color:#b35c3e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">WAITING PICKUP</span></div>';
-} else if (c.displayStatus === 'UNDER PRODUCTION') {
-  html += '<div style="margin-bottom:8px"><span style="background:#e8f0fe;color:#1a73e8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">UNDER PRODUCTION</span></div>';
-} else if (c.displayStatus === 'CASE FULLY PAID') {
-  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">CASE FULLY PAID</span></div>';
-} else if (c.displayStatus === 'BATCH PAID') {
-  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">BATCH PAID</span></div>';
-} else if (c.displayStatus === 'FREE BATCH') {
-  html += '<div style="margin-bottom:8px"><span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px">FREE BATCH</span></div>';
-}
-html += '<div class="case-steps">';
-html += '<div class="step-box"><div class="step-label">⬆️ Upper</div><div class="step-value">' + c.upper + '</div></div>';
-html += '<div class="step-box"><div class="step-label">⬇️ Lower</div><div class="step-value">' + c.lower + '</div></div>';
-html += '<div class="step-box"><div class="step-label">📦 Up Del</div><div class="step-value' + (uDone ? ' done' : '') + '">' + c.upperDel + '</div></div>';
-html += '<div class="step-box"><div class="step-label">📦 Low Del</div><div class="step-value' + (lDone ? ' done' : '') + '">' + c.lowerDel + '</div></div>';
-html += '<div class="step-box"><div class="step-label">⏳ Up Rem</div><div class="step-value' + (c.upperRem > 0 ? ' remaining' : ' done') + '">' + c.upperRem + '</div></div>';
-html += '<div class="step-box"><div class="step-label">⏳ Low Rem</div><div class="step-value' + (c.lowerRem > 0 ? ' remaining' : ' done') + '">' + c.lowerRem + '</div></div>';
-html += '</div>';
-
-    // Financial details
-    html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0">';
-    html += '<div class="case-steps" style="grid-template-columns:1fr 1fr 1fr">';
-    html += '<div class="step-box"><div class="step-label">Case Price</div><div class="step-value" style="font-size:13px">' + formatNum(c.casePrice) + ' IQD</div></div>';
-    html += '<div class="step-box"><div class="step-label">Discount</div><div class="step-value" style="font-size:13px">' + (c.discountDisplay || '-') + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">After Disc.</div><div class="step-value" style="font-size:13px">' + formatNum(c.priceAfterDiscount) + ' IQD</div></div>';
-    html += '</div>';
-    html += '<div class="case-steps" style="grid-template-columns:1fr 1fr;margin-top:6px">';
-    html += '<div class="step-box"><div class="step-label">Batch Price</div><div class="step-value" style="font-size:13px">' + (c.batchPrice > 0 ? formatNum(c.batchPrice) + ' IQD' : 'FREE') + '</div></div>';
-    html += '<div class="step-box"><div class="step-label">Remaining</div><div class="step-value' + (c.amtRemaining > 0 ? ' remaining' : ' done') + '" style="font-size:13px">' + formatNum(c.amtRemaining) + ' IQD</div></div>';
-    html += '</div>';
-    html += '</div>';
-
-    html += '</div>';
-  }
-  if (filtered.length > 50) {
-    html += '<div class="status-empty">Showing first 50 of ' + filtered.length + '. Use search to narrow down.</div>';
-  }
-  container.innerHTML = html;
-}
-
-function buildUnpaidZoneDropdown() {
-  var select = document.getElementById('unpaidZoneSelect');
-  var html = '';
-  if (isSalesRep) {
-    // Sales rep: only Karkh and Rusafa, no All Zones
-    html += '<option value="Karkh">Karkh</option>';
-    html += '<option value="Rusafa">Rusafa</option>';
-  } else {
-    // Admin: All Zones + every zone from the data (except Baghdad Sales Rep)
-    html += '<option value="">All Zones</option>';
-    allZones.sort().forEach(function(z) {
-      if (z.toLowerCase() !== 'baghdad sales rep') {
-        html += '<option value="' + z.replace(/"/g, '&quot;') + '">' + z + '</option>';
-      }
-    });
-  }
-  select.innerHTML = html;
-}
-
-function renderUnpaid() {
-  var container = document.getElementById('unpaidTableContainer');
-  var totalEl = document.getElementById('unpaidTotalValue');
-
-  var zoneFilter = document.getElementById('unpaidZoneSelect').value || '';
-
-  var unpaid = allCases.filter(function(c) {
-    if (c.displayStatus !== 'UNPAID') return false;
-    if (isSalesRep) {
-      // Sales rep must match zone (Karkh or Rusafa only)
-      var zoneLower = c.zone.toLowerCase();
-      if (zoneFilter) {
-        if (zoneLower !== zoneFilter.toLowerCase()) return false;
-      } else {
-        if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') return false;
-      }
-    } else if (zoneFilter) {
-      // Admin optional zone filter
-      if (c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false;
-    }
-    return true;
-  });
-
-  // Most recent first
-  unpaid.reverse();
-
-  // Calculate total — use batchPrice if available, otherwise amtRemaining
-  var total = 0;
-  unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; });
-  totalEl.textContent = formatNum(total) + ' IQD';
-
-  if (unpaid.length === 0) {
-    container.innerHTML = '<div class="status-empty">No pending cases</div>';
-    return;
-  }
-
-  var html = '<table class="unpaid-table">';
-  html += '<thead><tr>';
-  html += '<th class="frozen frozen-case">Case #</th>';
-  html += '<th class="frozen frozen-doctor">Doctor</th>';
-  html += '<th>Year</th><th>Month</th><th>Type</th>';
-  html += '<th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th>';
-  html += '</tr></thead><tbody>';
-
-  unpaid.forEach(function(c) {
-    var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining;
-    html += '<tr>';
-    html += '<td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td>';
-    html += '<td class="frozen frozen-doctor">' + c.doctor + '</td>';
-    html += '<td>' + c.year + '</td>';
-    html += '<td>' + c.month + '</td>';
-    html += '<td>' + c.caseType + '</td>';
-    html += '<td>' + c.clinic + '</td>';
-    html += '<td>' + c.patient + '</td>';
-    html += '<td>' + c.zone + '</td>';
-    html += '<td class="amt">' + formatNum(amt) + ' IQD</td>';
-    html += '</tr>';
-  });
-
-  html += '</tbody></table>';
-  container.innerHTML = html;
-}
-
-function sendToTelegram(chatId, message) {
-  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text: message })
-  });
-}
-
-function sendSTLToTelegram(file, caption) {
-  var formData = new FormData();
-  formData.append('chat_id', CHAT_ID);
-  formData.append('document', file, file.name);
-  formData.append('caption', caption);
-  return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendDocument', {
-    method: 'POST', body: formData
-  });
-}
-
-function validateForm() {
-  var valid = true;
-  var caseType = document.getElementById('caseType').value;
-
-  // Block unrecognized users
-  var repName = document.getElementById('repDetected').value || '';
-  if (!repName) {
-    alert('You are not authorized to submit orders. Please contact your admin.');
-    return false;
-  }
-  var valid = true;
-  var caseType = document.getElementById('caseType').value;
-
-  var caseNum = document.getElementById('caseNumber').value.trim();
-  if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
-    document.getElementById('caseNumberError').classList.add('show');
-    document.getElementById('caseNumber').classList.add('error-field');
-    valid = false;
-  } else {
-    document.getElementById('caseNumberError').classList.remove('show');
-    document.getElementById('caseNumber').classList.remove('error-field');
-  }
-
-  var doctorValue = document.getElementById('doctorValue').value;
-  var doctorSearch = document.getElementById('doctorSearch').value.trim();
-  if (!doctorValue) {
-    document.getElementById('doctorError').classList.add('show');
-    document.getElementById('doctorSearch').classList.add('error-field');
-    document.getElementById('doctorError').textContent = doctorSearch
-      ? 'Please select a doctor from the list or click + New Doctor'
-      : 'Please select or enter a doctor';
-    valid = false;
-  } else {
-    document.getElementById('doctorError').classList.remove('show');
-    document.getElementById('doctorSearch').classList.remove('error-field');
-  }
-
-  if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) {
-    document.getElementById('newDoctorError').classList.add('show');
-    document.getElementById('newDoctorName').classList.add('error-field');
-    valid = false;
-  } else {
-    document.getElementById('newDoctorError').classList.remove('show');
-    document.getElementById('newDoctorName').classList.remove('error-field');
-  }
-
-  if (!document.getElementById('patient').value.trim()) {
-    document.getElementById('patientError').classList.add('show');
-    document.getElementById('patient').classList.add('error-field');
-    valid = false;
-  } else {
-    document.getElementById('patientError').classList.remove('show');
-    document.getElementById('patient').classList.remove('error-field');
-  }
-
-  if (caseType === 'reprint') {
-    if (!document.getElementById('reprintReason').value.trim()) {
-      document.getElementById('reprintReason').classList.add('error-field');
-      valid = false;
-    } else {
-      document.getElementById('reprintReason').classList.remove('error-field');
-    }
-  }
-
-  if (caseType === 'retainer') {
-    var upperChecked = document.getElementById('retainerUpper').checked;
-    var lowerChecked = document.getElementById('retainerLower').checked;
-    if (!upperChecked && !lowerChecked) {
-      document.getElementById('retainerArchError').classList.add('show');
-      valid = false;
-    } else {
-      document.getElementById('retainerArchError').classList.remove('show');
-    }
-    if (!document.getElementById('retainerPrice').value.trim()) {
-      document.getElementById('retainerPriceError').classList.add('show');
-      document.getElementById('retainerPrice').classList.add('error-field');
-      valid = false;
-    } else {
-      document.getElementById('retainerPriceError').classList.remove('show');
-      document.getElementById('retainerPrice').classList.remove('error-field');
-    }
-  }
-
-  var mcaBatchVal = document.getElementById('mcaBatchNumber').value;
-  var rBatchVal = document.getElementById('refinementBatch').value;
-  var isNonFirstBatch = caseType === 'batch' ||
-    (caseType === 'mca' && mcaBatchVal !== '1') ||
-    (caseType === 'refinement' && rBatchVal !== '1');
-
-  if (caseType !== 'reprint' && caseType !== 'retainer' && !isNonFirstBatch) {
-    var upper = document.getElementById('upper');
-    var lower = document.getElementById('lower');
-    var singleArch = document.getElementById('singleArch').checked;
-
-    if (!singleArch) {
-      if (upper.value === '') {
-        document.getElementById('upperError').classList.add('show');
-        upper.classList.add('error-field');
-        valid = false;
-      } else {
-        document.getElementById('upperError').classList.remove('show');
-        upper.classList.remove('error-field');
-      }
-      if (lower.value === '') {
-        document.getElementById('lowerError').classList.add('show');
-        lower.classList.add('error-field');
-        valid = false;
-      } else {
-        document.getElementById('lowerError').classList.remove('show');
-        lower.classList.remove('error-field');
-      }
-    } else {
-      var upperVal = parseInt(upper.value) || 0;
-      var lowerVal = parseInt(lower.value) || 0;
-      if (upperVal === 0 && lowerVal === 0) {
-        document.getElementById('upperError').classList.add('show');
-        upper.classList.add('error-field');
-        valid = false;
-      } else {
-        document.getElementById('upperError').classList.remove('show');
-        upper.classList.remove('error-field');
-        document.getElementById('lowerError').classList.remove('show');
-        lower.classList.remove('error-field');
-      }
-    }
-  }
-
-  return valid;
-}
-
-function submitForm() {
-  if (!validateForm()) {
-    var firstError = document.querySelector('.error-field');
-    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-
-  var btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
-  var doctorValue = document.getElementById('doctorValue').value;
-  var isNewDoctor = doctorValue === 'NEW_DOCTOR';
-  var newDoctorName = document.getElementById('newDoctorName').value.trim();
-  var finalDoctor = isNewDoctor
-    ? newDoctorName
-    : (doctorValue || document.getElementById('doctorSearch').value.trim());
-
-  var repName = document.getElementById('repDetected').value || '';
-  var caseNumber = buildCaseNumber();
-  var caseType = document.getElementById('caseType').value;
-
-  var data = {
-    caseType: caseType,
-    caseNumber: caseNumber,
-    doctor: finalDoctor,
-    isNewDoctor: isNewDoctor,
-    patient: document.getElementById('patient').value.trim(),
-    clinic: document.getElementById('clinic').value.trim(),
-    upper: parseInt(document.getElementById('upper').value) || 0,
-    lower: parseInt(document.getElementById('lower').value) || 0,
-    package: document.getElementById('package').value,
-    singleArch: document.getElementById('singleArch').checked,
-    discountType: document.getElementById('discountType').value,
-    discountValue: document.getElementById('discountType').value === 'percentage'
-      ? parseFloat(document.getElementById('discountValue').value) || 0
-      : getRawNumber('discountValue'),
-    batch1Amount: getRawNumber('batch1Amount'),
-    fullBatch: (document.getElementById('caseType').value === 'batch' || !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))
-      ? document.getElementById('printAllRemaining').checked
-      : document.getElementById('installments').value === 'full',
-    fullPayment: document.getElementById('fullPayment').checked,
-    asap: document.getElementById('asap').checked,
-    retainer: document.getElementById('retainer').checked,
-    notes: document.getElementById('notes').value.trim(),
-    rep: repName
-  };
-
-  var message = buildTelegramMessage(data);
-  var promises = [sendToTelegram(CHAT_ID, message)];
-
-  selectedFiles.forEach(function(file) {
-    promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber));
-  });
-
-  Promise.all(promises)
-    .then(function() {
-      if (tgUserId) {
-        setTimeout(function() {
-          sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!');
-        }, 500);
-      }
-      document.getElementById('formScreen').style.display = 'none';
-      document.getElementById('statusScreen').style.display = 'none';
-      document.getElementById('unpaidScreen').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
-      window.scrollTo(0, 0);
-      document.getElementById('successSub').textContent = caseNumber
-        ? 'Order for case ' + caseNumber + ' submitted successfully.'
-        : 'Order submitted successfully.';
-      if (tg) {
-        setTimeout(function() { tg.close(); }, 3000);
-      } else {
-        setTimeout(function() { window.location.reload(); }, 5000);
-      }
-    })
-    .catch(function(err) {
-      btn.disabled = false;
-      btn.textContent = 'Submit Order';
-      alert('Failed to submit. Please try again.\n' + err.message);
-    });
-}
-
-// Initialize comma formatting on price fields
-formatWithCommas(document.getElementById('batch1Amount'));
-formatWithCommas(document.getElementById('discountValue'));
-formatWithCommas(document.getElementById('retainerPrice'));
-formatWithCommas(document.getElementById('reprintPayment'));
-
-handleCaseTypeChange();
-initTelegram();
-loadData();
-// Pre-load case data in background so autofill works immediately
-setTimeout(function() { loadCaseStatus(); }, 1500);
+var groupedCases = [];
+var selectedDoctor = '';
+var currentFiltered = [];
+function formatWithCommas(input) { input.addEventListener('input', function() { var pos = input.selectionStart; var raw = input.value.replace(/,/g, ''); if (!/^\d*$/.test(raw)) { input.value = raw.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ','); return; } var formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ','); var diff = formatted.length - input.value.length; input.value = formatted; input.setSelectionRange(pos + diff, pos + diff); }); }
+function getRawNumber(id) { var val = document.getElementById(id).value.replace(/,/g, '').trim(); return parseInt(val) || 0; }
+function getFormattedValue(id) { return document.getElementById(id).value.trim(); }
+function formatNum(n) { if (!n || n === 0) return '0'; return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function safe(v){return String(v||'').trim();}
+function initTelegram() { tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null; if (tg) { tg.ready(); tg.expand(); var tgUser = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null; tgUsername = tgUser ? (tgUser.username || null) : null; tgUserId = tgUser ? (tgUser.id || null) : null; } }
+function handleCaseTypeChange() { var type = document.getElementById('caseType').value; var mcaBatch = document.getElementById('mcaBatchNumber').value; var rBatch = document.getElementById('refinementBatch').value; var isReprint = type === 'reprint'; var isRetainer = type === 'retainer'; var isMCA = type === 'mca'; var isRefinement = type === 'refinement'; document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX'; document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline'; document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch'); document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA); document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA); document.getElementById('refinementNumberGroup').classList.toggle('hidden', !isRefinement); document.getElementById('refinementBatchGroup').classList.toggle('hidden', !isRefinement); document.getElementById('normalCards').classList.toggle('hidden', isReprint || isRetainer); var isNonFirstBatch = type === 'batch' || (isMCA && mcaBatch !== '1') || (isRefinement && rBatch !== '1'); document.getElementById('stepsGroup').classList.toggle('hidden', isNonFirstBatch); document.getElementById('packageGroup').classList.toggle('hidden', isMCA || isRefinement || isNonFirstBatch); var rNum = isRefinement ? document.getElementById('refinementNumber').value : '1'; var hidePaymentCard = isReprint || isRetainer || (isRefinement && (rNum === '1' || rBatch !== '1')); document.getElementById('paymentCard').classList.toggle('hidden', hidePaymentCard); var isBatch = isNonFirstBatch; document.getElementById('installmentsGroup').classList.toggle('hidden', isBatch); document.getElementById('discountGroup').classList.toggle('hidden', isBatch); document.getElementById('discountValueGroup').classList.add('hidden'); document.getElementById('fullPaymentGroup').classList.toggle('hidden', isBatch); document.getElementById('printAllRemainingGroup').classList.toggle('hidden', !isBatch); document.getElementById('batch1AmountLabel').textContent = isBatch ? 'Payment Amount (IQD)' : 'First Payment Amount (IQD)'; if (!isBatch) { document.getElementById('printAllRemaining').checked = false; handlePrintAllRemaining(); } var showRetainerCheckbox = !isMCA && !isRefinement && !isReprint && !isRetainer; document.getElementById('retainerCheckboxGroup').classList.toggle('hidden', !showRetainerCheckbox); if (!showRetainerCheckbox) document.getElementById('retainer').checked = false; var showAttachment = !isReprint && !isRetainer && ((type === 'new') || (isMCA && mcaBatch === '1') || (isRefinement && rBatch === '1')); document.getElementById('attachmentCard').classList.toggle('hidden', !showAttachment); document.getElementById('retainerCard').classList.toggle('hidden', !isRetainer); document.getElementById('stlCard').classList.toggle('hidden', !isRetainer); document.getElementById('retainerNotesCard').classList.toggle('hidden', !isRetainer); document.getElementById('reprintCard').classList.toggle('hidden', !isReprint); document.getElementById('trimLineCard').classList.toggle('hidden', isReprint || isRetainer); }
+function handleRetainerArch() { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; document.getElementById('retainerUpperQty').classList.toggle('hidden', !upperChecked); document.getElementById('retainerLowerQty').classList.toggle('hidden', !lowerChecked); }
+function toggleReprintMode(arch) { var isNonSeq = document.getElementById('reprint' + arch + 'NonSeq').checked; document.getElementById('reprint' + arch + 'Range').classList.toggle('hidden', isNonSeq); document.getElementById('reprint' + arch + 'StepsGroup').classList.toggle('hidden', !isNonSeq); }
+function handleReprintArch() { var arch = document.getElementById('reprintArch').value; document.getElementById('reprintUpperGroup').classList.toggle('hidden', arch === 'Lower'); document.getElementById('reprintLowerGroup').classList.toggle('hidden', arch === 'Upper'); }
+function handleSingleArch() { var checked = document.getElementById('singleArch').checked; var upper = document.getElementById('upper'); var lower = document.getElementById('lower'); if (!checked) { upper.disabled = false; lower.disabled = false; singleArchLocked = null; document.getElementById('upperRequired').style.display = 'inline'; document.getElementById('lowerRequired').style.display = 'inline'; upper.removeEventListener('input', lockLowerOnInput); lower.removeEventListener('input', lockUpperOnInput); return; } var upperVal = upper.value.trim(); var lowerVal = lower.value.trim(); if (upperVal && !lowerVal) { lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower'; document.getElementById('lowerRequired').style.display = 'none'; } else if (lowerVal && !upperVal) { upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper'; document.getElementById('upperRequired').style.display = 'none'; } else { upper.addEventListener('input', lockLowerOnInput); lower.addEventListener('input', lockUpperOnInput); } }
+function lockLowerOnInput() { if (document.getElementById('singleArch').checked && document.getElementById('upper').value) { var lower = document.getElementById('lower'); lower.value = '0'; lower.disabled = true; singleArchLocked = 'lower'; document.getElementById('lowerRequired').style.display = 'none'; document.getElementById('upper').removeEventListener('input', lockLowerOnInput); document.getElementById('lower').removeEventListener('input', lockUpperOnInput); } }
+function lockUpperOnInput() { if (document.getElementById('singleArch').checked && document.getElementById('lower').value) { var upper = document.getElementById('upper'); upper.value = '0'; upper.disabled = true; singleArchLocked = 'upper'; document.getElementById('upperRequired').style.display = 'none'; document.getElementById('upper').removeEventListener('input', lockLowerOnInput); document.getElementById('lower').removeEventListener('input', lockUpperOnInput); } }
+function handleFullPayment() { var checked = document.getElementById('fullPayment').checked; var field = document.getElementById('batch1Amount'); if (checked) { field.value = ''; field.disabled = true; field.placeholder = 'N/A - Full Payment'; } else { field.disabled = false; field.placeholder = 'e.g. 500,000'; } }
+function handlePrintAllRemaining() { var checked = document.getElementById('printAllRemaining').checked; var field = document.getElementById('batch1Amount'); if (checked) { field.value = ''; field.placeholder = 'N/A - Printing all remaining'; field.disabled = true; } else { field.placeholder = 'e.g. 500,000'; field.disabled = false; } }
+function autoDetectPackage() { var upper = parseInt(document.getElementById('upper').value) || 0; var lower = parseInt(document.getElementById('lower').value) || 0; var max = Math.max(upper, lower); if (max === 0) return; var pkg = max <= 12 ? 'BRONZE' : max <= 25 ? 'SILVER' : 'GOLD'; document.getElementById('package').value = pkg; }
+var caseAutoFillTimer = null;
+function handleCaseNumberInput() { clearTimeout(caseAutoFillTimer); caseAutoFillTimer = setTimeout(function() { var type = document.getElementById('caseType').value; if (type === 'retainer' || type === 'reprint') return; var typed = document.getElementById('caseNumber').value.trim().toLowerCase(); if (!typed || typed.length < 3) { document.getElementById('caseAutoFillHint').style.display = 'none'; return; } var match = null; for (var i = 0; i < allCasesUnfiltered.length; i++) { var c = allCasesUnfiltered[i]; var base = extractBaseCase(c.caseNumber).toLowerCase(); if (base === typed || c.caseNumber.toLowerCase() === typed) { match = c; break; } } if (!match) { document.getElementById('caseAutoFillHint').style.display = 'none'; return; } if (match.doctor) { var doctorInList = doctors.some(function(d) { return d.toLowerCase() === match.doctor.toLowerCase(); }); if (doctorInList) { document.getElementById('doctorSearch').value = match.doctor; document.getElementById('doctorValue').value = match.doctor; document.getElementById('clearDoctor').style.display = 'block'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); document.getElementById('doctorResultsOrder').style.display = 'none'; } } if (match.patient) document.getElementById('patient').value = match.patient; if (match.clinic) document.getElementById('clinic').value = match.clinic; var hint = document.getElementById('caseAutoFillHint'); hint.textContent = '✓ Auto-filled from ' + match.doctor + (match.patient ? ' · ' + match.patient : ''); hint.style.display = 'block'; }, 400); }
+function handleDiscountChange() { var type = document.getElementById('discountType').value; document.getElementById('discountValueGroup').classList.toggle('hidden', type === 'none'); document.getElementById('discountValueLabel').textContent = type === 'percentage' ? 'Discount (%)' : 'Discount Amount (IQD)'; }
+function handleFileSelect(input) { selectedFiles = Array.from(input.files); document.getElementById('fileNames').textContent = selectedFiles.length > 0 ? selectedFiles.map(function(f) { return f.name; }).join(', ') : ''; }
+function filterDoctors(query) { var results = document.getElementById('doctorResultsOrder'); query = (query || '').toLowerCase().trim(); currentFiltered = query ? doctors.filter(function(d) { return d.toLowerCase().indexOf(query) !== -1; }) : doctors; var html = '<div class="search-result-item new-doctor-item">+ New Doctor</div>'; currentFiltered.slice(0, 40).forEach(function(doc, i) { html += '<div class="search-result-item" data-doc-idx="' + i + '">' + doc + '</div>'; }); if (currentFiltered.length === 0 && query) { html += '<div class="search-result-item loading-item">No match — select New Doctor</div>'; } results.innerHTML = html; results.style.display = 'block'; document.getElementById('clearDoctor').style.display = query ? 'block' : 'none'; }
+document.getElementById('doctorResultsOrder').addEventListener('click', function(e) { var item = e.target.closest('.search-result-item'); if (!item) return; if (item.classList.contains('new-doctor-item')) { selectNewDoctor(); return; } if (item.classList.contains('loading-item')) return; var idx = item.getAttribute('data-doc-idx'); if (idx !== null && currentFiltered[parseInt(idx)]) { selectDoctor(currentFiltered[parseInt(idx)]); } });
+function selectDoctor(name) { document.getElementById('doctorSearch').value = name; document.getElementById('doctorValue').value = name; document.getElementById('doctorResultsOrder').style.display = 'none'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('clearDoctor').style.display = 'block'; document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); }
+function selectNewDoctor() { document.getElementById('doctorSearch').value = ''; document.getElementById('doctorValue').value = 'NEW_DOCTOR'; document.getElementById('doctorResultsOrder').style.display = 'none'; document.getElementById('newDoctorGroup').classList.remove('hidden'); document.getElementById('newDoctorName').focus(); document.getElementById('doctorError').classList.remove('show'); }
+function clearDoctor() { document.getElementById('doctorSearch').value = ''; document.getElementById('doctorValue').value = ''; document.getElementById('clearDoctor').style.display = 'none'; document.getElementById('newDoctorGroup').classList.add('hidden'); document.getElementById('doctorSearch').focus(); }
+document.addEventListener('click', function(e) { if (!e.target.closest('.search-wrapper')) { document.getElementById('doctorResultsOrder').style.display = 'none'; } });
+document.getElementById('doctorSearch').addEventListener('input', function() { filterDoctors(this.value); });
+document.getElementById('doctorSearch').addEventListener('focus', function() { filterDoctors(this.value); document.getElementById('doctorResultsOrder').style.display = 'block'; });
+function setupRepField() { var ADMIN_USERNAMES = ['shafafmanagement', 'shafafclearaligners']; if (tgUsername) { var matched = reps.find(function(r) { return r.username.toLowerCase() === tgUsername.toLowerCase(); }); if (matched) { document.getElementById('repDetected').value = matched.name; document.getElementById('repUsername').value = tgUsername; detectedUsername = tgUsername; repZone = matched.zone || ''; isSalesRep = repZone.toLowerCase() === 'baghdad sales rep'; if (isSalesRep) { document.getElementById('tabOrder').style.display = 'none'; document.getElementById('tabStatus').style.display = 'none'; document.getElementById('unpaidZoneGroup').style.display = 'block'; switchTab('unpaid'); return; } if (ADMIN_USERNAMES.indexOf(tgUsername.toLowerCase()) !== -1) { isAdmin = true; doctors = doctorRows.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) { return row[0].trim(); }); document.getElementById('doctorSearch').placeholder = 'Search doctor name...'; document.getElementById('unpaidZoneGroup').style.display = 'block'; return; } var repNameLower = matched.name.toLowerCase().trim(); doctors = doctorRows.filter(function(row) { var docName = (row[0] || '').trim(); var docReps = (row[3] || '').toLowerCase().trim(); if (!docName) return false; return docReps.split(',').some(function(r) { return r.trim() === repNameLower; }); }).map(function(row) { return row[0].trim(); }); if (doctors.length === 0) { document.getElementById('doctorSearch').placeholder = 'No doctors assigned yet'; } else { document.getElementById('doctorSearch').placeholder = 'Search doctor name...'; } } else { doctors = []; document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized'; } } else { doctors = []; document.getElementById('doctorSearch').placeholder = 'Contact admin — rep not recognized'; } }
+function applyCache(parsed) { doctorRows = parsed.doctorRows || []; reps = parsed.reps || []; setupRepField(); }
+function fetchFreshData() { var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values:batchGet?ranges=Customers!B:D&ranges=Reps!A:C&key=' + API_KEY; fetch(url).then(function(res) { return res.json(); }).then(function(data) { var rawRows = data.valueRanges[0].values || []; var seen = {}; rawRows.forEach(function(row) { var name = (row[0] || '').trim(); if (!name) return; var key = name.toLowerCase(); if (!seen[key]) { seen[key] = { name: name, zone: row[1] || '', rep: row[2] || '' }; } else { var existing = (seen[key].rep || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean); var incoming = (row[2] || '').toLowerCase().split(',').map(function(r) { return r.trim(); }).filter(Boolean); incoming.forEach(function(r) { if (existing.indexOf(r) === -1) { seen[key].rep = seen[key].rep ? seen[key].rep + ', ' + r : r; existing.push(r); } }); } }); doctorRows = Object.values(seen).map(function(entry) { return [entry.name, '', entry.zone, entry.rep]; }); var repValues = data.valueRanges[1].values || []; reps = repValues.filter(function(row) { return row[0] && row[0].trim() !== ''; }).map(function(row) { return { name: row[0].trim(), username: (row[1] || '').trim(), zone: (row[2] || '').trim() }; }); var cacheData = JSON.stringify({ doctorRows: doctorRows, reps: reps }); try { localStorage.setItem('shafaf_data', cacheData); } catch(e) {} initTelegram(); setupRepField(); }).catch(function(e) { console.error('Failed to load data', e); if (doctors.length === 0) { document.getElementById('doctorSearch').placeholder = 'Type doctor name manually'; } }); }
+function loadData() { try { var cached = localStorage.getItem('shafaf_data'); if (cached) { applyCache(JSON.parse(cached)); } } catch(e) {} fetchFreshData(); }
+function buildCaseNumber() { var type = document.getElementById('caseType').value; var baseNum = document.getElementById('caseNumber').value.trim(); if (type === 'reprint') return 'Reprint/ ' + baseNum; if (type === 'retainer') return baseNum ? 'Retainer/ ' + baseNum : 'Retainer'; if (type === 'batch') return document.getElementById('batchNumber').value + '/ ' + baseNum; if (type === 'mca') { var mcaNum = document.getElementById('mcaNumber').value; var mcaBatch = document.getElementById('mcaBatchNumber').value; var prefix = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum; if (mcaBatch === '1') return prefix + '/ ' + baseNum; var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th'; return prefix + '/ ' + batchSuffix + '/ ' + baseNum; } if (type === 'refinement') { var rNum = document.getElementById('refinementNumber').value; var rBatch = document.getElementById('refinementBatch').value; var rPrefix = 'R' + rNum; if (rBatch === '1') return rPrefix + '/ ' + baseNum; var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th'; return rPrefix + '/ ' + rBatchSuffix + '/ ' + baseNum; } return baseNum; }
+function buildPrintOrderLine(data) { var type = data.caseType; if (type === 'new') return data.fullBatch ? 'Print order for Full Batch' : 'Print order for 1st Batch'; if (type === 'batch') return 'Print order for ' + document.getElementById('batchNumber').value + ' Batch'; if (type === 'mca') { var mcaBatch = document.getElementById('mcaBatchNumber').value; var mcaNum = document.getElementById('mcaNumber').value; var mcaLabel = mcaNum === '1' ? 'MCA' : 'MCA' + mcaNum; if (mcaBatch === '1') return data.fullBatch ? 'Print order for Full Batch of ' + mcaLabel : 'Print order for 1st Batch of ' + mcaLabel; var batchSuffix = mcaBatch === '2' ? '2nd' : mcaBatch === '3' ? '3rd' : mcaBatch + 'th'; return 'Print order for ' + batchSuffix + ' Batch of ' + mcaLabel; } if (type === 'refinement') { var rNum = document.getElementById('refinementNumber').value; var rBatch = document.getElementById('refinementBatch').value; var rLabel = 'R' + rNum; if (rBatch === '1') return 'Print order for Refinement ' + rLabel; var rBatchSuffix = rBatch === '2' ? '2nd' : rBatch === '3' ? '3rd' : rBatch + 'th'; return 'Print order for ' + rBatchSuffix + ' Batch of ' + rLabel; } return 'Print order for 1st Batch'; }
+function buildTelegramMessage(data) { var username = detectedUsername || ''; var repName = document.getElementById('repDetected').value || ''; var zone = (reps.find(function(r) { return r.name === repName; }) || {}).zone || ''; var msg = ''; msg += '🆕 Approval from @' + username + '\n'; msg += 'Case Number: ' + data.caseNumber + '\n'; msg += 'Doctor: ' + data.doctor + '\n'; msg += 'Patient: ' + data.patient + '\n'; if (data.clinic) msg += 'Clinic: ' + data.clinic + '\n'; if (data.caseType === 'reprint') { var arch = document.getElementById('reprintArch').value; var upperFrom = document.getElementById('reprintUpperFrom').value; var upperTo = document.getElementById('reprintUpperTo').value; var lowerFrom = document.getElementById('reprintLowerFrom').value; var lowerTo = document.getElementById('reprintLowerTo').value; var reprintReason = document.getElementById('reprintReason').value.trim(); var reprintPaymentVal = getFormattedValue('reprintPayment'); var reprintNotes = document.getElementById('reprintNotes').value.trim(); msg += 'Reprint Request\n'; msg += 'Arch: ' + arch + '\n'; if (arch === 'Both' || arch === 'Upper') { if (document.getElementById('reprintUpperNonSeq').checked) { var usteps = document.getElementById('reprintUpperSteps').value.trim(); if (usteps) msg += 'Upper: steps ' + usteps + '\n'; } else if (upperFrom && upperTo) { msg += 'Upper: ' + upperFrom + ' to ' + upperTo + '\n'; } } if (arch === 'Both' || arch === 'Lower') { if (document.getElementById('reprintLowerNonSeq').checked) { var lsteps = document.getElementById('reprintLowerSteps').value.trim(); if (lsteps) msg += 'Lower: steps ' + lsteps + '\n'; } else if (lowerFrom && lowerTo) { msg += 'Lower: ' + lowerFrom + ' to ' + lowerTo + '\n'; } } if (reprintReason) msg += 'Reason: ' + reprintReason + '\n'; if (reprintPaymentVal && getRawNumber('reprintPayment') > 0) { msg += 'Payment: ' + reprintPaymentVal + ' IQD\n'; } else { msg += 'Free Reprint\n'; } if (reprintNotes) msg += 'Notes: ' + reprintNotes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; } if (data.caseType === 'retainer') { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; var upperQty = document.getElementById('retainerUpperQty').value; var lowerQty = document.getElementById('retainerLowerQty').value; var retainerAsap = document.getElementById('retainerAsap').checked; var retainerPriceVal = getFormattedValue('retainerPrice'); var retainerNotes = document.getElementById('retainerNotes').value.trim(); var retainerReason = document.getElementById('retainerReason').value.trim(); if (upperChecked) msg += 'Upper Retainer: ' + upperQty + 'x\n'; if (lowerChecked) msg += 'Lower Retainer: ' + lowerQty + 'x\n'; if (retainerAsap) msg += 'ASAP\n'; msg += 'Price: ' + retainerPriceVal + ' IQD\n'; msg += 'Print order for Retainer\n'; if (retainerReason) msg += 'Reason: ' + retainerReason + '\n'; if (retainerNotes) msg += 'Notes: ' + retainerNotes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; } var type = data.caseType; msg += 'Upper: ' + data.upper + '\n'; msg += 'Lower: ' + data.lower + '\n'; msg += data.package + '\n'; if (data.singleArch) msg += 'Single Arch\n'; if (type !== 'batch' && data.discountType !== 'none' && data.discountValue) { if (data.discountType === 'percentage') { msg += data.discountValue + '% DISCOUNT\n'; } else { msg += 'Discount: ' + getFormattedValue('discountValue') + ' IQD\n'; } } if (type === 'batch' || (document.getElementById('printAllRemainingGroup') && !document.getElementById('printAllRemainingGroup').classList.contains('hidden'))) { msg += 'Approved\n'; if (document.getElementById('printAllRemaining').checked) { msg += 'Print order for Full Batch\n'; } else { var batchPayVal = getFormattedValue('batch1Amount'); if (batchPayVal && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batchPayVal + ' IQD\n'; } } else { var installments = document.getElementById('installments').value; if (installments === 'full') msg += 'Approved (Full)\n'; else if (installments !== '0') msg += 'Approved (' + installments + ' Installments)\n'; else msg += 'Approved\n'; var batch1Val = getFormattedValue('batch1Amount'); if (batch1Val && getRawNumber('batch1Amount') > 0) msg += 'First Payment: ' + batch1Val + ' IQD\n'; if (data.fullPayment) msg += 'Full Payment\n'; } msg += buildPrintOrderLine(data) + '\n'; if (data.asap) msg += 'ASAP\n'; if (data.retainer) msg += 'Add Retainer(s)\n'; var thickness = document.getElementById('attachmentThickness').value; if (thickness) msg += 'Attachment Template Thickness: ' + thickness + '\n'; var trimLine = document.getElementById('trimLine').value; if (trimLine && trimLine !== 'Straight') msg += 'Trim Line: ' + trimLine + '\n'; if (data.notes) msg += 'Notes: ' + data.notes + '\n'; if (zone) msg += zone + '\n'; msg += repName; return msg; }
+function switchTab(tab) { document.getElementById('tabOrder').classList.toggle('active', tab === 'order'); document.getElementById('tabStatus').classList.toggle('active', tab === 'status'); document.getElementById('tabUnpaid').classList.toggle('active', tab === 'unpaid'); document.getElementById('formScreen').style.display = tab === 'order' ? 'block' : 'none'; document.getElementById('statusScreen').style.display = tab === 'status' ? 'block' : 'none'; document.getElementById('unpaidScreen').style.display = tab === 'unpaid' ? 'block' : 'none'; document.getElementById('successScreen').style.display = 'none'; if (tab === 'status' || tab === 'unpaid') { var repName = document.getElementById('repDetected').value || ''; if (!repName) { if (tab === 'status') { document.getElementById('resultsArea').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>'; document.getElementById('resultsMeta').textContent = ''; } else { document.getElementById('unpaidTableContainer').innerHTML = '<div class="status-empty">You are not authorized to view cases. Please contact your admin.</div>'; } return; } if (!statusLoaded) { loadCaseStatus(); } else if (tab === 'status') { buildGroupedCases(); renderGroupedCases(); } else if (tab === 'unpaid') { renderUnpaid(); } } }
+function extractBaseCase(caseNum) { return caseNum.replace(/^reprint\/\s*/i, '').replace(/^retainer\/\s*/i, '').replace(/^MCA\d*\/\s*/i, '').replace(/^R\d+\/\s*/i, '').replace(/^(2nd|3rd|4th|5th)\/\s*/i, '').trim(); }
+function loadCaseStatus() { var statusNode = document.getElementById('resultsArea'); if (statusNode) statusNode.innerHTML = '<div class="status-loading">Loading cases...</div>'; var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/CombinedTable!A:AR?key=' + API_KEY; fetch(url).then(function(res) { return res.json(); }).then(function(data) { var rows = data.values || []; allCases = []; allCasesUnfiltered = []; allZones = []; var header = rows[0] || []; var idx = {}; header.forEach(function(h,i){ idx[h]=i; }); var repZoneMap = {}; reps.forEach(function(rep) { if (rep.name && rep.zone) { repZoneMap[rep.name.toLowerCase()] = rep.zone; } }); for (var i = 1; i < rows.length; i++) { var r = rows[i]; var caseNumber = (r[idx['#️⃣ Case Number']] || '').trim(); if (!caseNumber) continue; var caseRep = (r[idx['Rep']] || '').trim(); var caseZone = repZoneMap[caseRep.toLowerCase()] || ''; var paymentStatus = (r[idx['Payment Status']] || '').trim().toLowerCase(); var workflowStatus = (r[idx['Workflow Status']] || '').trim(); var caseDoctor = (r[idx['Doctor 👨‍⚕️']] || '').trim(); allCasesUnfiltered.push({ caseType: (r[idx['Case Type']] || '').trim(), caseNumber: caseNumber, doctor: caseDoctor, clinic: (r[idx['🏥 Clinic']] || '').trim(), patient: (r[idx['😷 Patient']] || '').trim() }); if (!isAdmin && !isSalesRep) { var repDoctors = doctors.map(function(d) { return d.toLowerCase(); }); if (repDoctors.length > 0 && repDoctors.indexOf(caseDoctor.toLowerCase()) === -1) continue; } if (caseZone && caseZone.toLowerCase() !== 'baghdad sales rep' && allZones.indexOf(caseZone) === -1) allZones.push(caseZone); var upperRem = parseInt(r[idx['⏳ Upper Remaining']]) || 0; var lowerRem = parseInt(r[idx['⏳ Lower Remaining']]) || 0; var amtRemaining = parseFloat(String(r[idx['Amount Remaining']] || '0').replace(/,/g,'')) || 0; var amountReceived = parseFloat(String(r[idx['Amount Recieved']] || '0').replace(/,/g,'')) || 0; var rowMoney = parseFloat(String(r[idx['Total Invoice']] || '0').replace(/,/g,'')) || 0; var batchPrice = Math.max(rowMoney, amountReceived, amtRemaining, 0); var casePrice = parseFloat(String(r[idx['Price']] || '0').replace(/,/g,'')) || 0; var afterDisc = parseFloat(String(r[idx['Price after Discount']] || '0').replace(/,/g,'')) || 0; var rawDiscount = parseFloat(String(r[idx['Discount']] || '0').replace(/,/g,'')) || 0; var discountDisplay = ''; if (rawDiscount > 0 && rawDiscount < 1) discountDisplay = Math.round(rawDiscount * 100) + '%'; else if (rawDiscount >= 1) discountDisplay = formatNum(rawDiscount) + ' IQD'; var allDelivered = upperRem === 0 && lowerRem === 0 && ((parseInt(r[idx['⬆️ Upper']])||0) + (parseInt(r[idx['⬇️ Lower']])||0) > 0); var displayStatus = ''; if (paymentStatus === 'unpaid') displayStatus = 'UNPAID'; else if (workflowStatus.toLowerCase() === 'waiting pickup') displayStatus = 'WAITING PICKUP'; else if (workflowStatus.toLowerCase() === 'under production') displayStatus = 'UNDER PRODUCTION'; else if (allDelivered && amtRemaining === 0) displayStatus = 'CASE FULLY PAID'; else if (batchPrice > 0) displayStatus = 'BATCH PAID'; else if (batchPrice === 0) displayStatus = 'FREE BATCH'; allCases.push({ year: (r[idx['Year']] || '').trim(), month: (r[idx['MonthDate']] || '').trim(), caseType: (r[idx['Case Type']] || '').trim(), caseNumber: caseNumber, doctor: caseDoctor, clinic: (r[idx['🏥 Clinic']] || '').trim(), patient: (r[idx['😷 Patient']] || '').trim(), upper: parseInt(r[idx['⬆️ Upper']]) || 0, lower: parseInt(r[idx['⬇️ Lower']]) || 0, upperDel: parseInt(r[idx['📦 Upper Delivered']] || r[idx['📦 Upper\nDelivered']]) || 0, lowerDel: parseInt(r[idx['📦 Lower Delivered']] || r[idx['📦 Lower\nDelivered']]) || 0, upperRem: upperRem, lowerRem: lowerRem, casePrice: casePrice, discountDisplay: discountDisplay, priceAfterDiscount: afterDisc, batchPrice: batchPrice, amtRemaining: amtRemaining, amountReceived: amountReceived, displayStatus: displayStatus, zone: caseZone }); }
+      statusLoaded = true; buildUnpaidZoneDropdown(); buildGroupedCases(); renderGroupedCases(); renderUnpaid(); }).catch(function(e) { console.error('Failed to load cases', e); if (statusNode) statusNode.innerHTML = '<div class="status-empty">Failed to load. Try again later.</div>'; }); }
+function buildUnpaidZoneDropdown() { var select = document.getElementById('unpaidZoneSelect'); var html = ''; if (isSalesRep) { html += '<option value="Karkh">Karkh</option>'; html += '<option value="Rusafa">Rusafa</option>'; } else { html += '<option value="">All Zones</option>'; allZones.sort().forEach(function(z) { if (z.toLowerCase() !== 'baghdad sales rep') html += '<option value="' + z.replace(/"/g, '&quot;') + '">' + z + '</option>'; }); } select.innerHTML = html; }
+function renderUnpaid() { var container = document.getElementById('unpaidTableContainer'); var totalEl = document.getElementById('unpaidTotalValue'); var zoneFilter = document.getElementById('unpaidZoneSelect').value || ''; var unpaid = allCases.filter(function(c) { if (c.displayStatus !== 'UNPAID') return false; if (isSalesRep) { var zoneLower = c.zone.toLowerCase(); if (zoneFilter) { if (zoneLower !== zoneFilter.toLowerCase()) return false; } else { if (zoneLower !== 'karkh' && zoneLower !== 'rusafa') return false; } } else if (zoneFilter) { if (c.zone.toLowerCase() !== zoneFilter.toLowerCase()) return false; } return true; }); unpaid.reverse(); var total = 0; unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; }); totalEl.textContent = formatNum(total) + ' IQD'; if (unpaid.length === 0) { container.innerHTML = '<div class="status-empty">No pending cases</div>'; return; } var html = '<table class="unpaid-table">'; html += '<thead><tr><th class="frozen frozen-case">Case #</th><th class="frozen frozen-doctor">Doctor</th><th>Year</th><th>Month</th><th>Type</th><th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th></tr></thead><tbody>'; unpaid.forEach(function(c) { var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; html += '<tr><td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td><td class="frozen frozen-doctor">' + c.doctor + '</td><td>' + c.year + '</td><td>' + c.month + '</td><td>' + c.caseType + '</td><td>' + c.clinic + '</td><td>' + c.patient + '</td><td>' + c.zone + '</td><td class="amt">' + formatNum(amt) + ' IQD</td></tr>'; }); html += '</tbody></table>'; container.innerHTML = html; }
+function sendToTelegram(chatId, message) { return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: message }) }); }
+function sendSTLToTelegram(file, caption) { var formData = new FormData(); formData.append('chat_id', CHAT_ID); formData.append('document', file, file.name); formData.append('caption', caption); return fetch(TG_PROXY + '/bot' + BOT_TOKEN + '/sendDocument', { method: 'POST', body: formData }); }
+function validateForm() { var valid = true; var caseType = document.getElementById('caseType').value; var repName = document.getElementById('repDetected').value || ''; if (!repName) { alert('You are not authorized to submit orders. Please contact your admin.'); return false; } var caseNum = document.getElementById('caseNumber').value.trim(); if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') { document.getElementById('caseNumberError').classList.add('show'); document.getElementById('caseNumber').classList.add('error-field'); valid = false; } else { document.getElementById('caseNumberError').classList.remove('show'); document.getElementById('caseNumber').classList.remove('error-field'); } var doctorValue = document.getElementById('doctorValue').value; var doctorSearch = document.getElementById('doctorSearch').value.trim(); if (!doctorValue) { document.getElementById('doctorError').classList.add('show'); document.getElementById('doctorSearch').classList.add('error-field'); document.getElementById('doctorError').textContent = doctorSearch ? 'Please select a doctor from the list or click + New Doctor' : 'Please select or enter a doctor'; valid = false; } else { document.getElementById('doctorError').classList.remove('show'); document.getElementById('doctorSearch').classList.remove('error-field'); } if (doctorValue === 'NEW_DOCTOR' && !document.getElementById('newDoctorName').value.trim()) { document.getElementById('newDoctorError').classList.add('show'); document.getElementById('newDoctorName').classList.add('error-field'); valid = false; } else { document.getElementById('newDoctorError').classList.remove('show'); document.getElementById('newDoctorName').classList.remove('error-field'); } if (!document.getElementById('patient').value.trim()) { document.getElementById('patientError').classList.add('show'); document.getElementById('patient').classList.add('error-field'); valid = false; } else { document.getElementById('patientError').classList.remove('show'); document.getElementById('patient').classList.remove('error-field'); } if (caseType === 'reprint') { if (!document.getElementById('reprintReason').value.trim()) { document.getElementById('reprintReason').classList.add('error-field'); valid = false; } else { document.getElementById('reprintReason').classList.remove('error-field'); } } if (caseType === 'retainer') { var upperChecked = document.getElementById('retainerUpper').checked; var lowerChecked = document.getElementById('retainerLower').checked; if (!upperChecked && !lowerChecked) { document.getElementById('retainerArchError').classList.add('show'); valid = false; } else { document.getElementById('retainerArchError').classList.remove('show'); } if (!document.getElementById('retainerPrice').value.trim()) { document.getElementById('retainerPriceError').classList.add('show'); document.getElementById('retainerPrice').classList.add('error-field'); valid = false; } else { document.getElementById('retainerPriceError').classList.remove('show'); document.getElementById('retainerPrice').classList.remove('error-field'); } } var mcaBatchVal = document.getElementById('mcaBatchNumber').value; var rBatchVal = document.getElementById('refinementBatch').value; var isNonFirstBatch = caseType === 'batch' || (caseType === 'mca' && mcaBatchVal !== '1') || (caseType === 'refinement' && rBatchVal !== '1'); if (caseType !== 'reprint' && caseType !== 'retainer' && !isNonFirstBatch) { var upper = document.getElementById('upper'); var lower = document.getElementById('lower'); var singleArch = document.getElementById('singleArch').checked; if (!singleArch) { if (upper.value === '') { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; } else { document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field'); } if (lower.value === '') { document.getElementById('lowerError').classList.add('show'); lower.classList.add('error-field'); valid = false; } else { document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field'); } } else { var upperVal = parseInt(upper.value) || 0; var lowerVal = parseInt(lower.value) || 0; if (upperVal === 0 && lowerVal === 0) { document.getElementById('upperError').classList.add('show'); upper.classList.add('error-field'); valid = false; } else { document.getElementById('upperError').classList.remove('show'); upper.classList.remove('error-field'); document.getElementById('lowerError').classList.remove('show'); lower.classList.remove('error-field'); } } } return valid; }
+function submitForm() { if (!validateForm()) { var firstError = document.querySelector('.error-field'); if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; } var btn = document.getElementById('submitBtn'); btn.disabled = true; btn.textContent = 'Sending...'; var doctorValue = document.getElementById('doctorValue').value; var isNewDoctor = doctorValue === 'NEW_DOCTOR'; var newDoctorName = document.getElementById('newDoctorName').value.trim(); var finalDoctor = isNewDoctor ? newDoctorName : (doctorValue || document.getElementById('doctorSearch').value.trim()); var repName = document.getElementById('repDetected').value || ''; var caseNumber = buildCaseNumber(); var caseType = document.getElementById('caseType').value; var data = { caseType: caseType, caseNumber: caseNumber, doctor: finalDoctor, isNewDoctor: isNewDoctor, patient: document.getElementById('patient').value.trim(), clinic: document.getElementById('clinic').value.trim(), upper: parseInt(document.getElementById('upper').value) || 0, lower: parseInt(document.getElementById('lower').value) || 0, package: document.getElementById('package').value, singleArch: document.getElementById('singleArch').checked, discountType: document.getElementById('discountType').value, discountValue: document.getElementById('discountType').value === 'percentage' ? parseFloat(document.getElementById('discountValue').value) || 0 : getRawNumber('discountValue'), batch1Amount: getRawNumber('batch1Amount'), fullBatch: (document.getElementById('caseType').value === 'batch' || !document.getElementById('printAllRemainingGroup').classList.contains('hidden')) ? document.getElementById('printAllRemaining').checked : document.getElementById('installments').value === 'full', fullPayment: document.getElementById('fullPayment').checked, asap: document.getElementById('asap').checked, retainer: document.getElementById('retainer').checked, notes: document.getElementById('notes').value.trim(), rep: repName }; var message = buildTelegramMessage(data); var promises = [sendToTelegram(CHAT_ID, message)]; selectedFiles.forEach(function(file) { promises.push(sendSTLToTelegram(file, 'STL for case: ' + data.caseNumber)); }); Promise.all(promises).then(function() { if (tgUserId) { setTimeout(function() { sendToTelegram(tgUserId, message + '\n\n✅ Print Order received—thanks!'); }, 500); } document.getElementById('formScreen').style.display = 'none'; document.getElementById('statusScreen').style.display = 'none'; document.getElementById('unpaidScreen').style.display = 'none'; document.getElementById('successScreen').style.display = 'block'; window.scrollTo(0, 0); document.getElementById('successSub').textContent = caseNumber ? 'Order for case ' + caseNumber + ' submitted successfully.' : 'Order submitted successfully.'; if (tg) { setTimeout(function() { tg.close(); }, 3000); } else { setTimeout(function() { window.location.reload(); }, 5000); } }).catch(function(err) { btn.disabled = false; btn.textContent = 'Submit Order'; alert('Failed to submit. Please try again.\n' + err.message); }); }
+function getBadgeClass(text){const t=safe(text).toLowerCase(); if(t==='active'||t==='under production'||t==='waiting pickup') return 'orange'; if(t==='finished'||t==='paid'||t==='case fully paid'||t==='batch paid'||t==='free batch') return 'green'; if(t==='unpaid') return 'red'; return 'blue';}
+function amountClass(value,kind){const num=Number(value)||0; if(num===0) return ''; return kind==='received' ? 'green-value' : 'red-value';}
+function shouldPendingDisplay(row){const workflow=safe(row.workflowStatus).toLowerCase(); const payment=safe(row.paymentStatus).toLowerCase(); return payment==='unpaid' || workflow==='under production' || workflow==='waiting pickup';}
+function isPaidRow(row){return !shouldPendingDisplay(row) && (Number(row.amountReceived)||0) > 0;}
+function deriveBatchPrice(row){if(shouldPendingDisplay(row)) return Math.max(Number(row.rowMoney)||0, Number(row.amountReceived)||0, Number(row.amountRemaining)||0); if((Number(row.amountReceived)||0)>0) return Number(row.amountReceived)||0; if((Number(row.rowMoney)||0)>0) return Number(row.rowMoney)||0; if((Number(row.amountRemaining)||0)>0) return Number(row.amountRemaining)||0; return 0;}
+function deriveAmountDue(row){if(shouldPendingDisplay(row)) return deriveBatchPrice(row); if(isPaidRow(row)) return null; return (Number(row.amountRemaining)||0)>0 ? Number(row.amountRemaining)||0 : null;}
+function forceFinishedForSupersededRows(sortedRows){const result=sortedRows.map(r=>({...r})); if(result.length<=1) return result; for(let i=0;i<result.length-1;i++){result[i].workflowStatus='Finished';} return result;}
+function buildGroupedCases(){ let visibleRows = allRows.slice(); if(!isAdmin&&!isSalesRep){ const allowed=new Set(doctors.map(d=>d.toLowerCase())); visibleRows=visibleRows.filter(r=>allowed.has(safe(r.doctor).toLowerCase())); } const map=new Map(); visibleRows.forEach(function(row){ const baseKey=safe(row.baseCaseNumber)||('STANDALONE::'+safe(row.caseNumber)+'::'+safe(row.patient)); if(!map.has(baseKey)){ map.set(baseKey,{ baseCaseNumber:safe(row.baseCaseNumber), titleCaseNumber:safe(row.baseCaseNumber)||safe(row.caseNumber), doctor:safe(row.doctor), clinic:safe(row.clinic), patient:safe(row.patient), rows:[] }); } const normalizedRow={...row}; if(shouldPendingDisplay(normalizedRow)){ const pendingAmount=Math.max(Number(normalizedRow.amountRemaining)||0, Number(normalizedRow.amountReceived)||0, Number(normalizedRow.rowMoney)||0); normalizedRow.amountReceived=0; normalizedRow.amountRemaining=pendingAmount; } normalizedRow.batchPriceDisplay=deriveBatchPrice(normalizedRow); normalizedRow.amountDueDisplay=deriveAmountDue(normalizedRow); normalizedRow.isPaidDisplay=isPaidRow(normalizedRow); map.get(baseKey).rows.push(normalizedRow); }); function pathDepth(r){const p=safe(r.casePath); return !p||p==='ROOT'?0:p.split('/').length;} groupedCases=Array.from(map.values()).map(function(group){ const rows=group.rows; const rootRow=rows.find(r=>!r.casePath||r.casePath==='ROOT')||rows[0]; const sortedRows=rows.slice().sort(function(a,b){ const depthA=pathDepth(a),depthB=pathDepth(b); if(depthA!==depthB) return depthA-depthB; return safe(a.casePath||'ROOT').localeCompare(safe(b.casePath||'ROOT')); }); const displayRows=forceFinishedForSupersededRows(sortedRows); const rootDisplayRow=displayRows.find(r=>!r.casePath||r.casePath==='ROOT')||displayRows[0]; const childRows=displayRows.filter(r=>r.casePath&&r.casePath!=='ROOT'); const currentRow=childRows.length?childRows[childRows.length-1]:rootDisplayRow; const currentDue=(currentRow.amountDueDisplay===null||typeof currentRow.amountDueDisplay==='undefined')?0:(Number(currentRow.amountDueDisplay)||0); const totalReceived=displayRows.reduce(function(s,r){ return s+(isPaidRow(r)?(Number(r.amountReceived)||0):0); },0); const totalDue=currentDue; const caseTarget=(Number(rootRow.priceAfterDiscount)||0)||(Number(rootRow.casePrice)||0); const totalRemaining=Math.max(caseTarget-totalReceived-totalDue,0); const overallWorkflow=currentRow.workflowStatus||'Finished'; const overallPayment=displayRows.some(r=>safe(r.paymentStatus).toLowerCase()==='unpaid')?'Unpaid':'Paid'; const collapsedSummary={ upper:currentRow.upper, lower:currentRow.lower, upperDelivered:currentRow.upperDelivered, lowerDelivered:currentRow.lowerDelivered, casePrice:rootRow.casePrice, discountRaw:formatDiscount(rootRow.discountRaw), priceAfterDiscount:rootRow.priceAfterDiscount }; const mainTags=[]; const caseTypeSet=new Set(displayRows.map(r=>safe(r.caseType)).filter(Boolean)); caseTypeSet.forEach(function(ct){ if(/^Refinement/i.test(ct)||/mid-course adjustment/i.test(ct)) mainTags.push(ct); }); return {...group, title:(group.titleCaseNumber||'Standalone')+' — '+(group.patient||'No patient'), overallWorkflow, overallPayment, totalDue, totalRemaining, totalReceived, rows:displayRows, collapsedSummary, rootDate:formatMonthYear(rootRow), mainTags, currentTypeTag:safe(currentRow.caseType||'')}; }).sort(function(a,b){ return a.title.localeCompare(b.title); }); }
+function buildTreeRows(rows){const rootRow=rows.find(r=>!r.casePath||r.casePath==='ROOT')||null; const childRows=rows.filter(r=>r.casePath&&r.casePath!=='ROOT'); const byParent={}; childRows.forEach(function(r){ const parent=r.parentPath||'ROOT'; if(!byParent[parent]) byParent[parent]=[]; byParent[parent].push(r); }); Object.keys(byParent).forEach(function(k){ byParent[k].sort(function(a,b){ return safe(a.casePath||'').localeCompare(safe(b.casePath||'')); }); }); const out=[]; if(rootRow) out.push({row:rootRow, depth:0}); function walk(parentKey,depth){ const list=byParent[parentKey]||[]; list.forEach(function(r){ out.push({row:r, depth:Math.min(depth,4)}); const ownKey=r.casePath||''; walk(ownKey,depth+1); }); } walk('ROOT',1); return out; }
+function filterDoctorOptions(query){const box=document.getElementById('doctorResults'); const q=safe(query).toLowerCase(); const pool=doctors.filter(Boolean).sort(); const filtered=q?pool.filter(d=>d.toLowerCase().includes(q)):pool; let html='<div class="search-result-item" data-doc="__ALL__" style="color:#1a73e8;font-weight:700">All Doctors</div>'; filtered.slice(0,40).forEach(function(doc){ html+='<div class="search-result-item" data-doc="'+doc.replace(/"/g,'&quot;')+'">'+doc+'</div>'; }); box.innerHTML=html; box.style.display='block'; }
+document.getElementById('doctorResults').addEventListener('click',function(e){ const item=e.target.closest('.search-result-item'); if(!item) return; const doc=item.getAttribute('data-doc'); selectedDoctor=doc==='__ALL__'?'':doc; document.getElementById('doctorFilterInput').value=selectedDoctor; document.getElementById('doctorResults').style.display='none'; renderGroupedCases(); });
+function renderGroupedCases(){ const query=safe(document.getElementById('searchInput').value).toLowerCase(); const area=document.getElementById('resultsArea'); const meta=document.getElementById('resultsMeta'); let filtered=groupedCases.filter(function(g){ if(selectedDoctor&&g.doctor!==selectedDoctor) return false; if(!query) return true; const hay=[g.titleCaseNumber,g.patient,g.doctor,g.clinic].join(' ').toLowerCase(); return hay.includes(query); }); meta.textContent=filtered.length?(filtered.length+' grouped case'+(filtered.length===1?'':'s')):''; if(!filtered.length){ area.innerHTML='<div class="status-empty">No grouped cases found.</div>'; return; } area.innerHTML=filtered.map(function(g,index){ const wid='tree_'+index; return `<div class="case-card"><div class="case-head"><div><div class="case-title">${escapeHtml(g.title)}</div><div class="case-sub">${escapeHtml(g.doctor)}${g.clinic?' — '+escapeHtml(g.clinic):''}</div><div class="case-date">${escapeHtml(g.rootDate)}</div><div class="badges"><span class="badge ${getBadgeClass(g.overallWorkflow)}">${escapeHtml(g.overallWorkflow)}</span><span class="badge ${getBadgeClass(g.overallPayment)}">${escapeHtml(g.overallPayment)}</span>${g.mainTags.map(tag=>`<span class="badge blue">${escapeHtml(tag)}</span>`).join('')}</div></div><button class="expand-btn" onclick="toggleTree('${wid}', this)">Expand</button></div><div class="summary-grid top-financial"><div class="mini-box"><div class="mini-label">🧾 Amount Due</div><div class="mini-value ${amountClass(g.totalDue,'remaining')}">${g.totalDue===0?'-':formatNum(g.totalDue)+' IQD'}</div></div><div class="mini-box"><div class="mini-label">✅ Amount Received</div><div class="mini-value ${amountClass(g.totalReceived,'received')}">${formatNum(g.totalReceived)} IQD</div></div><div class="mini-box"><div class="mini-label">⏭️ Amount Remaining</div><div class="mini-value ${amountClass(g.totalRemaining,'remaining')}">${g.totalRemaining===0?'-':formatNum(g.totalRemaining)+' IQD'}</div></div></div><div class="badges" style="margin-top:10px;justify-content:flex-start;">${g.currentTypeTag?`<span class="badge blue">${escapeHtml(g.currentTypeTag)}</span>`:''}</div>${renderCollapsedMainCard(g.collapsedSummary)}<div class="tree-wrap" id="${wid}" style="display:none;"><div class="tree-label">Case Records</div>${buildTreeRows(g.rows).map(item=>renderTreeNode(item.row,item.depth)).join('')||'<div class="status-empty" style="padding:16px 8px">No case records.</div>'}</div></div>`; }).join(''); }
+function renderCollapsedMainCard(summary){ if(!summary) return ''; return `<div class="parent-card"><div class="summary-grid steps-grid" style="margin-top:0;"><div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${summary.upper}</div></div><div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${summary.lower}</div></div><div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${summary.upperDelivered}</div></div><div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${summary.lowerDelivered}</div></div></div><div class="summary-grid financial-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">💰 Case Price</div><div class="mini-value">${formatNum(summary.casePrice)} IQD</div></div><div class="mini-box"><div class="mini-label">🏷️ Discount</div><div class="mini-value">${escapeHtml(summary.discountRaw||'-')}</div></div><div class="mini-box"><div class="mini-label">💵 After Disc.</div><div class="mini-value">${formatNum(summary.priceAfterDiscount)} IQD</div></div></div></div>`; }
+function childPriceInfo(row){ const price=Number(row.batchPriceDisplay)||0; return {label:'📦 Batch Price', value:price===0?'FREE':formatNum(price)+' IQD', valueClass:price===0?'green-value':(row.isPaidDisplay?'green-value':'')}; }
+function dueInfo(row){ if(row.amountDueDisplay===null||typeof row.amountDueDisplay==='undefined') return {label:'🧾 Amount Due', value:'-', valueClass:''}; const due=Number(row.amountDueDisplay)||0; return {label:'🧾 Amount Due', value:due===0?'-':formatNum(due)+' IQD', valueClass:due===0?'':'red-value'}; }
+function renderRecordCard(r,nested,depth){ if(!r||!Object.keys(r).length) return ''; const priceInfo=childPriceInfo(r); const due=dueInfo(r); return `<div class="${nested?`tree-node tree-indent-${depth}`:'parent-card'}"><div class="tree-line"><div class="tree-main"><div class="tree-title">${escapeHtml(r.caseType||r.caseNumber)}</div><div class="tree-meta">${escapeHtml(r.caseNumber)} • ${escapeHtml(formatMonthYear(r))}</div><div class="badges"><span class="badge blue">${escapeHtml(r.caseType||'')}</span>${r.paymentStatus?`<span class="badge ${getBadgeClass(r.paymentStatus)}">${escapeHtml(r.paymentStatus)}</span>`:''}${r.workflowStatus?`<span class="badge ${getBadgeClass(r.workflowStatus)}">${escapeHtml(r.workflowStatus)}</span>`:''}</div><div class="summary-grid steps-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">⬆️ Upper</div><div class="mini-value">${r.upper}</div></div><div class="mini-box"><div class="mini-label">⬇️ Lower</div><div class="mini-value">${r.lower}</div></div><div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${r.upperDelivered}</div></div><div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${r.lowerDelivered}</div></div><div class="mini-box"><div class="mini-label">⏳ Up Rem</div><div class="mini-value">${r.upperRemaining}</div></div><div class="mini-box"><div class="mini-label">⏳ Low Rem</div><div class="mini-value">${r.lowerRemaining}</div></div></div><div class="summary-grid financial-grid" style="margin-top:10px;"><div class="mini-box"><div class="mini-label">${escapeHtml(priceInfo.label)}</div><div class="mini-value ${priceInfo.valueClass}">${escapeHtml(priceInfo.value)}</div></div><div class="mini-box"><div class="mini-label">${escapeHtml(due.label)}</div><div class="mini-value ${due.valueClass}">${escapeHtml(due.value)}</div></div><div class="mini-box"><div class="mini-label">🔄 Workflow</div><div class="mini-value">${escapeHtml(r.workflowStatus||'-')}</div></div></div>${r.notes?`<div class="note">${escapeHtml(r.notes)}</div>`:''}</div></div></div>`; }
+function renderTreeNode(r,depth){ return renderRecordCard(r,true,depth); }
+function toggleTree(id,btn){ const el=document.getElementById(id); const open=el.style.display!=='none'; el.style.display=open?'none':'block'; btn.textContent=open?'Expand':'Collapse'; }
+function formatDiscount(value){ const raw=safe(value); if(!raw) return '-'; const num=Number(raw); if(Number.isNaN(num)) return raw; if(num===0) return '0%'; if(Math.abs(num)<=1) return (num*100).toFixed(num*100%1===0?0:1)+'%'; return num.toFixed(num%1===0?0:1)+'%'; }
+function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+formatWithCommas(document.getElementById('batch1Amount')); formatWithCommas(document.getElementById('discountValue')); formatWithCommas(document.getElementById('retainerPrice')); formatWithCommas(document.getElementById('reprintPayment')); handleCaseTypeChange(); initTelegram(); loadData(); setTimeout(function() { loadCaseStatus(); }, 1500);
 </script>
 </body>
 </html>
