@@ -228,6 +228,8 @@ textarea { resize: none; height: 80px; }
 .note { margin-top:5px; font-size:12px; color:#555; background:#fff; border:1px dashed #e0e0e0; border-radius:8px; padding:7px 8px; }
 .detail-back-card { padding:12px; }
 .last-printed-label { font-size:12px; color:#666; font-weight:600; }
+.expected-date-pill { margin-top:8px; font-size:12px; color:#444; background:#f0f4ff; border-radius:8px; padding:7px 10px; font-weight:600; }
+.expected-date-pill span { color:#1a73e8; }
 @media (max-width:620px) {
   .row { flex-direction:column; }
   .summary-grid, .summary-grid.compact-top, .summary-grid.steps-grid, .summary-grid.financial-grid, .summary-grid.financial-grid-2, .summary-grid.top-financial { grid-template-columns:1fr 1fr; }
@@ -1200,6 +1202,8 @@ function loadCaseStatus() {
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
+        // *** CHANGE 1: read expectedDate from CombinedTable column "Expected To Be Done By" ***
+        expectedDate: String(r[idx['Expected To Be Done By']] || '').trim(),
         baseCaseNumber: String(rawCaseNumber ? (r[idx['Base Case Number']] || extractBaseCase(rawCaseNumber)) : ((rawCaseType || 'Case') + '::' + caseDoctor + '::' + casePatient + '::' + ((r[idx['🏥 Clinic']] || '').trim()))).trim(),
         rawCaseNumber: rawCaseNumber,
         casePath: String(r[idx['Case Path']] || 'ROOT').trim(),
@@ -1673,7 +1677,6 @@ function buildTreeRows(rows){
     });
   }
 
-
   walk('ROOT', 1);
   return out;
 }
@@ -1846,6 +1849,14 @@ function renderRecordCard(r,nested,depth){
   if(!r||!Object.keys(r).length) return '';
   const priceInfo=childPriceInfo(r);
   const due=dueInfo(r);
+
+  // *** CHANGE 2: build expected date pill ***
+  const hasDate = r.expectedDate && r.expectedDate.trim();
+  const isDone = r.upperRemaining === 0 && r.lowerRemaining === 0;
+  const expectedDateHtml = hasDate
+    ? `<div class="expected-date-pill">${isDone ? '🏁 Expected finish date' : '📅 Next batch expected on'}: <span>${escapeHtml(r.expectedDate)}</span></div>`
+    : '';
+
   return `<div class="${nested?`tree-node tree-indent-${depth}`:'parent-card'}">
     <div class="tree-line">
       <div class="tree-main">
@@ -1864,6 +1875,7 @@ function renderRecordCard(r,nested,depth){
           <div class="mini-box"><div class="mini-label">⏳ Up Rem</div><div class="mini-value">${r.upperRemaining}</div></div>
           <div class="mini-box"><div class="mini-label">⏳ Low Rem</div><div class="mini-value">${r.lowerRemaining}</div></div>
         </div>
+        ${expectedDateHtml}
         <div class="summary-grid financial-grid" style="margin-top:10px;">
           <div class="mini-box"><div class="mini-label">${escapeHtml(priceInfo.label)}</div><div class="mini-value ${priceInfo.valueClass}">${escapeHtml(priceInfo.value)}</div></div>
           <div class="mini-box"><div class="mini-label">${escapeHtml(due.label)}</div><div class="mini-value ${due.valueClass}">${escapeHtml(due.value)}</div></div>
