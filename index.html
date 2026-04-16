@@ -573,8 +573,8 @@ function handleCaseTypeChange() {
   var isRetainer = type === 'retainer';
   var isMCA = type === 'mca';
   var isRefinement = type === 'refinement';
-  document.getElementById('caseNumber').placeholder = (isRetainer || isReprint) ? 'Optional' : 'e.g. XXXX';
-  document.getElementById('caseNumberRequired').style.display = (isRetainer || isReprint) ? 'none' : 'inline';
+  document.getElementById('caseNumber').placeholder = isRetainer ? 'Optional' : 'e.g. XXXX';
+document.getElementById('caseNumberRequired').style.display = isRetainer ? 'none' : 'inline';
   document.getElementById('batchNumberGroup').classList.toggle('hidden', type !== 'batch');
   document.getElementById('mcaNumberGroup').classList.toggle('hidden', !isMCA);
   document.getElementById('mcaBatchNumberGroup').classList.toggle('hidden', !isMCA);
@@ -1293,7 +1293,7 @@ function validateForm() {
   if (!repName) { alert('You are not authorized to submit orders. Please contact your admin.'); return false; }
 
   var caseNum = document.getElementById('caseNumber').value.trim();
-  if (!caseNum && caseType !== 'retainer' && caseType !== 'reprint') {
+ if (!caseNum && caseType !== 'retainer') {
     document.getElementById('caseNumberError').classList.add('show');
     document.getElementById('caseNumber').classList.add('error-field');
     valid = false;
