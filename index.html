@@ -1605,9 +1605,9 @@ function buildGroupedCases() {
       lowerDelivered: currentStatusRow.lowerDelivered,
       casePrice: Number(rootRow.casePrice) || 0,
       discountRaw: formatDiscount(rootRow.discountRaw),
-      priceAfterDiscount: Number(rootRow.priceAfterDiscount) || 0
+      priceAfterDiscount: Number(rootRow.priceAfterDiscount) || 0,
+      expectedDate: currentStatusRow.expectedDate || ''
     };
-
     const mainTags = [];
     const caseTypeSet = new Set(displayRows.map(r => safe(r.caseTypeLabel || r.caseType)).filter(Boolean));
     caseTypeSet.forEach(function(ct){
@@ -1829,6 +1829,7 @@ function renderCollapsedMainCard(summary){
       <div class="mini-box"><div class="mini-label">📦 Up Del</div><div class="mini-value">${summary.upperDelivered}</div></div>
       <div class="mini-box"><div class="mini-label">📦 Low Del</div><div class="mini-value">${summary.lowerDelivered}</div></div>
     </div>
+   ${(function(){const hasDate=summary.expectedDate&&summary.expectedDate.trim();if(!hasDate)return '';const isDone=summary.upperDelivered>=summary.upper&&summary.lowerDelivered>=summary.lower;const label=isDone?'🏁 Expected finish date':'📅 Next batch expected on';return `<div class="expected-date-pill">${label}: <span>${escapeHtml(summary.expectedDate)}</span></div>`;})()}
     <div class="summary-grid financial-grid" style="margin-top:10px;">
       <div class="mini-box"><div class="mini-label">💰 Case Price</div><div class="mini-value">${formatNum(summary.casePrice)} IQD</div></div>
       <div class="mini-box"><div class="mini-label">🏷️ Discount</div><div class="mini-value">${escapeHtml(summary.discountRaw||'-')}</div></div>
