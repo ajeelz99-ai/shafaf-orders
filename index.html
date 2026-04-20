@@ -1503,10 +1503,13 @@ function pickCurrentStatusRow(rows){
 }
 
 function getGroupCaseTarget(rootRow, rows){
-  const afterDisc = Number(rootRow.priceAfterDiscount) || 0;
-  if (afterDisc > 0) return afterDisc;
-
+  const afterDisc = Number(rootRow.priceAfterDiscount);
   const casePrice = Number(rootRow.casePrice) || 0;
+
+  if (rootRow.priceAfterDiscount !== '' && rootRow.priceAfterDiscount !== undefined && !isNaN(afterDisc)) {
+    return afterDisc;
+  }
+
   if (casePrice > 0) return casePrice;
 
   return rows.reduce(function(sum, r){
