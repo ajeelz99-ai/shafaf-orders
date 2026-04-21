@@ -1257,7 +1257,12 @@ function renderUnpaid() {
   unpaid.reverse();
   var total = 0;
   unpaid.forEach(function(c) {
-    var outstanding = c.batchPrice > 0 ? (c.batchPrice - c.amountReceived) : c.amtRemaining;
+    var outstanding;
+    if (c.batchPrice > 0) {
+      outstanding = (c.amountReceived === c.batchPrice) ? c.batchPrice : (c.batchPrice - c.amountReceived);
+    } else {
+      outstanding = c.amtRemaining;
+    }
     total += outstanding > 0 ? outstanding : 0;
   });
   totalEl.textContent = formatNum(total) + ' IQD';
@@ -1268,7 +1273,12 @@ function renderUnpaid() {
   var html = '<table class="unpaid-table">';
   html += '<thead><tr><th class="frozen frozen-case">Case #</th><th class="frozen frozen-doctor">Doctor</th><th>Year</th><th>Month</th><th>Type</th><th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
   unpaid.forEach(function(c) {
-    var amt = c.batchPrice > 0 ? (c.batchPrice - c.amountReceived) : c.amtRemaining;
+    var amt;
+    if (c.batchPrice > 0) {
+      amt = (c.amountReceived === c.batchPrice) ? c.batchPrice : (c.batchPrice - c.amountReceived);
+    } else {
+      amt = c.amtRemaining;
+    }
     if (amt < 0) amt = 0;
     html += '<tr><td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td><td class="frozen frozen-doctor">' + c.doctor + '</td><td>' + c.year + '</td><td>' + c.month + '</td><td>' + c.caseType + '</td><td>' + c.clinic + '</td><td>' + c.patient + '</td><td>' + c.zone + '</td><td class="amt">' + formatNum(amt) + ' IQD</td></tr>';
   });
