@@ -1135,7 +1135,7 @@ function loadCaseStatus() {
       var amtRemaining = parseFloat(String(r[idx['Amount Remaining']] || '0').replace(/,/g,'')) || 0;
       var amountReceived = parseFloat(String(r[idx['Amount Recieved']] || '0').replace(/,/g,'')) || 0;
       var rowMoney = parseFloat(String(r[idx['Total Invoice']] || '0').replace(/,/g,'')) || 0;
-      var batchPrice = amountReceived;
+      var batchPrice = parseFloat(String(r[idx['Batch Price']] || '0').replace(/,/g,'')) || 0;
 
       var casePrice = parseFloat(String(r[idx['Price']] || '0').replace(/,/g,'')) || 0;
       var afterDisc = parseFloat(String(r[idx['Price after Discount']] || '0').replace(/,/g,'')) || 0;
@@ -1199,6 +1199,7 @@ function loadCaseStatus() {
         rowMoney: rowMoney,
         amountReceived: amountReceived,
         amountRemaining: amtRemaining,
+        batchPrice: batchPrice,
         notes: String(r[idx['📝 Notes']] || '').trim(),
         paymentStatus: paymentStatus,
         workflowStatus: workflowStatus,
@@ -1255,7 +1256,10 @@ function renderUnpaid() {
   });
   unpaid.reverse();
   var total = 0;
-  unpaid.forEach(function(c) { total += c.batchPrice > 0 ? c.batchPrice : c.amtRemaining; });
+  unpaid.forEach(function(c) {
+    var outstanding = c.batchPrice > 0 ? (c.batchPrice - c.amountReceived) : c.amtRemaining;
+    total += outstanding > 0 ? outstanding : 0;
+  });
   totalEl.textContent = formatNum(total) + ' IQD';
   if (unpaid.length === 0) {
     container.innerHTML = '<div class="status-empty">No pending cases</div>';
@@ -1264,7 +1268,8 @@ function renderUnpaid() {
   var html = '<table class="unpaid-table">';
   html += '<thead><tr><th class="frozen frozen-case">Case #</th><th class="frozen frozen-doctor">Doctor</th><th>Year</th><th>Month</th><th>Type</th><th>Clinic</th><th>Patient</th><th>Zone</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
   unpaid.forEach(function(c) {
-    var amt = c.batchPrice > 0 ? c.batchPrice : c.amtRemaining;
+    var amt = c.batchPrice > 0 ? (c.batchPrice - c.amountReceived) : c.amtRemaining;
+    if (amt < 0) amt = 0;
     html += '<tr><td class="frozen frozen-case" style="font-weight:600;color:#1a73e8">' + c.caseNumber + '</td><td class="frozen frozen-doctor">' + c.doctor + '</td><td>' + c.year + '</td><td>' + c.month + '</td><td>' + c.caseType + '</td><td>' + c.clinic + '</td><td>' + c.patient + '</td><td>' + c.zone + '</td><td class="amt">' + formatNum(amt) + ' IQD</td></tr>';
   });
   html += '</tbody></table>';
@@ -1476,6 +1481,8 @@ function getCaseTypeLabel(row){
 }
 
 function getCurrentBatchAmount(row){
+  const bp = Number(row.batchPrice);
+  if (bp > 0) return bp;
   return Number(row.amountReceived) || 0;
 }
 
