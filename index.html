@@ -1496,6 +1496,30 @@ function getCurrentBatchAmount(row){
   return Number(row.amountReceived) || 0;
 }
 
+function getRowReceived(row){
+  const bp = Number(row.batchPrice) || 0;
+  const ar = Number(row.amountReceived) || 0;
+  if (isActuallyPaidRow(row)) {
+    return bp > 0 ? bp : ar;
+  }
+  if (isDueNow(row)) {
+    const diff = Math.abs(bp - ar);
+    if (bp > 0 && diff < 2000) return 0;
+    return ar;
+  }
+  return 0;
+}
+
+function getRowDue(row){
+  if (!isDueNow(row)) return 0;
+  const bp = Number(row.batchPrice) || 0;
+  const ar = Number(row.amountReceived) || 0;
+  if (bp <= 0) return Number(row.amountRemaining) || 0;
+  const diff = bp - ar;
+  if (Math.abs(diff) < 2000) return bp;
+  return diff > 0 ? diff : 0;
+}
+
 function isDueNow(row){
   return safe(row.paymentStatus).toLowerCase() === 'unpaid';
 }
@@ -1576,7 +1600,7 @@ function buildGroupedCases() {
     const normalizedRow = {...row};
     normalizedRow.caseTypeLabel = caseTypeLabel;
     normalizedRow.batchPriceDisplay = getCurrentBatchAmount(normalizedRow);
-    normalizedRow.amountDueDisplay = isDueNow(normalizedRow) ? getCurrentBatchAmount(normalizedRow) : 0;
+    normalizedRow.amountDueDisplay = getRowDue(normalizedRow);     normalizedRow.amountReceivedDisplay = getRowReceived(normalizedRow);
     normalizedRow.isPaidDisplay = isActuallyPaidRow(normalizedRow);
     map.get(baseKey).rows.push(normalizedRow);
   });
@@ -1606,11 +1630,11 @@ function buildGroupedCases() {
     const displayRows = forceFinishedForSupersededRows(sortedRows);
     const currentStatusRow = pickCurrentStatusRow(sortedRows) || sortedRows[0] || rootRow;
 
-    const totalReceived = sortedRows.reduce(function(s,r){
-      return s + (isActuallyPaidRow(r) ? getCurrentBatchAmount(r) : 0);
+   const totalReceived = sortedRows.reduce(function(s,r){
+      return s + getRowReceived(r);
     }, 0);
     const totalDue = sortedRows.reduce(function(s,r){
-      return s + (isDueNow(r) ? getCurrentBatchAmount(r) : 0);
+      return s + getRowDue(r);
     }, 0);
     const caseTarget = getGroupCaseTarget(rootRow, sortedRows);
     const totalRemaining = Math.max(caseTarget - totalReceived - totalDue, 0);
@@ -1899,7 +1923,10 @@ function renderRecordCard(r,nested,depth){
         ${expectedDateHtml}
         <div class="summary-grid financial-grid" style="margin-top:10px;">
           <div class="mini-box"><div class="mini-label">${escapeHtml(priceInfo.label)}</div><div class="mini-value ${priceInfo.valueClass}">${escapeHtml(priceInfo.value)}</div></div>
+          <div class="mini-box"><div class="mini-label">✅ Received</div><div class="mini-value ${(Number(r.amountReceivedDisplay)||0) > 0 ? 'green-value' : ''}">${(Number(r.amountReceivedDisplay)||0) === 0 ? '-' : formatNum(r.amountReceivedDisplay) + ' IQD'}</div></div>
           <div class="mini-box"><div class="mini-label">${escapeHtml(due.label)}</div><div class="mini-value ${due.valueClass}">${escapeHtml(due.value)}</div></div>
+        </div>
+        <div class="summary-grid financial-grid-2" style="margin-top:10px;">
           <div class="mini-box"><div class="mini-label">🔄 Workflow</div><div class="mini-value">${escapeHtml(r.workflowStatus||'-')}</div></div>
         </div>
         ${r.notes?`<div class="note">${escapeHtml(r.notes)}</div>`:''}
