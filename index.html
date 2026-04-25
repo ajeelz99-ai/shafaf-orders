@@ -1688,14 +1688,65 @@ function buildGroupedCases() {
 
 function buildTreeRows(rows){
   if (!rows || rows.length === 0) return [];
-  const sorted = rows.slice().sort(function(a,b){
-    const monthDiff = rowSortValue(a) - rowSortValue(b);
-    if (monthDiff !== 0) return monthDiff;
-    return (Number(a.combinedTableRowIndex) || 0) - (Number(b.combinedTableRowIndex) || 0);
+  if (rows.length === 1) return [{row: rows[0], depth: 0}];
+
+  const rootRow = rows.find(r => !r.casePath || r.casePath === 'ROOT') || rows[0];
+  const childRows = rows.filter(r => r !== rootRow && r.casePath && r.casePath !== 'ROOT');
+
+  // If hierarchy data missing or incomplete, just show all rows flat
+  if (childRows.length === 0 || childRows.length < rows.length - 1) {
+    const sortedAll = rows.slice().sort(function(a,b){
+      const monthDiff = rowSortValue(a) - rowSortValue(b);
+      if (monthDiff !== 0) return monthDiff;
+      return (Number(a.combinedTableRowIndex) || 0) - (Number(b.combinedTableRowIndex) || 0);
+    });
+    return sortedAll.map(function(r, i){
+      return { row: r, depth: i === 0 ? 0 : 1 };
+    });
+  }
+
+  const byParent = {};
+  childRows.forEach(function(r){
+    const parent = r.parentPath || 'ROOT';
+    if(!byParent[parent]) byParent[parent] = [];
+    byParent[parent].push(r);
   });
-  return sorted.map(function(r, i){
-    return { row: r, depth: i === 0 ? 0 : 1 };
+
+  Object.keys(byParent).forEach(function(k){
+    byParent[k].sort(function(a,b){
+      const monthDiff = rowSortValue(a) - rowSortValue(b);
+      if (monthDiff !== 0) return monthDiff;
+      const rowDiff = (Number(a.combinedTableRowIndex) || 0) - (Number(b.combinedTableRowIndex) || 0);
+      if (rowDiff !== 0) return rowDiff;
+      return safe(a.casePath || '').localeCompare(safe(b.casePath || ''));
+    });
   });
+
+  const out = [{row: rootRow, depth: 0}];
+  const visited = new Set([rootRow]);
+
+  function walk(parentKey, depth){
+    const list = byParent[parentKey] || [];
+    list.forEach(function(r){
+      if (visited.has(r)) return;
+      visited.add(r);
+      out.push({row: r, depth: Math.min(depth, 4)});
+      const ownKey = r.casePath || '';
+      walk(ownKey, depth + 1);
+    });
+  }
+
+  walk('ROOT', 1);
+
+  // Safety net: include any rows that didn't get walked (orphan parentPath)
+  rows.forEach(function(r){
+    if (!visited.has(r)) {
+      out.push({row: r, depth: 1});
+      visited.add(r);
+    }
+  });
+
+  return out;
 }
 
   function walk(parentKey, depth){
